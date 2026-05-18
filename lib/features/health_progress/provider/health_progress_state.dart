@@ -2,18 +2,19 @@ import 'package:equatable/equatable.dart';
 
 final class HealthProgressState extends Equatable {
   const HealthProgressState({
-    required this.selectedPlantId,
+    required this.selectedSpeciesLabel,
   });
 
-  final String? selectedPlantId;
+  /// Geçmiş taramalardaki ham tür anahtarı (`plantnet__…`).
+  final String? selectedSpeciesLabel;
 
-  HealthProgressState copyWith({String? selectedPlantId}) {
+  HealthProgressState copyWith({String? selectedSpeciesLabel}) {
     return HealthProgressState(
-      selectedPlantId: selectedPlantId,
+      selectedSpeciesLabel: selectedSpeciesLabel,
     );
   }
 
   @override
-  List<Object?> get props => <Object?>[selectedPlantId];
+  List<Object?> get props => <Object?>[selectedSpeciesLabel];
 }
 

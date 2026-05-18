@@ -1,13 +1,16 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
+import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/services/disease_label_display.dart';
+import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
+import 'package:bitirme_mobile/core/services/scan_identification_filter.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/features/health_progress/sub_view/disease_progress_chart.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:bitirme_mobile/core/services/plant_scans_firestore_service.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +42,10 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
       return;
     }
     final PlantScansFirestoreService svc = sl<PlantScansFirestoreService>();
-    final List<PlantScanModel> items = await svc.listScans(ownerUid: uid, plantId: widget.plantId);
+    final List<PlantScanModel> items = await svc.listScans(
+      ownerUid: uid,
+      plantId: widget.plantId,
+    );
     if (!mounted) {
       return;
     }
@@ -55,11 +61,26 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
     final String loc = Localizations.localeOf(context).languageCode;
     final DateFormat fmt = DateFormat.yMMMd(loc);
     final TextTheme tt = Theme.of(context).textTheme;
-    final bool hasData = _items.isNotEmpty;
-    final int lastScore = hasData ? _items.first.healthScore : 0;
-    final int avgScore = hasData
-        ? (_items.fold<int>(0, (int sum, PlantScanModel e) => sum + e.healthScore) / _items.length)
-            .round()
+
+    final Set<String> knownDiseases = knownDiseaseKeysFromList(
+      sl<MlMetadataLoader>().diseaseClassKeys,
+    );
+    final List<PlantScanModel> filteredItems = _items
+        .where(
+          (PlantScanModel e) =>
+              isScanFullyIdentified(e, knownDiseaseKeys: knownDiseases),
+        )
+        .toList();
+
+    final bool hasFilteredData = filteredItems.isNotEmpty;
+    final int lastScore = hasFilteredData ? filteredItems.first.healthScore : 0;
+    final int avgScore = hasFilteredData
+        ? (filteredItems.fold<int>(
+                    0,
+                    (int sum, PlantScanModel e) => sum + e.healthScore,
+                  ) /
+                  filteredItems.length)
+              .round()
         : 0;
 
     return Scaffold(
@@ -77,7 +98,12 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: EdgeInsets.fromLTRB(pad, pad, pad, WidgetSizesEnum.bottomNavHeight.value),
+              padding: EdgeInsets.fromLTRB(
+                pad,
+                pad,
+                pad,
+                WidgetSizesEnum.bottomNavHeight.value,
+              ),
               children: <Widget>[
                 Text(
                   context.l10n.myPlantsDetailHeadline,
@@ -102,12 +128,16 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                     Expanded(
                       child: SoftElevationCard(
                         onTap: null,
-                        padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 1.05),
+                        padding: EdgeInsets.all(
+                          WidgetSizesEnum.cardRadius.value * 1.05,
+                        ),
                         child: _StatPill(
                           icon: Icons.favorite_rounded,
                           iconColor: context.palPrimary,
                           label: context.l10n.myPlantsLastScore,
-                          value: hasData ? '$lastScore' : context.l10n.placeholderDash,
+                          value: hasFilteredData
+                              ? '$lastScore'
+                              : context.l10n.placeholderDash,
                         ),
                       ),
                     ),
@@ -115,12 +145,16 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                     Expanded(
                       child: SoftElevationCard(
                         onTap: null,
-                        padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 1.05),
+                        padding: EdgeInsets.all(
+                          WidgetSizesEnum.cardRadius.value * 1.05,
+                        ),
                         child: _StatPill(
                           icon: Icons.insights_rounded,
                           iconColor: context.palAccent,
                           label: context.l10n.myPlantsAvgScore,
-                          value: hasData ? '$avgScore' : context.l10n.placeholderDash,
+                          value: hasFilteredData
+                              ? '$avgScore'
+                              : context.l10n.placeholderDash,
                         ),
                       ),
                     ),
@@ -132,15 +166,23 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                   padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
                   child: SizedBox(
                     height: WidgetSizesEnum.homeHeaderHeight.value * 0.9,
-                    child: _items.isEmpty
+                    child: !hasFilteredData
                         ? Center(
                             child: Text(
                               context.l10n.myPlantsNoScans,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: context.palMuted, fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                color: context.palMuted,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           )
-                        : LineChart(_chartData(context, _items)),
+                        : DiseaseProgressChart(
+                            scans: filteredItems,
+                            primary: context.palPrimary,
+                            outline: context.palOutline,
+                            muted: context.palMuted,
+                          ),
                   ),
                 ),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
@@ -153,10 +195,12 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                   ),
                 ),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.65),
-                if (_items.isEmpty)
+                if (!hasFilteredData)
                   SoftElevationCard(
                     onTap: null,
-                    padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 1.05),
+                    padding: EdgeInsets.all(
+                      WidgetSizesEnum.cardRadius.value * 1.05,
+                    ),
                     child: Row(
                       children: <Widget>[
                         Container(
@@ -164,9 +208,14 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                           height: WidgetSizesEnum.cardRadius.value * 2.1,
                           decoration: BoxDecoration(
                             color: context.palPrimarySoftBg,
-                            borderRadius: BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
+                            borderRadius: BorderRadius.circular(
+                              WidgetSizesEnum.chipRadius.value,
+                            ),
                           ),
-                          child: Icon(Icons.timeline_rounded, color: context.palPrimary),
+                          child: Icon(
+                            Icons.timeline_rounded,
+                            color: context.palPrimary,
+                          ),
                         ),
                         SizedBox(width: WidgetSizesEnum.cardRadius.value),
                         Expanded(
@@ -183,25 +232,38 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                     ),
                   )
                 else
-                  ..._items.map((PlantScanModel e) {
-                    final String disease = diseaseClassKeyToDisplay(e.diseaseKey, context.l10n);
+                  ...filteredItems.map((PlantScanModel e) {
+                    final String disease = diseaseClassKeyToDisplay(
+                      e.diseaseKey,
+                      context.l10n,
+                    );
                     return Padding(
-                      padding: EdgeInsets.only(bottom: WidgetSizesEnum.cardRadius.value * 0.75),
+                      padding: EdgeInsets.only(
+                        bottom: WidgetSizesEnum.cardRadius.value * 0.75,
+                      ),
                       child: SoftElevationCard(
                         onTap: null,
-                        padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 0.95),
+                        padding: EdgeInsets.all(
+                          WidgetSizesEnum.cardRadius.value * 0.95,
+                        ),
                         child: Row(
                           children: <Widget>[
                             Container(
                               width: WidgetSizesEnum.cardRadius.value * 2.1,
                               height: WidgetSizesEnum.cardRadius.value * 2.1,
                               decoration: BoxDecoration(
-                                color: context.palPrimary.withValues(alpha: 0.12),
-                                borderRadius:
-                                    BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
+                                color: context.palPrimary.withValues(
+                                  alpha: 0.12,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  WidgetSizesEnum.chipRadius.value,
+                                ),
                               ),
                               child: e.imageUrl == null || e.imageUrl!.isEmpty
-                                  ? Icon(Icons.analytics_rounded, color: context.palPrimary)
+                                  ? Icon(
+                                      Icons.analytics_rounded,
+                                      color: context.palPrimary,
+                                    )
                                   : ClipRRect(
                                       borderRadius: BorderRadius.circular(
                                         WidgetSizesEnum.chipRadius.value,
@@ -228,7 +290,22 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                                       color: context.palOnSurface,
                                     ),
                                   ),
-                                  SizedBox(height: WidgetSizesEnum.divider.value * 6),
+                                  SizedBox(
+                                    height: WidgetSizesEnum.divider.value * 6,
+                                  ),
+                                  Text(
+                                    speciesClassDisplayForRaw(
+                                      context,
+                                      e.speciesLabel,
+                                    ),
+                                    style: TextStyle(
+                                      color: context.palMuted,
+                                      fontSize: TextSizesEnum.caption.value,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: WidgetSizesEnum.divider.value * 4,
+                                  ),
                                   Text(
                                     '$disease • ${context.l10n.myPlantsHealthScoreLabel} ${e.healthScore}',
                                     style: TextStyle(color: context.palMuted),
@@ -236,7 +313,10 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                                 ],
                               ),
                             ),
-                            Icon(Icons.chevron_right_rounded, color: context.palMuted),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: context.palMuted,
+                            ),
                           ],
                         ),
                       ),
@@ -246,37 +326,7 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
             ),
     );
   }
-  LineChartData _chartData(BuildContext context, List<PlantScanModel> items) {
-    final List<PlantScanModel> sorted = List<PlantScanModel>.from(items)
-      ..sort((PlantScanModel a, PlantScanModel b) => a.createdAt.compareTo(b.createdAt));
-    final List<FlSpot> spots = <FlSpot>[];
-    for (int i = 0; i < sorted.length; i++) {
-      spots.add(FlSpot(i.toDouble(), sorted[i].healthScore.toDouble()));
-    }
-    return LineChartData(
-      minY: 0,
-      maxY: 100,
-      gridData: FlGridData(show: true, horizontalInterval: 20),
-      titlesData: const FlTitlesData(
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      ),
-      borderData: FlBorderData(show: true, border: Border.all(color: context.palOutline)),
-      lineBarsData: <LineChartBarData>[
-        LineChartBarData(
-          spots: spots,
-          isCurved: true,
-          color: context.palPrimary,
-          barWidth: 3,
-          dotData: const FlDotData(show: true),
-          belowBarData: BarAreaData(
-            show: true,
-            color: context.palPrimary.withValues(alpha: 0.12),
-          ),
-        ),
-      ],
-    );
-  }
+
 }
 
 class _StatPill extends StatelessWidget {
@@ -301,7 +351,9 @@ class _StatPill extends StatelessWidget {
           padding: EdgeInsets.all(WidgetSizesEnum.divider.value * 10),
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
+            borderRadius: BorderRadius.circular(
+              WidgetSizesEnum.chipRadius.value,
+            ),
           ),
           child: Icon(icon, color: iconColor, size: IconSizesEnum.large.value),
         ),

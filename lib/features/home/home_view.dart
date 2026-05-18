@@ -11,7 +11,6 @@ import 'package:bitirme_mobile/features/home/sub_view/home_insight_banner.dart';
 import 'package:bitirme_mobile/features/home/sub_view/home_quick_actions_row.dart';
 import 'package:bitirme_mobile/features/home/sub_view/home_recent_strip.dart';
 import 'package:bitirme_mobile/features/home/sub_view/home_scan_hero_card.dart';
-import 'package:bitirme_mobile/features/home/sub_view/home_search_bar.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,20 +49,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                HomeDashboardHeader(displayName: name),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    pad,
-                    WidgetSizesEnum.cardRadius.value * 0.65,
-                    pad,
-                    0,
-                  ),
-                  child: HomeSearchBar(
-                    onTap: () => context.push(AppPaths.guide),
-                  ),
-                ),
-              ],
+              children: <Widget>[HomeDashboardHeader(displayName: name)],
             ),
           ),
           SliverPadding(

@@ -5,6 +5,7 @@ import 'package:bitirme_mobile/core/services/disease_label_display.dart';
 import 'package:bitirme_mobile/core/utils/confidence_format.dart';
 import 'package:bitirme_mobile/l10n/app_localizations.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
+import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
@@ -39,7 +40,10 @@ class PdfReportService {
       l10n,
       record.speciesLabel,
     );
-    final String dateLine = record.createdAt.toIso8601String();
+    final String lang = l10n.localeName;
+    final String dateLine = DateFormat.yMMMd(
+      lang,
+    ).add_Hm().format(record.createdAt);
 
     final double pad = WidgetSizesEnum.pdfPagePadding.value;
     final double titleSize = WidgetSizesEnum.pdfTitleFont.value;

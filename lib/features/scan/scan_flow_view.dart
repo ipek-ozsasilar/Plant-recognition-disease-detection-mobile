@@ -54,6 +54,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
   bool _savingToPlant = false;
   bool _savingToHistory = false;
   bool _exportingPdf = false;
+  bool _downloadingPdf = false;
 
   @override
   void initState() {
@@ -136,20 +137,42 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       return;
     }
 
+    // Tür tanınamadıysa veya güven skoru çok düşükse kaydetmeye izin verme
+    final double spUnit = confidenceToUnit(sp.top.confidence);
+    final String spRaw = (sp.top.rawKey ?? sp.top.label).trim();
+    final bool spIsSink = sl<SinkSpeciesClassRepository>().snapshot.contains(
+      spRaw,
+    );
+    final bool spUnrecognized = spIsSink
+        ? spUnit < InferenceThresholdEnum.unrecognizedSink.value
+        : spUnit < InferenceThresholdEnum.unrecognizedGlobal.value;
+
+    if (spUnrecognized) {
+      showAppSnackBar(
+        context,
+        message: context.l10n.errorSpeciesUnknownSave,
+        isError: true,
+      );
+      return;
+    }
+
     await ref.read(plantsProvider.notifier).load();
     if (!mounted) {
       return;
     }
-    // 'Tanınmadı' olan bitkileri filtrele
-    final List<PlantModel> validPlants = ref
-        .read(plantsProvider)
-        .items
-        .where(
-          (p) => !p.name.toLowerCase().contains(
-            context.l10n.scanUnrecognizedTitle.toLowerCase(),
-          ),
-        )
-        .toList();
+    // 'Tanınmadı' (unrecognized) olan, türü veya hastalığı belirsiz bitkileri seçim listesinden filtrele
+    final List<PlantModel> validPlants = ref.read(plantsProvider).items.where((
+      p,
+    ) {
+      final String unrecognized = context.l10n.scanUnrecognizedTitle
+          .toLowerCase();
+      final String name = p.name.toLowerCase();
+      final String label = p.speciesLabel.toLowerCase();
+      // Not: PlantModel içinde direkt diseaseKey yoksa speciesLabel üzerinden kontrol edilir.
+      return !name.contains(unrecognized) &&
+          !label.contains(unrecognized) &&
+          !label.contains('unknown');
+    }).toList();
 
     if (validPlants.isEmpty) {
       showAppSnackBar(
@@ -327,6 +350,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     // Hem bitkiyi güncelle hem de geçmişe (scans) kaydet
     await sl<PlantScansFirestoreService>().addScan(scanWithImage);
     ref.invalidate(historyFirestoreProvider);
+    ref.invalidate(homeStatsProvider); // İstatistikleri güncelle
     await _scheduleFollowUpNotification(scanWithImage);
 
     if (healthScore < 55) {
@@ -344,6 +368,71 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       message: context.l10n.scanSavedToPlantSuccess,
       isError: false,
     );
+  }
+
+  Future<void> _onSaveToHistoryOnly() async {
+    final ScanFlowState s = ref.read(scanFlowProvider);
+    final InferenceResultModel? sp = s.species;
+    final InferenceResultModel? dis = s.disease;
+    if (sp == null || dis == null) return;
+
+    final String? uid = ref.read(authProvider).uid;
+    if (uid == null) return;
+
+    setState(() => _savingToHistory = true);
+
+    String? imageUrl;
+    final String scanId = const Uuid().v4();
+    final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
+    final int healthScore = computeHealthScore(
+      diseaseKey: dis.top.label,
+      diseaseConfidenceUnit: diseaseConfUnit,
+    );
+
+    if (s.imageBytes != null && s.regions.isNotEmpty) {
+      final int idx = s.selectedRegionIndex.clamp(0, s.regions.length - 1);
+      final Uint8List? cropped = sl<ImageCropService>().cropRegion(
+        imageBytes: s.imageBytes!,
+        region: s.regions[idx],
+      );
+      if (cropped != null) {
+        imageUrl = await sl<FirebaseStorageService>().uploadJpegBytes(
+          path: 'users/$uid/scans/$scanId.jpg',
+          bytes: cropped,
+        );
+      }
+    }
+
+    final PlantScanModel finalScan = PlantScanModel(
+      id: scanId,
+      ownerUid: uid,
+      plantId: 'general',
+      createdAt: DateTime.now(),
+      speciesLabel: sp.top.rawKey ?? sp.top.label,
+      speciesConfidence: confidenceToUnit(sp.top.confidence),
+      diseaseKey: dis.top.label,
+      diseaseConfidence: diseaseConfUnit,
+      healthScore: healthScore,
+      imageUrl: imageUrl,
+    );
+
+    await sl<CatalogFirestoreService>().ensureSpecies(
+      rawLabel: finalScan.speciesLabel,
+    );
+    await sl<CatalogFirestoreService>().ensureDisease(
+      diseaseKey: finalScan.diseaseKey,
+    );
+    await sl<PlantScansFirestoreService>().addScan(finalScan);
+
+    ref.invalidate(historyFirestoreProvider);
+    ref.invalidate(homeStatsProvider); // İstatistikleri güncelle
+
+    if (!mounted) return;
+    setState(() => _savingToHistory = false);
+
+    showAppSnackBar(context, message: context.l10n.scanSavedToPlantSuccess);
+    // Kayıttan sonra ana sayfaya veya geçmişe yönlendirilebilir
+    context.pop();
   }
 
   Future<void> _exportPdfFromCurrent() async {
@@ -384,6 +473,47 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       return;
     }
     setState(() => _exportingPdf = false);
+  }
+
+  Future<void> _downloadPdfFromCurrent() async {
+    final ScanFlowState s = ref.read(scanFlowProvider);
+    final InferenceResultModel? sp = s.species;
+    final InferenceResultModel? dis = s.disease;
+    if (sp == null || dis == null) {
+      return;
+    }
+    final String? uid = ref.read(authProvider).uid;
+    setState(() => _downloadingPdf = true);
+
+    final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
+    final int healthScore = computeHealthScore(
+      diseaseKey: dis.top.label,
+      diseaseConfidenceUnit: diseaseConfUnit,
+    );
+
+    final PlantScanModel record = PlantScanModel(
+      id: const Uuid().v4(),
+      ownerUid: uid ?? '',
+      plantId: 'general',
+      createdAt: DateTime.now(),
+      speciesLabel: sp.top.rawKey ?? sp.top.label,
+      speciesConfidence: confidenceToUnit(sp.top.confidence),
+      diseaseKey: dis.top.label,
+      diseaseConfidence: diseaseConfUnit,
+      healthScore: healthScore,
+      imageUrl: null,
+    );
+    final PdfReportService pdf = sl<PdfReportService>();
+    final Uint8List bytes = await pdf.buildScanReportPdf(
+      record: record,
+      l10n: context.l10n,
+    );
+    // Mobil cihazlarda 'Paylaş' menüsü üzerinden 'Dosyalara Kaydet' seçeneği en 'direkt' indirme yoludur.
+    await Printing.sharePdf(bytes: bytes, filename: 'phytoguard_report.pdf');
+    if (!mounted) {
+      return;
+    }
+    setState(() => _downloadingPdf = false);
   }
 
   @override
@@ -730,9 +860,21 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
         ),
         const Spacer(),
         AppPrimaryButton(
+          label: l10n.scanSaveHistory,
+          isLoading: _savingToHistory,
+          onPressed: _onSaveToHistoryOnly,
+        ),
+        SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
+        AppPrimaryButton(
           label: l10n.scanExportPdfCta,
           isLoading: _exportingPdf,
           onPressed: _exportPdfFromCurrent,
+        ),
+        SizedBox(height: WidgetSizesEnum.cardRadius.value),
+        AppPrimaryButton(
+          label: l10n.scanDownloadPdfCta,
+          isLoading: _downloadingPdf,
+          onPressed: _downloadPdfFromCurrent,
         ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value),
         AppPrimaryButton(

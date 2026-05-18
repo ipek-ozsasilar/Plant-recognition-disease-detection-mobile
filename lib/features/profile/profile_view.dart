@@ -44,6 +44,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       backgroundColor: context.palSurface,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        leading: const BackButton(),
         title: Text(context.l10n.profileTitle),
         backgroundColor: Colors.transparent,
         elevation: 0,

@@ -5,6 +5,7 @@ import 'package:bitirme_mobile/core/services/google_sign_in_service.dart';
 import 'package:bitirme_mobile/core/services/firestore_setup_service.dart';
 import 'package:bitirme_mobile/core/services/user_profile_firestore_service.dart';
 import 'package:bitirme_mobile/core/services/image_crop_service.dart';
+import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
 import 'package:bitirme_mobile/core/services/inference_api_service.dart';
 import 'package:bitirme_mobile/core/services/catalog_firestore_service.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
@@ -32,6 +33,13 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerLazySingleton<PlantnetSpeciesNameRepository>(() => PlantnetSpeciesNameRepository());
   sl.registerLazySingleton<SinkSpeciesClassRepository>(() => SinkSpeciesClassRepository());
+  sl.registerLazySingleton<MlMetadataLoader>(
+    () => MlMetadataLoader(
+      logger: sl<AppLogger>(),
+      plantnetNames: sl<PlantnetSpeciesNameRepository>(),
+      sinkSpeciesClasses: sl<SinkSpeciesClassRepository>(),
+    ),
+  );
   sl.registerLazySingleton<TflitePlantInferenceService>(
     () => TflitePlantInferenceService(
       logger: sl<AppLogger>(),

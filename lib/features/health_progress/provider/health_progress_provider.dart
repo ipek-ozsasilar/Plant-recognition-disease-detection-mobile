@@ -7,11 +7,11 @@ final NotifierProvider<HealthProgressNotifier, HealthProgressState> healthProgre
 final class HealthProgressNotifier extends Notifier<HealthProgressState> {
   @override
   HealthProgressState build() {
-    return const HealthProgressState(selectedPlantId: null);
+    return const HealthProgressState(selectedSpeciesLabel: null);
   }
 
-  void selectPlant(String? plantId) {
-    state = state.copyWith(selectedPlantId: plantId);
+  void selectSpecies(String? speciesLabel) {
+    state = state.copyWith(selectedSpeciesLabel: speciesLabel);
   }
 }
 

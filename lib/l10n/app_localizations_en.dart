@@ -280,6 +280,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanExportPdfCta => 'Share PDF report';
 
   @override
+  String get scanDownloadPdfCta => 'Download PDF report';
+
+  @override
   String get scanDone => 'Done';
 
   @override
@@ -434,7 +437,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthProgressHint =>
-      'This screen is a UI demo; once data saving is wired, it will chart from your scan history automatically.';
+      'Only plants with past scans where both species and disease were confidently identified are listed.';
+
+  @override
+  String get healthProgressNoPlants =>
+      'No eligible scans yet. Save a scan to history with both species and disease recognized.';
+
+  @override
+  String get healthProgressNoChartData =>
+      'No eligible scans for this plant in the last 14 days.';
 
   @override
   String get healthProgressSelectPlant => 'Select a plant';
@@ -672,6 +683,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInference => 'Prediction service did not respond.';
+
+  @override
+  String get errorSpeciesUnknownSave =>
+      'Cannot save because plant species is unrecognized. Please try again with a clearer photo.';
 
   @override
   String get errorAuth => 'Could not verify session.';

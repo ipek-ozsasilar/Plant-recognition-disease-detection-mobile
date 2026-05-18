@@ -282,6 +282,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanExportPdfCta => 'PDF raporu paylaş';
 
   @override
+  String get scanDownloadPdfCta => 'PDF raporu indir';
+
+  @override
   String get scanDone => 'Tamam';
 
   @override
@@ -436,7 +439,15 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get healthProgressHint =>
-      'Bu ekran UI demo amaçlıdır; veri kaydı eklendiğinde geçmiş taramalarınızdan otomatik çizilecektir.';
+      'Yalnızca geçmişte kayıtlı ve hem türü hem hastalığı güvenilir şekilde tanınmış bitkiler listelenir.';
+
+  @override
+  String get healthProgressNoPlants =>
+      'Henüz uygun tarama yok. Geçmişe hem tür hem hastalık tanınmış bir tarama kaydedin.';
+
+  @override
+  String get healthProgressNoChartData =>
+      'Son 14 günde bu bitki için uygun tarama bulunamadı.';
 
   @override
   String get healthProgressSelectPlant => 'Bir bitki seçin';
@@ -677,6 +688,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get errorInference => 'Tahmin servisi yanıt vermedi.';
+
+  @override
+  String get errorSpeciesUnknownSave =>
+      'Bitki türü tanınamadığı için kaydedilemiyor. Lütfen daha net bir fotoğraf ile tekrar deneyin.';
 
   @override
   String get errorAuth => 'Oturum bilgisi doğrulanamadı.';

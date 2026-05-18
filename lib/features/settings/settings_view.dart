@@ -143,19 +143,20 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             onTap: null,
             padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 0.95),
             child: SegmentedButton<_LocaleSegment>(
+              style: _settingsSegmentStyle(),
+              showSelectedIcon: false,
               segments: <ButtonSegment<_LocaleSegment>>[
                 ButtonSegment<_LocaleSegment>(
                   value: _LocaleSegment.system,
-                  label: FittedBox(child: Text(context.l10n.languageSystem)),
-                  icon: const Icon(Icons.language),
+                  label: _segmentLabel(context, context.l10n.languageSystem),
                 ),
                 ButtonSegment<_LocaleSegment>(
                   value: _LocaleSegment.turkish,
-                  label: FittedBox(child: Text(context.l10n.languageTurkish)),
+                  label: _segmentLabel(context, context.l10n.languageTurkish),
                 ),
                 ButtonSegment<_LocaleSegment>(
                   value: _LocaleSegment.english,
-                  label: FittedBox(child: Text(context.l10n.languageEnglish)),
+                  label: _segmentLabel(context, context.l10n.languageEnglish),
                 ),
               ],
               selected: SettingsView._selectedLocale(localeMode),
@@ -184,21 +185,32 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             onTap: null,
             padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 0.95),
             child: SegmentedButton<ThemeMode>(
+              style: _settingsSegmentStyle(),
+              showSelectedIcon: false,
               segments: <ButtonSegment<ThemeMode>>[
                 ButtonSegment<ThemeMode>(
                   value: ThemeMode.system,
-                  label: FittedBox(child: Text(context.l10n.themeSystem)),
-                  icon: const Icon(Icons.brightness_auto),
+                  label: _segmentIconLabel(
+                    context,
+                    icon: Icons.brightness_auto,
+                    text: context.l10n.themeSystem,
+                  ),
                 ),
                 ButtonSegment<ThemeMode>(
                   value: ThemeMode.light,
-                  label: FittedBox(child: Text(context.l10n.themeLight)),
-                  icon: const Icon(Icons.light_mode_outlined),
+                  label: _segmentIconLabel(
+                    context,
+                    icon: Icons.light_mode_outlined,
+                    text: context.l10n.themeLight,
+                  ),
                 ),
                 ButtonSegment<ThemeMode>(
                   value: ThemeMode.dark,
-                  label: FittedBox(child: Text(context.l10n.themeDark)),
-                  icon: const Icon(Icons.dark_mode_outlined),
+                  label: _segmentIconLabel(
+                    context,
+                    icon: Icons.dark_mode_outlined,
+                    text: context.l10n.themeDark,
+                  ),
                 ),
               ],
               selected: <ThemeMode>{mode},
@@ -221,4 +233,47 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ),
     );
   }
+}
+
+ButtonStyle _settingsSegmentStyle() {
+  return SegmentedButton.styleFrom(
+    visualDensity: VisualDensity.compact,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    padding: EdgeInsets.symmetric(
+      horizontal: WidgetSizesEnum.divider.value * 6,
+      vertical: WidgetSizesEnum.divider.value * 10,
+    ),
+  );
+}
+
+Widget _segmentLabel(BuildContext context, String text) {
+  return Text(
+    text,
+    maxLines: 1,
+    softWrap: false,
+    overflow: TextOverflow.visible,
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      fontSize: TextSizesEnum.caption.value,
+      fontWeight: FontWeight.w700,
+      height: 1.1,
+      color: context.palOnSurface,
+    ),
+  );
+}
+
+Widget _segmentIconLabel(
+  BuildContext context, {
+  required IconData icon,
+  required String text,
+}) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      Icon(icon, size: IconSizesEnum.small.value),
+      SizedBox(height: WidgetSizesEnum.divider.value * 4),
+      _segmentLabel(context, text),
+    ],
+  );
 }

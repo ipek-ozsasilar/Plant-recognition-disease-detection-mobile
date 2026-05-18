@@ -4,7 +4,6 @@ import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/services/pdf_report_service.dart';
 import 'package:bitirme_mobile/core/services/disease_label_display.dart';
-import 'package:bitirme_mobile/core/utils/confidence_format.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/core/widgets/button/app_primary_button.dart';
@@ -38,6 +37,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
     return Scaffold(
       backgroundColor: context.palSurface,
       appBar: AppBar(
+        leading: const BackButton(),
         title: Text(context.l10n.historyTitle),
         actions: <Widget>[
           historyAsync.maybeWhen(
@@ -216,6 +216,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
+                            // ID yerine yaygın isim (Common Name) kullanımı
                             speciesClassDisplayForRaw(context, speciesKey),
                             style: tt.titleMedium?.copyWith(
                               fontWeight: FontWeight.w900,

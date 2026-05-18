@@ -4,7 +4,6 @@ import 'package:bitirme_mobile/features/settings/home_stats_model.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bitirme_mobile/core/services/app_logger.dart';
 
 /// Firestore'dan kullanıcı taramalarını çeker ve özet istatistikleri hesaplar.
 final homeStatsProvider = FutureProvider<HomeStatsModel>((ref) async {

@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'PDF raporu paylaş'**
   String get scanExportPdfCta;
 
+  /// No description provided for @scanDownloadPdfCta.
+  ///
+  /// In tr, this message translates to:
+  /// **'PDF raporu indir'**
+  String get scanDownloadPdfCta;
+
   /// No description provided for @scanDone.
   ///
   /// In tr, this message translates to:
@@ -905,8 +911,20 @@ abstract class AppLocalizations {
   /// No description provided for @healthProgressHint.
   ///
   /// In tr, this message translates to:
-  /// **'Bu ekran UI demo amaçlıdır; veri kaydı eklendiğinde geçmiş taramalarınızdan otomatik çizilecektir.'**
+  /// **'Yalnızca geçmişte kayıtlı ve hem türü hem hastalığı güvenilir şekilde tanınmış bitkiler listelenir.'**
   String get healthProgressHint;
+
+  /// No description provided for @healthProgressNoPlants.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz uygun tarama yok. Geçmişe hem tür hem hastalık tanınmış bir tarama kaydedin.'**
+  String get healthProgressNoPlants;
+
+  /// No description provided for @healthProgressNoChartData.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son 14 günde bu bitki için uygun tarama bulunamadı.'**
+  String get healthProgressNoChartData;
 
   /// No description provided for @healthProgressSelectPlant.
   ///
@@ -1369,6 +1387,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tahmin servisi yanıt vermedi.'**
   String get errorInference;
+
+  /// No description provided for @errorSpeciesUnknownSave.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitki türü tanınamadığı için kaydedilemiyor. Lütfen daha net bir fotoğraf ile tekrar deneyin.'**
+  String get errorSpeciesUnknownSave;
 
   /// No description provided for @errorAuth.
   ///
