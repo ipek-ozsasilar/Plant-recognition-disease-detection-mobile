@@ -374,6 +374,78 @@ abstract class AppLocalizations {
   /// **'Yaprak damarları net görünsün diye yumuşak ışık kullanın; gölgede çekim güven skorunu düşürür.'**
   String get homeTipBody;
 
+  /// No description provided for @homeTipBlight.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanıklık riski olan bitkilerde yaprakları ıslatmadan sabah sulayın; havalandırmayı artırın.'**
+  String get homeTipBlight;
+
+  /// No description provided for @homeTipBlightFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{species} taramalarınızda yanıklık sık görülüyor: yaprakları ıslatmadan sabah sulayın ve havalandırın.'**
+  String homeTipBlightFor(String species);
+
+  /// No description provided for @homeTipMold.
+  ///
+  /// In tr, this message translates to:
+  /// **'Küf için nemli havayı azaltın; yaprak aralarında hava dolaşımı bırakın.'**
+  String get homeTipMold;
+
+  /// No description provided for @homeTipMoldFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{species} için küf riski: fazla sulamayı kesin, yaprakları kuru tutun ve havalandırın.'**
+  String homeTipMoldFor(String species);
+
+  /// No description provided for @homeTipPowderyMildew.
+  ///
+  /// In tr, this message translates to:
+  /// **'Külleme için yaprakları akşam ıslatmayın; sıkışık dalları budayın.'**
+  String get homeTipPowderyMildew;
+
+  /// No description provided for @homeTipPowderyMildewFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{species} geçmişinizde külleme var: yaprakları akşam ıslatmayın, sık dalları seyreltin.'**
+  String homeTipPowderyMildewFor(String species);
+
+  /// No description provided for @homeTipRust.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pas için etkilenen yaprakları toplayıp atın; bitkiler arası mesafeyi açın.'**
+  String get homeTipRust;
+
+  /// No description provided for @homeTipRustFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{species} için pas uyarısı: dökülen yaprakları uzaklaştırın ve bitkileri seyreltin.'**
+  String homeTipRustFor(String species);
+
+  /// No description provided for @homeTipHealthy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sağlıklı görünen bitkilerde de haftada bir yaprak ve gövde kontrolü yapın.'**
+  String get homeTipHealthy;
+
+  /// No description provided for @homeTipHealthyFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{species} genelde sağlıklı: rutin kontrol için haftada bir yaprak ve gövdeye bakın.'**
+  String homeTipHealthyFor(String species);
+
+  /// No description provided for @homeTipMixedRisk.
+  ///
+  /// In tr, this message translates to:
+  /// **'Farklı hastalık işaretleri var; sulama, ışık ve havalandırmayı bitki bitki ayırın.'**
+  String get homeTipMixedRisk;
+
+  /// No description provided for @homeTipMixedRiskFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{species} ve diğer bitkilerde karışık risk: her saksı için sulama ve ışığı ayrı ayarlayın.'**
+  String homeTipMixedRiskFor(String species);
+
   /// No description provided for @homeEmptyTitle.
   ///
   /// In tr, this message translates to:
@@ -596,16 +668,28 @@ abstract class AppLocalizations {
   /// **'Hangi bitkiye kaydedilsin?'**
   String get scanSaveToPlantTitle;
 
+  /// No description provided for @scanSavePickPlantSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aynı türden birden fazla saksınız varsa doğru bitkiyi seçin; yoksa yeni bitki ekleyin.'**
+  String get scanSavePickPlantSubtitle;
+
+  /// No description provided for @scanSaveNewPlant.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni bitki olarak kaydet'**
+  String get scanSaveNewPlant;
+
   /// No description provided for @scanSaveToPlantCta.
   ///
   /// In tr, this message translates to:
-  /// **'Evimdeki bitkiye kaydet'**
+  /// **'Bitkiyi kaydet'**
   String get scanSaveToPlantCta;
 
   /// No description provided for @scanSavedToPlantSuccess.
   ///
   /// In tr, this message translates to:
-  /// **'Bitki takibine kaydedildi.'**
+  /// **'Tarama geçmişe kaydedildi.'**
   String get scanSavedToPlantSuccess;
 
   /// No description provided for @scanExportPdfCta.
@@ -619,6 +703,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'PDF raporu indir'**
   String get scanDownloadPdfCta;
+
+  /// No description provided for @scanPdfDownloadSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'PDF indirildi.'**
+  String get scanPdfDownloadSuccess;
+
+  /// No description provided for @scanPdfDownloadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'PDF kaydedilemedi. Lütfen tekrar deneyin.'**
+  String get scanPdfDownloadError;
 
   /// No description provided for @scanDone.
   ///
@@ -719,7 +815,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidesFooterInfo.
   ///
   /// In tr, this message translates to:
-  /// **'Önemli: \'Evimdeki Bitkiye Kaydet\' seçeneğini seçerseniz, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.'**
+  /// **'Önemli: \'Bitkiyi kaydet\' seçeneğini kullanırsanız, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.'**
   String get guidesFooterInfo;
 
   /// No description provided for @guideSectionPhoto.
@@ -755,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideDiseaseTips.
   ///
   /// In tr, this message translates to:
-  /// **'Hastalık tespit edildiğinde \'Evimdeki Bitkiye Kaydet\' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.'**
+  /// **'Hastalık tespit edildiğinde \'Bitkiyi kaydet\' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.'**
   String get guideDiseaseTips;
 
   /// No description provided for @settingsTitle.
@@ -773,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Dil, tema ve bildirim ayarlarını buradan yönetin.'**
+  /// **'Dil ve tema tercihlerini buradan yönetin.'**
   String get settingsSubtitle;
 
   /// No description provided for @profileTitle.
@@ -823,6 +919,138 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'tarama'**
   String get profileScansDone;
+
+  /// No description provided for @profileChangePhotoHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğrafı değiştirmek için dokunun'**
+  String get profileChangePhotoHint;
+
+  /// No description provided for @profilePhotoGallery.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeriden seç'**
+  String get profilePhotoGallery;
+
+  /// No description provided for @profilePhotoCamera.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kamera'**
+  String get profilePhotoCamera;
+
+  /// No description provided for @profilePhotoUploadSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil fotoğrafı güncellendi.'**
+  String get profilePhotoUploadSuccess;
+
+  /// No description provided for @profilePhotoUploadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil fotoğrafı yüklenemedi.'**
+  String get profilePhotoUploadError;
+
+  /// No description provided for @profileDisplayNameLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görünen ad'**
+  String get profileDisplayNameLabel;
+
+  /// No description provided for @profileDisplayNameRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görünen ad gerekli'**
+  String get profileDisplayNameRequired;
+
+  /// No description provided for @profileEmailLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta'**
+  String get profileEmailLabel;
+
+  /// No description provided for @profilePhoneLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Telefon (isteğe bağlı)'**
+  String get profilePhoneLabel;
+
+  /// No description provided for @profileBioLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hakkımda (isteğe bağlı)'**
+  String get profileBioLabel;
+
+  /// No description provided for @profileSaveSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilgiler kaydedildi.'**
+  String get profileSaveSuccess;
+
+  /// No description provided for @profileSaveError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilemedi. Tekrar deneyin.'**
+  String get profileSaveError;
+
+  /// No description provided for @profileNotificationsIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama kaydı sonrası takip ve risk uyarıları.'**
+  String get profileNotificationsIntro;
+
+  /// No description provided for @profileNotificationsDetail.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler cihazınızda yerel olarak planlanır. Her bitki için en son kayda göre tek bir takip hatırlatması tutulur.'**
+  String get profileNotificationsDetail;
+
+  /// No description provided for @profilePrivacyIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesap güvenliği ve verileriniz.'**
+  String get profilePrivacyIntro;
+
+  /// No description provided for @profileChangePassword.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifre sıfırlama'**
+  String get profileChangePassword;
+
+  /// No description provided for @profilePrivacyDataNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama ve bitki verileriniz Firebase üzerinde {email} hesabına bağlıdır. Fotoğraflar güvenli depolamada saklanır.'**
+  String profilePrivacyDataNote(String email);
+
+  /// No description provided for @profileDeleteDataTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm verilerimi sil'**
+  String get profileDeleteDataTitle;
+
+  /// No description provided for @profileDeleteDataBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitkiler, taramalar ve profil bilgileriniz kalıcı olarak silinir. Bu işlem geri alınamaz.'**
+  String get profileDeleteDataBody;
+
+  /// No description provided for @profileDeleteDataConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sil'**
+  String get profileDeleteDataConfirm;
+
+  /// No description provided for @profileDeleteDataHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabınız açık kalır; yalnızca uygulama verileri silinir.'**
+  String get profileDeleteDataHint;
+
+  /// No description provided for @profileDeleteDataError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Veriler silinemedi.'**
+  String get profileDeleteDataError;
 
   /// No description provided for @aboutTitle.
   ///
@@ -911,7 +1139,7 @@ abstract class AppLocalizations {
   /// No description provided for @healthProgressHint.
   ///
   /// In tr, this message translates to:
-  /// **'Yalnızca geçmişte kayıtlı ve hem türü hem hastalığı güvenilir şekilde tanınmış bitkiler listelenir.'**
+  /// **'Her kayıt bir saksıyı (fiziksel bitkiyi) temsil eder. Aynı türden iki saksı varsa kayıt sırasında ayrı seçmeniz gerekir.'**
   String get healthProgressHint;
 
   /// No description provided for @healthProgressNoPlants.
@@ -989,7 +1217,7 @@ abstract class AppLocalizations {
   /// No description provided for @myPlantsSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bitkilerini ekle, günlük taramalarla sağlık trendini takip et.'**
+  /// **'Her kart bir saksıdır. Aynı türden ikinci bitki için kayıt sırasında \"Yeni bitki olarak kaydet\" seçin.'**
   String get myPlantsSubtitle;
 
   /// No description provided for @myPlantsEmpty.
@@ -1079,20 +1307,38 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Sulama ve risk hatırlatmaları al'**
+  /// **'Tarama kaydı sonrası takip ve risk uyarıları'**
   String get notificationsSubtitle;
 
-  /// No description provided for @notificationWateringTitle.
+  /// No description provided for @notificationFollowUpTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bakım hatırlatması'**
-  String get notificationWateringTitle;
+  /// **'Bitki kontrol zamanı'**
+  String get notificationFollowUpTitle;
 
-  /// No description provided for @notificationWateringBody.
+  /// No description provided for @notificationFollowUpHealthy.
   ///
   /// In tr, this message translates to:
-  /// **'Bugün sulama günü olabilir. Bitkini kontrol etmek ister misin?'**
-  String get notificationWateringBody;
+  /// **'{plantName} için son tarama iyiydi. Bir hafta içinde yeni fotoğrafla kontrol edin.'**
+  String notificationFollowUpHealthy(String plantName);
+
+  /// No description provided for @notificationFollowUpMild.
+  ///
+  /// In tr, this message translates to:
+  /// **'{plantName} için hafif risk vardı. 5 gün içinde tekrar tarayın.'**
+  String notificationFollowUpMild(String plantName);
+
+  /// No description provided for @notificationFollowUpMedium.
+  ///
+  /// In tr, this message translates to:
+  /// **'{plantName} için orta risk kaydı var. 3 gün içinde kontrol taraması yapın.'**
+  String notificationFollowUpMedium(String plantName);
+
+  /// No description provided for @notificationFollowUpUrgent.
+  ///
+  /// In tr, this message translates to:
+  /// **'{plantName} ciddi risk göstermişti. Lütfen en kısa sürede tekrar tarayın.'**
+  String notificationFollowUpUrgent(String plantName);
 
   /// No description provided for @notificationRiskTitle.
   ///
@@ -1105,6 +1351,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Son taramada risk tespit edildi. Bitkini kontrol edip önerilere göz at.'**
   String get notificationRiskBody;
+
+  /// No description provided for @notificationRiskBodyFor.
+  ///
+  /// In tr, this message translates to:
+  /// **'{plantName} için ciddi risk tespit edildi. Hemen kontrol edin.'**
+  String notificationRiskBodyFor(String plantName);
 
   /// No description provided for @dataLabel.
   ///

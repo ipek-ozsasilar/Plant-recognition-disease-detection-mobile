@@ -1,6 +1,7 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,8 @@ class GuideView extends StatelessWidget {
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.guideTitle),
         actions: <Widget>[
           IconButton(

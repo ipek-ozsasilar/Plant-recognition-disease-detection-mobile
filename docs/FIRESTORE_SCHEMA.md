@@ -19,7 +19,7 @@ users/{uid}
 ---
 
 ### 2. `plants` Collection
-Kullanıcının takip ettiği bitkiler
+Kullanıcının takip ettiği bitkiler (tarama kaydedildiğinde tür etiketine göre **otomatik oluşturulur/güncellenir**; ayrı “geçmişe kaydet” akışı yoktur)
 ```json
 plants/{plantId}
 ├── id: string (UUID)
@@ -57,12 +57,12 @@ db.collection('plants')
 ---
 
 ### 3. `scans` Collection
-Bitki tarama geçmişi (hastalık tespiti kayıtları)
+Bitki tarama geçmişi (tek kayıt kaynağı; UI’daki “geçmiş taramalar” buradan okunur)
 ```json
 scans/{scanId}
 ├── id: string (UUID)
 ├── ownerUid: string (users collection'a referans)
-├── plantId: string (plants collection'a referans)
+├── plantId: string (plants/{plantId} — her zaman dolu; `general` kullanılmaz)
 ├── createdAt: timestamp
 ├── speciesLabel: string (örn: "Monstera deliciosa")
 ├── speciesConfidence: number (0.0-1.0)

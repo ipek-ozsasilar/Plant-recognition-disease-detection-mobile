@@ -2,11 +2,10 @@ import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/app_locale_mode.dart';
 import 'package:bitirme_mobile/core/locale/app_locale_provider.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
-import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/theme/theme_mode_provider.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
-import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,19 +32,6 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  bool? _isNotificationsEnabled;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNotificationStatus();
-  }
-
-  Future<void> _loadNotificationStatus() async {
-    final bool status = await sl<NotificationService>().isEnabled();
-    if (mounted) setState(() => _isNotificationsEnabled = status);
-  }
-
   @override
   Widget build(BuildContext context) {
     final ThemeMode mode = ref.watch(themeModeProvider);
@@ -53,15 +39,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final AppLocaleNotifier localeNotifier = ref.read(
       appLocaleProvider.notifier,
     );
-    final NotificationService notifications = sl<NotificationService>();
     final TextTheme tt = Theme.of(context).textTheme;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.settingsTitle),
-        leading: const BackButton(),
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
@@ -86,48 +71,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               color: context.palMuted,
               height: 1.4,
               fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.25),
-          SoftElevationCard(
-            onTap: null,
-            padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 0.65),
-            child: SwitchListTile(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: WidgetSizesEnum.cardRadius.value * 0.45,
-                vertical: WidgetSizesEnum.divider.value * 2,
-              ),
-              value: _isNotificationsEnabled ?? false,
-              onChanged: (bool v) async {
-                setState(() => _isNotificationsEnabled = v);
-
-                final String wateringTitle =
-                    context.l10n.notificationWateringTitle;
-                final String wateringBody =
-                    context.l10n.notificationWateringBody;
-
-                await notifications.setEnabled(v);
-                if (v) {
-                  await notifications.requestPermissions();
-                  await notifications.scheduleDailyWatering(
-                    title: wateringTitle,
-                    body: wateringBody,
-                  );
-                } else {
-                  await notifications.cancelAll();
-                }
-              },
-              title: Text(
-                context.l10n.notificationsLabel,
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: context.palOnSurface,
-                ),
-              ),
-              subtitle: Text(
-                context.l10n.notificationsSubtitle,
-                style: TextStyle(color: context.palMuted, height: 1.3),
-              ),
             ),
           ),
           SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),

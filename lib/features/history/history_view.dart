@@ -2,9 +2,13 @@ import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
+import 'package:bitirme_mobile/core/mixins/scaffold_message_mixin.dart';
+import 'package:bitirme_mobile/core/services/app_logger.dart';
+import 'package:bitirme_mobile/core/services/pdf_file_save_service.dart';
 import 'package:bitirme_mobile/core/services/pdf_report_service.dart';
 import 'package:bitirme_mobile/core/services/disease_label_display.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/core/widgets/button/app_primary_button.dart';
 import 'package:bitirme_mobile/features/history/provider/history_firestore_provider.dart';
@@ -25,7 +29,9 @@ class HistoryView extends ConsumerStatefulWidget {
   ConsumerState<HistoryView> createState() => _HistoryViewState();
 }
 
-class _HistoryViewState extends ConsumerState<HistoryView> {
+class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageMixin {
+  bool _downloadingPdf = false;
+
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(historyFirestoreProvider);
@@ -36,8 +42,8 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
-        leading: const BackButton(),
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.historyTitle),
         actions: <Widget>[
           historyAsync.maybeWhen(
@@ -366,6 +372,47 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
                 ),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.65),
                 SoftElevationCard(
+                  onTap: _downloadingPdf
+                      ? null
+                      : () async {
+                          Navigator.of(ctx).pop();
+                          await _downloadPdf(e);
+                        },
+                  padding: EdgeInsets.all(
+                    WidgetSizesEnum.cardRadius.value * 0.9,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.download_rounded,
+                        color: context.palPrimary,
+                      ),
+                      SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.75),
+                      Expanded(
+                        child: Text(
+                          _downloadingPdf
+                              ? context.l10n.loading
+                              : context.l10n.scanDownloadPdfCta,
+                        ),
+                      ),
+                      if (_downloadingPdf)
+                        SizedBox(
+                          width: IconSizesEnum.small.value,
+                          height: IconSizesEnum.small.value,
+                          child: CircularProgressIndicator(
+                            strokeWidth: WidgetSizesEnum.divider.value * 2,
+                          ),
+                        )
+                      else
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          color: context.palMuted,
+                        ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.65),
+                SoftElevationCard(
                   onTap: () async {
                     Navigator.of(ctx).pop();
                     final PdfReportService pdf = sl<PdfReportService>();
@@ -407,6 +454,41 @@ class _HistoryViewState extends ConsumerState<HistoryView> {
         );
       },
     );
+  }
+
+  Future<void> _downloadPdf(PlantScanModel record) async {
+    setState(() => _downloadingPdf = true);
+    try {
+      final PdfReportService pdf = sl<PdfReportService>();
+      final Uint8List bytes = await pdf.buildScanReportPdf(
+        record: record,
+        l10n: context.l10n,
+      );
+      await sl<PdfFileSaveService>().saveToDevice(
+        bytes: bytes,
+        filename: 'phytoguard_report.pdf',
+      );
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          message: context.l10n.scanPdfDownloadSuccess,
+          isError: false,
+        );
+      }
+    } catch (e, st) {
+      sl<AppLogger>().e('history_pdf_download', e, st);
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          message: context.l10n.scanPdfDownloadError,
+          isError: true,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _downloadingPdf = false);
+      }
+    }
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/indicator/confidence_indicator.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -35,9 +36,9 @@ class SpeciesDetailView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.speciesDetailTitle),
-        leading: const BackButton(),
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(

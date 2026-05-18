@@ -1,4 +1,6 @@
+import 'package:bitirme_mobile/gen/colors.gen.dart';
 import 'package:bitirme_mobile/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
 
 /// Grafik Y ekseni: 5 sınıflık hastalık modeli sırası.
 enum DiseaseClassChartEnum {
@@ -22,13 +24,42 @@ enum DiseaseClassChartEnum {
     return null;
   }
 
-  static String labelForChartY(AppLocalizations l10n, int chartY) {
+  static DiseaseClassChartEnum? forKey(String diseaseKey) {
+    final String k = diseaseKey.trim().toLowerCase();
     for (final DiseaseClassChartEnum e in DiseaseClassChartEnum.values) {
-      if (e.chartY == chartY) {
-        return e.displayLabel(l10n);
+      if (e.key == k) {
+        return e;
       }
     }
-    return '';
+    return null;
+  }
+
+  Color get chartColor {
+    switch (this) {
+      case DiseaseClassChartEnum.blight:
+        return ColorName.error;
+      case DiseaseClassChartEnum.healthy:
+        return ColorName.success;
+      case DiseaseClassChartEnum.mold:
+        return const Color(0xFF6B4E9E);
+      case DiseaseClassChartEnum.powderyMildew:
+        return ColorName.warning;
+      case DiseaseClassChartEnum.rust:
+        return const Color(0xFFC45C2A);
+    }
+  }
+
+  static DiseaseClassChartEnum? forChartY(int chartY) {
+    for (final DiseaseClassChartEnum e in DiseaseClassChartEnum.values) {
+      if (e.chartY == chartY) {
+        return e;
+      }
+    }
+    return null;
+  }
+
+  static String labelForChartY(AppLocalizations l10n, int chartY) {
+    return forChartY(chartY)?.displayLabel(l10n) ?? '';
   }
 
   String displayLabel(AppLocalizations l10n) {

@@ -1,19 +1,27 @@
+import 'dart:typed_data';
+
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
+import 'package:bitirme_mobile/core/mixins/scaffold_message_mixin.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/plants/provider/plants_provider.dart';
+import 'package:bitirme_mobile/features/profile/provider/user_profile_provider.dart';
+import 'package:bitirme_mobile/features/profile/sub_view/profile_avatar.dart';
 import 'package:bitirme_mobile/features/profile/sub_view/profile_settings_tile.dart';
 import 'package:bitirme_mobile/features/profile/sub_view/profile_stat_pill.dart';
-import 'package:bitirme_mobile/features/history/provider/history_provider.dart';
+import 'package:bitirme_mobile/features/settings/home_stats_model.dart';
+import 'package:bitirme_mobile/features/settings/home_stats_provider.dart';
 import 'package:bitirme_mobile/gen/colors.gen.dart';
+import 'package:bitirme_mobile/models/user_profile_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
-/// Kullanıcı profili (yerel oturum).
+/// Kullanıcı profili — Firestore + profil fotoğrafı.
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
@@ -21,24 +29,113 @@ class ProfileView extends ConsumerStatefulWidget {
   ConsumerState<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends ConsumerState<ProfileView> {
+class _ProfileViewState extends ConsumerState<ProfileView> with ScaffoldMessageMixin {
+  final ImagePicker _picker = ImagePicker();
+  Uint8List? _localAvatarBytes;
+  bool _uploadingAvatar = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ref.read(plantsProvider.notifier).load();
-      await ref.read(historyProvider.notifier).load();
+      await ref.read(userProfileProvider.notifier).reload();
     });
+  }
+
+  Future<void> _pickProfilePhoto() async {
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (BuildContext ctx) => SafeArea(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(ctx.l10n.profilePhotoGallery),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text(ctx.l10n.profilePhotoCamera),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null || !mounted) {
+      return;
+    }
+    try {
+      final double maxPx = ImageSizesEnum.galleryPickMax.value;
+      final XFile? file = await _picker.pickImage(
+        source: source,
+        imageQuality: 88,
+        maxWidth: maxPx,
+        maxHeight: maxPx,
+      );
+      if (file == null || !mounted) {
+        return;
+      }
+      final Uint8List bytes = await file.readAsBytes();
+      setState(() {
+        _localAvatarBytes = bytes;
+        _uploadingAvatar = true;
+      });
+      final String? error =
+          await ref.read(userProfileProvider.notifier).updateProfilePhoto(bytes);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _uploadingAvatar = false;
+        if (error == null) {
+          _localAvatarBytes = null;
+        }
+      });
+      if (error != null) {
+        showAppSnackBar(
+          context,
+          message: context.l10n.profilePhotoUploadError,
+          isError: true,
+        );
+      } else {
+        showAppSnackBar(
+          context,
+          message: context.l10n.profilePhotoUploadSuccess,
+          isError: false,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _uploadingAvatar = false);
+        showAppSnackBar(
+          context,
+          message: context.l10n.profilePhotoUploadError,
+          isError: true,
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final AuthState auth = ref.watch(authProvider);
+    final AsyncValue<UserProfileModel?> profileAsync = ref.watch(userProfileProvider);
+    final UserProfileModel? profile = profileAsync.valueOrNull;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
     final TextTheme tt = Theme.of(context).textTheme;
     final int plantsCount = ref.watch(plantsProvider).items.length;
-    final int scansCount = ref.watch(historyProvider).length;
+    final AsyncValue<HomeStatsModel> statsAsync = ref.watch(homeStatsProvider);
+    final int scansCount = statsAsync.maybeWhen(
+      data: (HomeStatsModel stats) => stats.totalScans,
+      orElse: () => 0,
+    );
     final double topInset = MediaQuery.paddingOf(context).top + kToolbarHeight;
+
+    final String displayName =
+        profile?.displayName ?? auth.displayName ?? context.l10n.placeholderDash;
+    final String email = profile?.email ?? auth.email ?? context.l10n.placeholderDash;
 
     return Scaffold(
       backgroundColor: context.palSurface,
@@ -73,37 +170,26 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             Center(
               child: Column(
                 children: <Widget>[
-                  Container(
-                    width: ImageSizesEnum.thumb.value * 1.6,
-                    height: ImageSizesEnum.thumb.value * 1.6,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: context.palSurfaceCard,
-                      border: Border.all(
-                        color: context.palOutline.withValues(alpha: 0.55),
-                      ),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                          color: context.palPrimary.withValues(alpha: 0.18),
-                          blurRadius: WidgetSizesEnum.cardShadowBlur.value,
-                          offset: Offset(
-                            0,
-                            WidgetSizesEnum.cardShadowOffsetY.value * 0.85,
-                          ),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: ImageSizesEnum.thumb.value * 0.85,
-                        color: context.palPrimary,
-                      ),
+                  GestureDetector(
+                    onTap: _uploadingAvatar ? null : _pickProfilePhoto,
+                    child: ProfileAvatar(
+                      profile: profile,
+                      fallbackName: displayName,
+                      localBytes: _localAvatarBytes,
+                      uploading: _uploadingAvatar,
                     ),
                   ),
-                  SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
+                  SizedBox(height: WidgetSizesEnum.divider.value * 6),
                   Text(
-                    auth.displayName ?? context.l10n.placeholderDash,
+                    context.l10n.profileChangePhotoHint,
+                    style: tt.bodySmall?.copyWith(
+                      color: context.palMuted,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.65),
+                  Text(
+                    displayName,
                     textAlign: TextAlign.center,
                     style: tt.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w900,
@@ -113,7 +199,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   ),
                   SizedBox(height: WidgetSizesEnum.divider.value * 6),
                   Text(
-                    auth.email ?? context.l10n.placeholderDash,
+                    email,
                     textAlign: TextAlign.center,
                     style: tt.bodyMedium?.copyWith(
                       color: context.palMuted,
@@ -169,7 +255,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   ProfileSettingsTile(
                     icon: Icons.person_outline_rounded,
                     title: context.l10n.profilePersonalInfo,
-                    onTap: () => context.push(AppPaths.settings),
+                    onTap: () => context.push(AppPaths.profilePersonalInfo),
                   ),
                   Divider(
                     height: WidgetSizesEnum.divider.value,
@@ -179,7 +265,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   ProfileSettingsTile(
                     icon: Icons.notifications_none_rounded,
                     title: context.l10n.profileNotificationSettings,
-                    onTap: () => context.push(AppPaths.settings),
+                    onTap: () => context.push(AppPaths.profileNotifications),
                   ),
                   Divider(
                     height: WidgetSizesEnum.divider.value,
@@ -189,7 +275,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   ProfileSettingsTile(
                     icon: Icons.lock_outline_rounded,
                     title: context.l10n.profilePrivacySecurity,
-                    onTap: () => context.push(AppPaths.settings),
+                    onTap: () => context.push(AppPaths.profilePrivacy),
                   ),
                   Divider(
                     height: WidgetSizesEnum.divider.value,
@@ -199,7 +285,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   ProfileSettingsTile(
                     icon: Icons.help_outline_rounded,
                     title: context.l10n.profileHelpCenter,
-                    onTap: () => context.push(AppPaths.about),
+                    onTap: () => context.push(AppPaths.guide),
                   ),
                 ],
               ),

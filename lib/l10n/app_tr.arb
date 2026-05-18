@@ -57,6 +57,48 @@
   "homeHeroBadge": "Yapay zeka",
   "homeTipTitle": "Günün ipucu",
   "homeTipBody": "Yaprak damarları net görünsün diye yumuşak ışık kullanın; gölgede çekim güven skorunu düşürür.",
+  "homeTipBlight": "Yanıklık riski olan bitkilerde yaprakları ıslatmadan sabah sulayın; havalandırmayı artırın.",
+  "homeTipBlightFor": "{species} taramalarınızda yanıklık sık görülüyor: yaprakları ıslatmadan sabah sulayın ve havalandırın.",
+  "@homeTipBlightFor": {
+    "placeholders": {
+      "species": { "type": "String" }
+    }
+  },
+  "homeTipMold": "Küf için nemli havayı azaltın; yaprak aralarında hava dolaşımı bırakın.",
+  "homeTipMoldFor": "{species} için küf riski: fazla sulamayı kesin, yaprakları kuru tutun ve havalandırın.",
+  "@homeTipMoldFor": {
+    "placeholders": {
+      "species": { "type": "String" }
+    }
+  },
+  "homeTipPowderyMildew": "Külleme için yaprakları akşam ıslatmayın; sıkışık dalları budayın.",
+  "homeTipPowderyMildewFor": "{species} geçmişinizde külleme var: yaprakları akşam ıslatmayın, sık dalları seyreltin.",
+  "@homeTipPowderyMildewFor": {
+    "placeholders": {
+      "species": { "type": "String" }
+    }
+  },
+  "homeTipRust": "Pas için etkilenen yaprakları toplayıp atın; bitkiler arası mesafeyi açın.",
+  "homeTipRustFor": "{species} için pas uyarısı: dökülen yaprakları uzaklaştırın ve bitkileri seyreltin.",
+  "@homeTipRustFor": {
+    "placeholders": {
+      "species": { "type": "String" }
+    }
+  },
+  "homeTipHealthy": "Sağlıklı görünen bitkilerde de haftada bir yaprak ve gövde kontrolü yapın.",
+  "homeTipHealthyFor": "{species} genelde sağlıklı: rutin kontrol için haftada bir yaprak ve gövdeye bakın.",
+  "@homeTipHealthyFor": {
+    "placeholders": {
+      "species": { "type": "String" }
+    }
+  },
+  "homeTipMixedRisk": "Farklı hastalık işaretleri var; sulama, ışık ve havalandırmayı bitki bitki ayırın.",
+  "homeTipMixedRiskFor": "{species} ve diğer bitkilerde karışık risk: her saksı için sulama ve ışığı ayrı ayarlayın.",
+  "@homeTipMixedRiskFor": {
+    "placeholders": {
+      "species": { "type": "String" }
+    }
+  },
   "homeEmptyTitle": "Henüz taramanız yok",
   "homeEmptySubtitle": "İlk fotoğrafınızı ekleyerek bitkilerinizi izlemeye başlayın.",
   "homeStartScan": "Tarama başlat",
@@ -94,10 +136,14 @@
   "scanSummaryTitle": "Özet rapor",
   "scanSaveHistory": "Geçmişe kaydet",
   "scanSaveToPlantTitle": "Hangi bitkiye kaydedilsin?",
-  "scanSaveToPlantCta": "Evimdeki bitkiye kaydet",
-  "scanSavedToPlantSuccess": "Bitki takibine kaydedildi.",
+  "scanSavePickPlantSubtitle": "Aynı türden birden fazla saksınız varsa doğru bitkiyi seçin; yoksa yeni bitki ekleyin.",
+  "scanSaveNewPlant": "Yeni bitki olarak kaydet",
+  "scanSaveToPlantCta": "Bitkiyi kaydet",
+  "scanSavedToPlantSuccess": "Tarama geçmişe kaydedildi.",
   "scanExportPdfCta": "PDF raporu paylaş",
   "scanDownloadPdfCta": "PDF raporu indir",
+  "scanPdfDownloadSuccess": "PDF indirildi.",
+  "scanPdfDownloadError": "PDF kaydedilemedi. Lütfen tekrar deneyin.",
   "scanDone": "Tamam",
   "scanRetry": "Yeniden dene",
   "historyTitle": "Geçmiş taramalar",
@@ -114,16 +160,16 @@
   "guidesLearnMore": "Devamını oku",
   "guidesSafetyCheckBadge": "Kontrol listesi",
   "guidesCheckPlantsCta": "Bitkini kontrol et",
-  "guidesFooterInfo": "Önemli: 'Evimdeki Bitkiye Kaydet' seçeneğini seçerseniz, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.",
+  "guidesFooterInfo": "Önemli: 'Bitkiyi kaydet' seçeneğini kullanırsanız, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.",
   "guideSectionPhoto": "İyi fotoğraf",
   "guidePhotoTips": "Yaprakları net gösterin, gölgeden kaçının, mümkünse tek bitkiyi kadraja alın.",
   "guideSectionMulti": "Çoklu bitki",
   "guideMultiTips": "Birden fazla tür varsa her bitki için ayrı bölge işaretleyin; yanlış eşleşmeyi azaltır.",
   "guideSectionDisease": "Hastalık taraması",
-  "guideDiseaseTips": "Hastalık tespit edildiğinde 'Evimdeki Bitkiye Kaydet' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.",
+  "guideDiseaseTips": "Hastalık tespit edildiğinde 'Bitkiyi kaydet' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.",
   "settingsTitle": "Ayarlar",
   "settingsHeadline": "Tercihler",
-  "settingsSubtitle": "Dil, tema ve bildirim ayarlarını buradan yönetin.",
+  "settingsSubtitle": "Dil ve tema tercihlerini buradan yönetin.",
   "profileTitle": "Profil",
   "profileAccountSettingsTitle": "Hesap ayarları",
   "profilePersonalInfo": "Kişisel bilgiler",
@@ -132,6 +178,33 @@
   "profileHelpCenter": "Yardım merkezi",
   "profilePlantsTracked": "takip edilen bitki",
   "profileScansDone": "tarama",
+  "profileChangePhotoHint": "Fotoğrafı değiştirmek için dokunun",
+  "profilePhotoGallery": "Galeriden seç",
+  "profilePhotoCamera": "Kamera",
+  "profilePhotoUploadSuccess": "Profil fotoğrafı güncellendi.",
+  "profilePhotoUploadError": "Profil fotoğrafı yüklenemedi.",
+  "profileDisplayNameLabel": "Görünen ad",
+  "profileDisplayNameRequired": "Görünen ad gerekli",
+  "profileEmailLabel": "E-posta",
+  "profilePhoneLabel": "Telefon (isteğe bağlı)",
+  "profileBioLabel": "Hakkımda (isteğe bağlı)",
+  "profileSaveSuccess": "Bilgiler kaydedildi.",
+  "profileSaveError": "Kaydedilemedi. Tekrar deneyin.",
+  "profileNotificationsIntro": "Tarama kaydı sonrası takip ve risk uyarıları.",
+  "profileNotificationsDetail": "Bildirimler cihazınızda yerel olarak planlanır. Her bitki için en son kayda göre tek bir takip hatırlatması tutulur.",
+  "profilePrivacyIntro": "Hesap güvenliği ve verileriniz.",
+  "profileChangePassword": "Şifre sıfırlama",
+  "profilePrivacyDataNote": "Tarama ve bitki verileriniz Firebase üzerinde {email} hesabına bağlıdır. Fotoğraflar güvenli depolamada saklanır.",
+  "@profilePrivacyDataNote": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "profileDeleteDataTitle": "Tüm verilerimi sil",
+  "profileDeleteDataBody": "Bitkiler, taramalar ve profil bilgileriniz kalıcı olarak silinir. Bu işlem geri alınamaz.",
+  "profileDeleteDataConfirm": "Sil",
+  "profileDeleteDataHint": "Hesabınız açık kalır; yalnızca uygulama verileri silinir.",
+  "profileDeleteDataError": "Veriler silinemedi.",
   "aboutTitle": "Hakkında",
   "aboutBody": "Bu uygulama bitirme tezi kapsamında geliştirilmiştir. Tahminler tıbbi teşhis değildir; ciddi zarar gören bitkiler için uzman görüşü önerilir.",
   "aboutThesis": "Tez ve TÜBİTAK raporu için proje dokümantasyonuna bakınız.",
@@ -146,7 +219,7 @@
   "healthProgressTitle": "Sağlık ilerlemesi",
   "healthProgressHeadline": "Trend analizi",
   "healthProgressSubtitle": "Bitki seçin ve trendi izleyin",
-  "healthProgressHint": "Yalnızca geçmişte kayıtlı ve hem türü hem hastalığı güvenilir şekilde tanınmış bitkiler listelenir.",
+  "healthProgressHint": "Her kayıt bir saksıyı (fiziksel bitkiyi) temsil eder. Aynı türden iki saksı varsa kayıt sırasında ayrı seçmeniz gerekir.",
   "healthProgressNoPlants": "Henüz uygun tarama yok. Geçmişe hem tür hem hastalık tanınmış bir tarama kaydedin.",
   "healthProgressNoChartData": "Son 14 günde bu bitki için uygun tarama bulunamadı.",
   "healthProgressSelectPlant": "Bir bitki seçin",
@@ -159,7 +232,7 @@
   "healthProgressPlant3": "Kauçuk",
   "myPlantsTitle": "Bitkilerim",
   "myPlantsHeadline": "Koleksiyonun",
-  "myPlantsSubtitle": "Bitkilerini ekle, günlük taramalarla sağlık trendini takip et.",
+  "myPlantsSubtitle": "Her kart bir saksıdır. Aynı türden ikinci bitki için kayıt sırasında \"Yeni bitki olarak kaydet\" seçin.",
   "myPlantsEmpty": "Henüz bitki eklemediniz. Yeni bir bitki ekleyerek günlük takibe başlayın.",
   "myPlantsAddTitle": "Bitki ekle",
   "myPlantsNameLabel": "Bitki adı",
@@ -174,11 +247,40 @@
   "myPlantsTimelineEmpty": "Bu bitki için kayıtlı tarama bulunamadı.",
   "myPlantsHealthScoreLabel": "Sağlık skoru:",
   "notificationsLabel": "Bildirimler",
-  "notificationsSubtitle": "Sulama ve risk hatırlatmaları al",
-  "notificationWateringTitle": "Bakım hatırlatması",
-  "notificationWateringBody": "Bugün sulama günü olabilir. Bitkini kontrol etmek ister misin?",
+  "notificationsSubtitle": "Tarama kaydı sonrası takip ve risk uyarıları",
+  "notificationFollowUpTitle": "Bitki kontrol zamanı",
+  "notificationFollowUpHealthy": "{plantName} için son tarama iyiydi. Bir hafta içinde yeni fotoğrafla kontrol edin.",
+  "@notificationFollowUpHealthy": {
+    "placeholders": {
+      "plantName": { "type": "String" }
+    }
+  },
+  "notificationFollowUpMild": "{plantName} için hafif risk vardı. 5 gün içinde tekrar tarayın.",
+  "@notificationFollowUpMild": {
+    "placeholders": {
+      "plantName": { "type": "String" }
+    }
+  },
+  "notificationFollowUpMedium": "{plantName} için orta risk kaydı var. 3 gün içinde kontrol taraması yapın.",
+  "@notificationFollowUpMedium": {
+    "placeholders": {
+      "plantName": { "type": "String" }
+    }
+  },
+  "notificationFollowUpUrgent": "{plantName} ciddi risk göstermişti. Lütfen en kısa sürede tekrar tarayın.",
+  "@notificationFollowUpUrgent": {
+    "placeholders": {
+      "plantName": { "type": "String" }
+    }
+  },
   "notificationRiskTitle": "Bitki riski artıyor olabilir",
   "notificationRiskBody": "Son taramada risk tespit edildi. Bitkini kontrol edip önerilere göz at.",
+  "notificationRiskBodyFor": "{plantName} için ciddi risk tespit edildi. Hemen kontrol edin.",
+  "@notificationRiskBodyFor": {
+    "placeholders": {
+      "plantName": { "type": "String" }
+    }
+  },
   "dataLabel": "Veri ve gizlilik",
   "apiHint": "Sunucu adresi .env içinden yapılandırılır.",
   "inferenceDiseaseBacterial": "Bakteriyel",

@@ -3,6 +3,7 @@ import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/plants/provider/plants_provider.dart';
 import 'package:bitirme_mobile/features/plants/provider/plants_state.dart';
@@ -36,7 +37,8 @@ class _PlantsListViewState extends ConsumerState<PlantsListView> {
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.myPlantsTitle),
         actions: <Widget>[
           IconButton(

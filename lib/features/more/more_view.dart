@@ -102,7 +102,7 @@ class MoreView extends StatelessWidget {
                     iconColor: context.palAccent,
                     title: context.l10n.healthProgressTitle,
                     subtitle: context.l10n.moreTileHealthProgressDesc,
-                    onTap: () => context.push(AppPaths.healthProgress),
+                    onTap: () => context.push(AppPaths.healthProgressPushed),
                   ),
                   _MoreTileCard(
                     icon: Icons.info_outline_rounded,

@@ -7,6 +7,9 @@ abstract final class AppPaths {
   static const String forgotPassword = '/forgot-password';
   static const String register = '/register';
   static const String healthProgress = '/health-progress';
+
+  /// Keşfet menüsünden açılan tam ekran sağlık analizi (geri ok ile).
+  static const String healthProgressPushed = '/health-analysis';
   static const String diseaseDetail = '/disease-detail';
   static const String speciesDetail = '/species-detail';
   static const String myPlants = '/my-plants';
@@ -15,6 +18,9 @@ abstract final class AppPaths {
   static const String more = '/more';
   static const String scan = '/scan';
   static const String profile = '/profile';
+  static const String profilePersonalInfo = '/profile/personal-info';
+  static const String profileNotifications = '/profile/notifications';
+  static const String profilePrivacy = '/profile/privacy';
   static const String settings = '/settings';
   static const String about = '/about';
   static const String guide = '/guide';

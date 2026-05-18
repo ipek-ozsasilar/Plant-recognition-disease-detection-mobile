@@ -3,7 +3,7 @@ import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Bitki taramaları: [scans] koleksiyonunda kullanıcı+bitki bazlı kayıt.
+/// Tarama geçmişi: [scans] koleksiyonu. Her kayıt [plants] içindeki bir bitkiye bağlıdır.
 class PlantScansFirestoreService {
   PlantScansFirestoreService({required AppLogger logger}) : _logger = logger;
 
@@ -73,18 +73,23 @@ class PlantScansFirestoreService {
           .doc(scan.id);
       batch.set(scanRef, scan.toJson());
 
-      // 2. Bitki özet bilgisini güncelle (Eğer bir bitki seçilmişse)
-      if (scan.plantId.isNotEmpty && scan.plantId != 'general') {
+      if (scan.plantId.isNotEmpty) {
         final DocumentReference<Map<String, dynamic>> plantRef = _db
             .collection(FirestoreCollectionEnum.plants.value)
             .doc(scan.plantId);
 
-        batch.update(plantRef, <String, dynamic>{
-          'lastHealthScore': scan.healthScore,
-          'lastScanDate': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-          'speciesLabel': scan.speciesLabel,
-        });
+        batch.set(
+          plantRef,
+          <String, dynamic>{
+            'lastHealthScore': scan.healthScore,
+            'lastScanDate': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+            'speciesLabel': scan.speciesLabel,
+            if (scan.imageUrl != null && scan.imageUrl!.isNotEmpty)
+              'photoUrl': scan.imageUrl,
+          },
+          SetOptions(merge: true),
+        );
       }
 
       await batch.commit();

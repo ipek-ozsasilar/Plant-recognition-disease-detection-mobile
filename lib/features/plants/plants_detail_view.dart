@@ -6,6 +6,7 @@ import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
 import 'package:bitirme_mobile/core/services/scan_identification_filter.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/features/health_progress/sub_view/disease_progress_chart.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
@@ -85,7 +86,8 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.myPlantsDetailTitle),
         actions: <Widget>[
           IconButton(
@@ -180,6 +182,7 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                         : DiseaseProgressChart(
                             scans: filteredItems,
                             primary: context.palPrimary,
+                            accent: context.palAccent,
                             outline: context.palOutline,
                             muted: context.palMuted,
                           ),

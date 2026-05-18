@@ -154,6 +154,60 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use soft light so leaf veins are clear; heavy shade lowers confidence scores.';
 
   @override
+  String get homeTipBlight =>
+      'For blight risk, water in the morning without wetting leaves; improve airflow.';
+
+  @override
+  String homeTipBlightFor(String species) {
+    return 'Your $species scans often show blight: water in the morning and improve ventilation.';
+  }
+
+  @override
+  String get homeTipMold =>
+      'For mold, reduce humidity and keep space between leaves.';
+
+  @override
+  String homeTipMoldFor(String species) {
+    return 'Mold risk for $species: ease off watering, keep leaves dry, and ventilate.';
+  }
+
+  @override
+  String get homeTipPowderyMildew =>
+      'For powdery mildew, avoid evening leaf wetting and thin crowded stems.';
+
+  @override
+  String homeTipPowderyMildewFor(String species) {
+    return 'Powdery mildew in your $species history: avoid evening wetting and thin dense growth.';
+  }
+
+  @override
+  String get homeTipRust =>
+      'For rust, remove affected leaves and space plants apart.';
+
+  @override
+  String homeTipRustFor(String species) {
+    return 'Rust alert for $species: remove fallen leaves and give plants more space.';
+  }
+
+  @override
+  String get homeTipHealthy =>
+      'Even healthy plants benefit from a weekly leaf and stem check.';
+
+  @override
+  String homeTipHealthyFor(String species) {
+    return '$species looks mostly healthy: do a quick leaf and stem check each week.';
+  }
+
+  @override
+  String get homeTipMixedRisk =>
+      'Mixed disease signs—adjust watering, light, and airflow per plant.';
+
+  @override
+  String homeTipMixedRiskFor(String species) {
+    return 'Mixed risks for $species and others: tune watering and light for each pot separately.';
+  }
+
+  @override
   String get homeEmptyTitle => 'No scans yet';
 
   @override
@@ -271,16 +325,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanSaveToPlantTitle => 'Save to which plant?';
 
   @override
-  String get scanSaveToPlantCta => 'Save to my home plant';
+  String get scanSavePickPlantSubtitle =>
+      'If you have more than one pot of the same species, pick the right plant—or add a new one.';
 
   @override
-  String get scanSavedToPlantSuccess => 'Saved to plant tracking.';
+  String get scanSaveNewPlant => 'Save as new plant';
+
+  @override
+  String get scanSaveToPlantCta => 'Save plant';
+
+  @override
+  String get scanSavedToPlantSuccess => 'Scan saved to history.';
 
   @override
   String get scanExportPdfCta => 'Share PDF report';
 
   @override
   String get scanDownloadPdfCta => 'Download PDF report';
+
+  @override
+  String get scanPdfDownloadSuccess => 'PDF downloaded.';
+
+  @override
+  String get scanPdfDownloadError =>
+      'Could not save the PDF. Please try again.';
 
   @override
   String get scanDone => 'Done';
@@ -364,8 +432,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHeadline => 'Preferences';
 
   @override
-  String get settingsSubtitle =>
-      'Manage language, theme, and notification settings.';
+  String get settingsSubtitle => 'Manage language and theme preferences.';
 
   @override
   String get profileTitle => 'Profile';
@@ -390,6 +457,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileScansDone => 'scans';
+
+  @override
+  String get profileChangePhotoHint => 'Tap to change photo';
+
+  @override
+  String get profilePhotoGallery => 'Choose from gallery';
+
+  @override
+  String get profilePhotoCamera => 'Camera';
+
+  @override
+  String get profilePhotoUploadSuccess => 'Profile photo updated.';
+
+  @override
+  String get profilePhotoUploadError => 'Could not upload profile photo.';
+
+  @override
+  String get profileDisplayNameLabel => 'Display name';
+
+  @override
+  String get profileDisplayNameRequired => 'Display name is required';
+
+  @override
+  String get profileEmailLabel => 'Email';
+
+  @override
+  String get profilePhoneLabel => 'Phone (optional)';
+
+  @override
+  String get profileBioLabel => 'About (optional)';
+
+  @override
+  String get profileSaveSuccess => 'Profile saved.';
+
+  @override
+  String get profileSaveError => 'Could not save. Try again.';
+
+  @override
+  String get profileNotificationsIntro =>
+      'Follow-ups after saved scans and risk alerts.';
+
+  @override
+  String get profileNotificationsDetail =>
+      'Notifications are scheduled locally on your device. One follow-up reminder is kept per plant based on your latest scan.';
+
+  @override
+  String get profilePrivacyIntro => 'Account security and your data.';
+
+  @override
+  String get profileChangePassword => 'Reset password';
+
+  @override
+  String profilePrivacyDataNote(String email) {
+    return 'Your plant and scan data is linked to $email in Firebase. Photos are stored in secure cloud storage.';
+  }
+
+  @override
+  String get profileDeleteDataTitle => 'Delete all my data';
+
+  @override
+  String get profileDeleteDataBody =>
+      'Plants, scans, and profile data will be permanently deleted. This cannot be undone.';
+
+  @override
+  String get profileDeleteDataConfirm => 'Delete';
+
+  @override
+  String get profileDeleteDataHint =>
+      'Your login stays active; only app data is removed.';
+
+  @override
+  String get profileDeleteDataError => 'Could not delete data.';
 
   @override
   String get aboutTitle => 'About';
@@ -437,7 +576,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthProgressHint =>
-      'Only plants with past scans where both species and disease were confidently identified are listed.';
+      'Each entry is one physical plant (pot). For two pots of the same species, choose separately when saving a scan.';
 
   @override
   String get healthProgressNoPlants =>
@@ -479,7 +618,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myPlantsSubtitle =>
-      'Add plants and track health trends with daily scans.';
+      'Each card is one pot. For a second plant of the same species, tap \"Save as new plant\" when saving a scan.';
 
   @override
   String get myPlantsEmpty =>
@@ -526,14 +665,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsLabel => 'Notifications';
 
   @override
-  String get notificationsSubtitle => 'Get watering and risk reminders';
+  String get notificationsSubtitle =>
+      'Follow-ups after saved scans and risk alerts';
 
   @override
-  String get notificationWateringTitle => 'Care reminder';
+  String get notificationFollowUpTitle => 'Time to check your plant';
 
   @override
-  String get notificationWateringBody =>
-      'It might be watering day. Want to check your plant today?';
+  String notificationFollowUpHealthy(String plantName) {
+    return '$plantName looked good last time. Scan again within a week.';
+  }
+
+  @override
+  String notificationFollowUpMild(String plantName) {
+    return '$plantName had mild risk. Scan again within 5 days.';
+  }
+
+  @override
+  String notificationFollowUpMedium(String plantName) {
+    return '$plantName had medium risk. Plan a check scan in 3 days.';
+  }
+
+  @override
+  String notificationFollowUpUrgent(String plantName) {
+    return '$plantName showed serious risk. Please scan again as soon as you can.';
+  }
 
   @override
   String get notificationRiskTitle => 'Plant risk may be increasing';
@@ -541,6 +697,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationRiskBody =>
       'Risk was detected in the latest scan. Check your plant and review recommendations.';
+
+  @override
+  String notificationRiskBodyFor(String plantName) {
+    return 'Serious risk for $plantName. Check your plant right away.';
+  }
 
   @override
   String get dataLabel => 'Data and privacy';

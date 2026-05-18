@@ -5,6 +5,7 @@ import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/firebase_storage_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/button/app_primary_button.dart';
 import 'package:bitirme_mobile/core/widgets/input/app_text_field.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
@@ -100,7 +101,10 @@ class _PlantsAddViewState extends ConsumerState<PlantsAddView> {
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(title: Text(context.l10n.myPlantsAddTitle)),
+      appBar: appBarWithConditionalBack(
+        context: context,
+        title: Text(context.l10n.myPlantsAddTitle),
+      ),
       body: Padding(
         padding: EdgeInsets.all(pad),
         child: Form(

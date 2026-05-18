@@ -6,8 +6,7 @@ final class HealthProgressViewModel {
 
   final WidgetRef ref;
 
-  void selectSpecies(String? speciesLabel) {
-    ref.read(healthProgressProvider.notifier).selectSpecies(speciesLabel);
+  void selectPlant(String? plantId) {
+    ref.read(healthProgressProvider.notifier).selectPlant(plantId);
   }
 }
-

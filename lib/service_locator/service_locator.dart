@@ -9,6 +9,7 @@ import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
 import 'package:bitirme_mobile/core/services/inference_api_service.dart';
 import 'package:bitirme_mobile/core/services/catalog_firestore_service.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
+import 'package:bitirme_mobile/core/services/pdf_file_save_service.dart';
 import 'package:bitirme_mobile/core/services/pdf_report_service.dart';
 import 'package:bitirme_mobile/core/services/plantnet_species_name_repository.dart';
 import 'package:bitirme_mobile/core/services/plant_scans_firestore_service.dart';
@@ -56,9 +57,6 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<GoogleSignInService>(
     () => GoogleSignInService(logger: sl<AppLogger>()),
   );
-  sl.registerLazySingleton<UserProfileFirestoreService>(
-    () => UserProfileFirestoreService(logger: sl<AppLogger>()),
-  );
   sl.registerLazySingleton<FirestoreSetupService>(
     () => FirestoreSetupService(logger: sl<AppLogger>()),
   );
@@ -68,7 +66,16 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<FirebaseStorageService>(
     () => FirebaseStorageService(logger: sl<AppLogger>()),
   );
+  sl.registerLazySingleton<UserProfileFirestoreService>(
+    () => UserProfileFirestoreService(
+      logger: sl<AppLogger>(),
+      storage: sl<FirebaseStorageService>(),
+    ),
+  );
   sl.registerLazySingleton<PdfReportService>(() => const PdfReportService());
+  sl.registerLazySingleton<PdfFileSaveService>(
+    () => PdfFileSaveService(logger: sl<AppLogger>()),
+  );
   sl.registerLazySingleton<PlantsFirestoreService>(
     () => PlantsFirestoreService(logger: sl<AppLogger>()),
   );

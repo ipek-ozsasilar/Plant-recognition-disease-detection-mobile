@@ -14,6 +14,9 @@ import 'package:bitirme_mobile/features/onboarding/onboarding_view.dart';
 import 'package:bitirme_mobile/features/plants/plants_add_view.dart';
 import 'package:bitirme_mobile/features/plants/plants_detail_view.dart';
 import 'package:bitirme_mobile/features/plants/plants_list_view.dart';
+import 'package:bitirme_mobile/features/profile/profile_notifications_view.dart';
+import 'package:bitirme_mobile/features/profile/profile_personal_info_view.dart';
+import 'package:bitirme_mobile/features/profile/profile_privacy_view.dart';
 import 'package:bitirme_mobile/features/profile/profile_view.dart';
 import 'package:bitirme_mobile/features/scan/scan_flow_view.dart';
 import 'package:bitirme_mobile/features/settings/settings_view.dart';
@@ -117,6 +120,23 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         path: AppPaths.profile,
         builder: (BuildContext context, GoRouterState state) =>
             const ProfileView(),
+        routes: <RouteBase>[
+          GoRoute(
+            path: 'personal-info',
+            builder: (BuildContext context, GoRouterState state) =>
+                const ProfilePersonalInfoView(),
+          ),
+          GoRoute(
+            path: 'notifications',
+            builder: (BuildContext context, GoRouterState state) =>
+                const ProfileNotificationsView(),
+          ),
+          GoRoute(
+            path: 'privacy',
+            builder: (BuildContext context, GoRouterState state) =>
+                const ProfilePrivacyView(),
+          ),
+        ],
       ),
       GoRoute(
         path: AppPaths.settings,
@@ -127,6 +147,11 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         path: AppPaths.about,
         builder: (BuildContext context, GoRouterState state) =>
             const AboutView(),
+      ),
+      GoRoute(
+        path: AppPaths.healthProgressPushed,
+        builder: (BuildContext context, GoRouterState state) =>
+            const HealthProgressView(),
       ),
       StatefulShellRoute.indexedStack(
         builder:

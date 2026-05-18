@@ -4,6 +4,7 @@ import 'package:bitirme_mobile/core/services/disease_info_catalog.dart';
 import 'package:bitirme_mobile/core/services/disease_label_display.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/indicator/confidence_indicator.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:flutter/material.dart';
 
@@ -30,9 +31,9 @@ class DiseaseDetailView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.diseaseDetailTitle),
-        leading: const BackButton(),
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(

@@ -1,19 +1,22 @@
 import 'package:bitirme_mobile/core/constants/preference_keys.dart';
+import 'package:bitirme_mobile/core/enums/notification_follow_up_enum.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-/// Lokal bildirimler: sulama hatırlatması ve risk uyarıları (MVP).
+/// Lokal bildirimler: tarama sonrası takip ve risk uyarıları.
 class NotificationService {
   NotificationService({required AppLogger logger}) : _logger = logger;
 
   final AppLogger _logger;
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
-  static const int _dailyWateringId = 11001;
+  static const int _followUpIdBase = 12000;
   static const int _riskAlertId = 11002;
+  static const int _followUpHour = 10;
+  static const int _followUpMinute = 0;
 
   Future<void> init() async {
     try {
@@ -28,7 +31,8 @@ class NotificationService {
       const AndroidInitializationSettings androidInit =
           AndroidInitializationSettings('@mipmap/ic_launcher');
       const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
-      const InitializationSettings settings = InitializationSettings(android: androidInit, iOS: iosInit);
+      const InitializationSettings settings =
+          InitializationSettings(android: androidInit, iOS: iosInit);
       await _plugin.initialize(settings);
     } catch (e, st) {
       _logger.e('notifications_init', e, st);
@@ -75,11 +79,24 @@ class NotificationService {
     }
   }
 
-  Future<void> scheduleDailyWatering({
+  /// Bitki başına tek takip bildirimi; yeni taramada önceki iptal edilir.
+  int notificationIdForPlant(String plantId) {
+    return _followUpIdBase + (plantId.hashCode.abs() % 8000);
+  }
+
+  Future<void> cancelFollowUpForPlant(String plantId) async {
+    try {
+      await _plugin.cancel(notificationIdForPlant(plantId));
+    } catch (e, st) {
+      _logger.e('notifications_cancel_follow_up', e, st);
+    }
+  }
+
+  Future<void> scheduleScanFollowUp({
+    required String plantId,
     required String title,
     required String body,
-    int hour = 20,
-    int minute = 0,
+    required int healthScore,
   }) async {
     try {
       final bool enabled = await isEnabled();
@@ -87,34 +104,46 @@ class NotificationService {
         return;
       }
 
+      final NotificationFollowUpEnum plan =
+          NotificationFollowUpEnum.forHealthScore(healthScore);
+      await cancelFollowUpForPlant(plantId);
+
       final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-      tz.TZDateTime next = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-      if (next.isBefore(now)) {
-        next = next.add(const Duration(days: 1));
+      tz.TZDateTime when = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day,
+        _followUpHour,
+        _followUpMinute,
+      ).add(Duration(days: plan.delayDays));
+      if (when.isBefore(now)) {
+        when = when.add(const Duration(days: 1));
       }
 
       const AndroidNotificationDetails android = AndroidNotificationDetails(
-        'watering_reminders',
-        'Watering reminders',
-        channelDescription: 'Daily plant care reminders',
+        'scan_follow_up',
+        'Scan follow-up',
+        channelDescription: 'Reminders after you save a plant scan',
         importance: Importance.defaultImportance,
         priority: Priority.defaultPriority,
       );
       const DarwinNotificationDetails ios = DarwinNotificationDetails();
-      const NotificationDetails details = NotificationDetails(android: android, iOS: ios);
+      const NotificationDetails details =
+          NotificationDetails(android: android, iOS: ios);
 
       await _plugin.zonedSchedule(
-        _dailyWateringId,
+        notificationIdForPlant(plantId),
         title,
         body,
-        next,
+        when,
         details,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (e, st) {
-      _logger.e('notifications_schedule_daily', e, st);
+      _logger.e('notifications_schedule_follow_up', e, st);
     }
   }
 
@@ -143,4 +172,3 @@ class NotificationService {
     }
   }
 }
-

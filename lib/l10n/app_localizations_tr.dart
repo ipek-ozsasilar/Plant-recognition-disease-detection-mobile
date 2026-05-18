@@ -155,6 +155,60 @@ class AppLocalizationsTr extends AppLocalizations {
       'Yaprak damarları net görünsün diye yumuşak ışık kullanın; gölgede çekim güven skorunu düşürür.';
 
   @override
+  String get homeTipBlight =>
+      'Yanıklık riski olan bitkilerde yaprakları ıslatmadan sabah sulayın; havalandırmayı artırın.';
+
+  @override
+  String homeTipBlightFor(String species) {
+    return '$species taramalarınızda yanıklık sık görülüyor: yaprakları ıslatmadan sabah sulayın ve havalandırın.';
+  }
+
+  @override
+  String get homeTipMold =>
+      'Küf için nemli havayı azaltın; yaprak aralarında hava dolaşımı bırakın.';
+
+  @override
+  String homeTipMoldFor(String species) {
+    return '$species için küf riski: fazla sulamayı kesin, yaprakları kuru tutun ve havalandırın.';
+  }
+
+  @override
+  String get homeTipPowderyMildew =>
+      'Külleme için yaprakları akşam ıslatmayın; sıkışık dalları budayın.';
+
+  @override
+  String homeTipPowderyMildewFor(String species) {
+    return '$species geçmişinizde külleme var: yaprakları akşam ıslatmayın, sık dalları seyreltin.';
+  }
+
+  @override
+  String get homeTipRust =>
+      'Pas için etkilenen yaprakları toplayıp atın; bitkiler arası mesafeyi açın.';
+
+  @override
+  String homeTipRustFor(String species) {
+    return '$species için pas uyarısı: dökülen yaprakları uzaklaştırın ve bitkileri seyreltin.';
+  }
+
+  @override
+  String get homeTipHealthy =>
+      'Sağlıklı görünen bitkilerde de haftada bir yaprak ve gövde kontrolü yapın.';
+
+  @override
+  String homeTipHealthyFor(String species) {
+    return '$species genelde sağlıklı: rutin kontrol için haftada bir yaprak ve gövdeye bakın.';
+  }
+
+  @override
+  String get homeTipMixedRisk =>
+      'Farklı hastalık işaretleri var; sulama, ışık ve havalandırmayı bitki bitki ayırın.';
+
+  @override
+  String homeTipMixedRiskFor(String species) {
+    return '$species ve diğer bitkilerde karışık risk: her saksı için sulama ve ışığı ayrı ayarlayın.';
+  }
+
+  @override
   String get homeEmptyTitle => 'Henüz taramanız yok';
 
   @override
@@ -273,16 +327,30 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanSaveToPlantTitle => 'Hangi bitkiye kaydedilsin?';
 
   @override
-  String get scanSaveToPlantCta => 'Evimdeki bitkiye kaydet';
+  String get scanSavePickPlantSubtitle =>
+      'Aynı türden birden fazla saksınız varsa doğru bitkiyi seçin; yoksa yeni bitki ekleyin.';
 
   @override
-  String get scanSavedToPlantSuccess => 'Bitki takibine kaydedildi.';
+  String get scanSaveNewPlant => 'Yeni bitki olarak kaydet';
+
+  @override
+  String get scanSaveToPlantCta => 'Bitkiyi kaydet';
+
+  @override
+  String get scanSavedToPlantSuccess => 'Tarama geçmişe kaydedildi.';
 
   @override
   String get scanExportPdfCta => 'PDF raporu paylaş';
 
   @override
   String get scanDownloadPdfCta => 'PDF raporu indir';
+
+  @override
+  String get scanPdfDownloadSuccess => 'PDF indirildi.';
+
+  @override
+  String get scanPdfDownloadError =>
+      'PDF kaydedilemedi. Lütfen tekrar deneyin.';
 
   @override
   String get scanDone => 'Tamam';
@@ -336,7 +404,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guidesFooterInfo =>
-      'Önemli: \'Evimdeki Bitkiye Kaydet\' seçeneğini seçerseniz, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.';
+      'Önemli: \'Bitkiyi kaydet\' seçeneğini kullanırsanız, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.';
 
   @override
   String get guideSectionPhoto => 'İyi fotoğraf';
@@ -357,7 +425,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guideDiseaseTips =>
-      'Hastalık tespit edildiğinde \'Evimdeki Bitkiye Kaydet\' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.';
+      'Hastalık tespit edildiğinde \'Bitkiyi kaydet\' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.';
 
   @override
   String get settingsTitle => 'Ayarlar';
@@ -366,8 +434,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsHeadline => 'Tercihler';
 
   @override
-  String get settingsSubtitle =>
-      'Dil, tema ve bildirim ayarlarını buradan yönetin.';
+  String get settingsSubtitle => 'Dil ve tema tercihlerini buradan yönetin.';
 
   @override
   String get profileTitle => 'Profil';
@@ -392,6 +459,78 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileScansDone => 'tarama';
+
+  @override
+  String get profileChangePhotoHint => 'Fotoğrafı değiştirmek için dokunun';
+
+  @override
+  String get profilePhotoGallery => 'Galeriden seç';
+
+  @override
+  String get profilePhotoCamera => 'Kamera';
+
+  @override
+  String get profilePhotoUploadSuccess => 'Profil fotoğrafı güncellendi.';
+
+  @override
+  String get profilePhotoUploadError => 'Profil fotoğrafı yüklenemedi.';
+
+  @override
+  String get profileDisplayNameLabel => 'Görünen ad';
+
+  @override
+  String get profileDisplayNameRequired => 'Görünen ad gerekli';
+
+  @override
+  String get profileEmailLabel => 'E-posta';
+
+  @override
+  String get profilePhoneLabel => 'Telefon (isteğe bağlı)';
+
+  @override
+  String get profileBioLabel => 'Hakkımda (isteğe bağlı)';
+
+  @override
+  String get profileSaveSuccess => 'Bilgiler kaydedildi.';
+
+  @override
+  String get profileSaveError => 'Kaydedilemedi. Tekrar deneyin.';
+
+  @override
+  String get profileNotificationsIntro =>
+      'Tarama kaydı sonrası takip ve risk uyarıları.';
+
+  @override
+  String get profileNotificationsDetail =>
+      'Bildirimler cihazınızda yerel olarak planlanır. Her bitki için en son kayda göre tek bir takip hatırlatması tutulur.';
+
+  @override
+  String get profilePrivacyIntro => 'Hesap güvenliği ve verileriniz.';
+
+  @override
+  String get profileChangePassword => 'Şifre sıfırlama';
+
+  @override
+  String profilePrivacyDataNote(String email) {
+    return 'Tarama ve bitki verileriniz Firebase üzerinde $email hesabına bağlıdır. Fotoğraflar güvenli depolamada saklanır.';
+  }
+
+  @override
+  String get profileDeleteDataTitle => 'Tüm verilerimi sil';
+
+  @override
+  String get profileDeleteDataBody =>
+      'Bitkiler, taramalar ve profil bilgileriniz kalıcı olarak silinir. Bu işlem geri alınamaz.';
+
+  @override
+  String get profileDeleteDataConfirm => 'Sil';
+
+  @override
+  String get profileDeleteDataHint =>
+      'Hesabınız açık kalır; yalnızca uygulama verileri silinir.';
+
+  @override
+  String get profileDeleteDataError => 'Veriler silinemedi.';
 
   @override
   String get aboutTitle => 'Hakkında';
@@ -439,7 +578,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get healthProgressHint =>
-      'Yalnızca geçmişte kayıtlı ve hem türü hem hastalığı güvenilir şekilde tanınmış bitkiler listelenir.';
+      'Her kayıt bir saksıyı (fiziksel bitkiyi) temsil eder. Aynı türden iki saksı varsa kayıt sırasında ayrı seçmeniz gerekir.';
 
   @override
   String get healthProgressNoPlants =>
@@ -481,7 +620,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get myPlantsSubtitle =>
-      'Bitkilerini ekle, günlük taramalarla sağlık trendini takip et.';
+      'Her kart bir saksıdır. Aynı türden ikinci bitki için kayıt sırasında \"Yeni bitki olarak kaydet\" seçin.';
 
   @override
   String get myPlantsEmpty =>
@@ -529,14 +668,31 @@ class AppLocalizationsTr extends AppLocalizations {
   String get notificationsLabel => 'Bildirimler';
 
   @override
-  String get notificationsSubtitle => 'Sulama ve risk hatırlatmaları al';
+  String get notificationsSubtitle =>
+      'Tarama kaydı sonrası takip ve risk uyarıları';
 
   @override
-  String get notificationWateringTitle => 'Bakım hatırlatması';
+  String get notificationFollowUpTitle => 'Bitki kontrol zamanı';
 
   @override
-  String get notificationWateringBody =>
-      'Bugün sulama günü olabilir. Bitkini kontrol etmek ister misin?';
+  String notificationFollowUpHealthy(String plantName) {
+    return '$plantName için son tarama iyiydi. Bir hafta içinde yeni fotoğrafla kontrol edin.';
+  }
+
+  @override
+  String notificationFollowUpMild(String plantName) {
+    return '$plantName için hafif risk vardı. 5 gün içinde tekrar tarayın.';
+  }
+
+  @override
+  String notificationFollowUpMedium(String plantName) {
+    return '$plantName için orta risk kaydı var. 3 gün içinde kontrol taraması yapın.';
+  }
+
+  @override
+  String notificationFollowUpUrgent(String plantName) {
+    return '$plantName ciddi risk göstermişti. Lütfen en kısa sürede tekrar tarayın.';
+  }
 
   @override
   String get notificationRiskTitle => 'Bitki riski artıyor olabilir';
@@ -544,6 +700,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get notificationRiskBody =>
       'Son taramada risk tespit edildi. Bitkini kontrol edip önerilere göz at.';
+
+  @override
+  String notificationRiskBodyFor(String plantName) {
+    return '$plantName için ciddi risk tespit edildi. Hemen kontrol edin.';
+  }
 
   @override
   String get dataLabel => 'Veri ve gizlilik';

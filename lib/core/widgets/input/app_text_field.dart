@@ -8,6 +8,8 @@ class AppTextField extends StatelessWidget {
     required this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
+    this.readOnly = false,
+    this.maxLines = 1,
     this.validator,
     super.key,
   });
@@ -16,6 +18,8 @@ class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType keyboardType;
   final bool obscureText;
+  final bool readOnly;
+  final int maxLines;
   final String? Function(String?)? validator;
 
   @override
@@ -24,6 +28,8 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
+      readOnly: readOnly,
+      maxLines: maxLines,
       validator: validator,
       style: TextStyle(
         fontSize: TextSizesEnum.body.value,

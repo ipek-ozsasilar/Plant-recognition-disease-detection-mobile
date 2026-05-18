@@ -79,6 +79,14 @@ class FirestoreSetupService {
         await doc.reference.delete();
       }
 
+      final QuerySnapshot<Map<String, dynamic>> scans = await _db
+          .collection(FirestoreCollectionEnum.scans.value)
+          .where('ownerUid', isEqualTo: uid)
+          .get();
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in scans.docs) {
+        await doc.reference.delete();
+      }
+
       // User sil
       await _db
           .collection(FirestoreCollectionEnum.users.value)
