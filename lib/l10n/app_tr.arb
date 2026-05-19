@@ -56,6 +56,8 @@
   "homeQuickAccessTitle": "Hızlı erişim",
   "homeHeroBadge": "Yapay zeka",
   "homeTipTitle": "Günün ipucu",
+  "homeTipLoading": "Kişisel ipucu hazırlanıyor…",
+  "homeTipAiBadge": "AI",
   "homeTipBody": "Yaprak damarları net görünsün diye yumuşak ışık kullanın; gölgede çekim güven skorunu düşürür.",
   "homeTipBlight": "Yanıklık riski olan bitkilerde yaprakları ıslatmadan sabah sulayın; havalandırmayı artırın.",
   "homeTipBlightFor": "{species} taramalarınızda yanıklık sık görülüyor: yaprakları ıslatmadan sabah sulayın ve havalandırın.",
@@ -137,9 +139,16 @@
   "scanSaveHistory": "Geçmişe kaydet",
   "scanSaveToPlantTitle": "Hangi bitkiye kaydedilsin?",
   "scanSavePickPlantSubtitle": "Aynı türden birden fazla saksınız varsa doğru bitkiyi seçin; yoksa yeni bitki ekleyin.",
+  "scanSavePlantLastHealth": "Son sağlık skoru: {score}",
+  "@scanSavePlantLastHealth": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
   "scanSaveNewPlant": "Yeni bitki olarak kaydet",
   "scanSaveToPlantCta": "Bitkiyi kaydet",
   "scanSavedToPlantSuccess": "Tarama geçmişe kaydedildi.",
+  "scanSavedPhotoFailed": "Tarama kaydedildi; fotoğraf yüklenemedi. Firebase Storage kurallarını kontrol edin.",
   "scanExportPdfCta": "PDF raporu paylaş",
   "scanDownloadPdfCta": "PDF raporu indir",
   "scanPdfDownloadSuccess": "PDF indirildi.",
@@ -148,7 +157,13 @@
   "scanRetry": "Yeniden dene",
   "historyTitle": "Geçmiş taramalar",
   "historyHeadline": "Tarama geçmişi",
-  "historySubtitle": "Kaydettiğin taramaları gün gün görüntüle, detaylara ve PDF rapora hızlıca ulaş.",
+  "historySubtitle": "Taramalar bitki türüne göre gruplanır. Aynı türden kaç saksı olursa olsun tek kartta listelenir.",
+  "historyScanCount": "{count} tarama",
+  "@historyScanCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "historyEmpty": "Henüz kayıtlı tarama yok.",
   "historyOpen": "Detay",
   "search": "Ara",
@@ -218,13 +233,18 @@
   "languageEnglish": "English",
   "healthProgressTitle": "Sağlık ilerlemesi",
   "healthProgressHeadline": "Trend analizi",
-  "healthProgressSubtitle": "Bitki seçin ve trendi izleyin",
-  "healthProgressHint": "Her kayıt bir saksıyı (fiziksel bitkiyi) temsil eder. Aynı türden iki saksı varsa kayıt sırasında ayrı seçmeniz gerekir.",
+  "healthProgressSubtitle": "Bitki türü seçin; o türdeki tüm taramalar birlikte analiz edilir",
+  "healthProgressHint": "Aynı türden kaç saksı olursa olsun listede bir kez görünür. Grafik ve fotoğraflar o türün genel sağlık trendini gösterir.",
+  "healthProgressPickSpeciesTitle": "Bitki türü",
+  "healthProgressSelectSpecies": "Bir tür seçin",
   "healthProgressNoPlants": "Henüz uygun tarama yok. Geçmişe hem tür hem hastalık tanınmış bir tarama kaydedin.",
-  "healthProgressNoChartData": "Son 14 günde bu bitki için uygun tarama bulunamadı.",
+  "healthProgressNoChartData": "Son 14 günde bu tür için uygun tarama bulunamadı.",
   "healthProgressSelectPlant": "Bir bitki seçin",
   "healthProgressPickPlantTitle": "Bitki seçimi",
   "healthProgressChartTitle": "Son 14 gün",
+  "healthProgressPhotoTimelineTitle": "Tarama fotoğrafları",
+  "healthProgressPhotoTimelineHint": "Zaman içinde yaprak görünümünü karşılaştırmak için fotoğraflara dokunun.",
+  "healthProgressNoPhotoTimeline": "Bu bitki için kayıtlı fotoğraf yok. Yeni taramada bölge seçerek kaydedin.",
   "healthProgressLegendHealth": "Sağlık",
   "healthProgressLegendDisease": "Hastalık",
   "healthProgressPlant1": "Monstera",

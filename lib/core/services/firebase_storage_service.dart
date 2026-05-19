@@ -10,6 +10,18 @@ class FirebaseStorageService {
   final AppLogger _logger;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
+  /// Tarama fotoğrafı: `scans/{uid}/{scanId}.jpg` (Storage kurallarıyla uyumlu).
+  Future<String?> uploadScanImage({
+    required String ownerUid,
+    required String scanId,
+    required Uint8List jpegBytes,
+  }) async {
+    return uploadJpegBytes(
+      path: 'scans/$ownerUid/$scanId.jpg',
+      bytes: jpegBytes,
+    );
+  }
+
   Future<String?> uploadJpegBytes({
     required String path,
     required Uint8List bytes,

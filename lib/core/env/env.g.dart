@@ -18,4 +18,12 @@ final class _Env {
 
   static const String googleWebClientId =
       '817892606519-sb6s1hdd9btqffj5bqmajigju5k59q94.apps.googleusercontent.com';
+
+  static const String openAiApiKey = '';
+
+  static const String openAiModel = 'gpt-4o-mini';
+
+  static const String useAiDailyTipRaw = 'true';
+
+  static const String useMockDailyTipRaw = 'false';
 }

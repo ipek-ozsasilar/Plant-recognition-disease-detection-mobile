@@ -56,6 +56,8 @@
   "homeQuickAccessTitle": "Quick access",
   "homeHeroBadge": "AI",
   "homeTipTitle": "Tip of the day",
+  "homeTipLoading": "Preparing your personal tip…",
+  "homeTipAiBadge": "AI",
   "homeTipBody": "Use soft light so leaf veins are clear; heavy shade lowers confidence scores.",
   "homeTipBlight": "For blight risk, water in the morning without wetting leaves; improve airflow.",
   "homeTipBlightFor": "Your {species} scans often show blight: water in the morning and improve ventilation.",
@@ -137,9 +139,16 @@
   "scanSaveHistory": "Save to history",
   "scanSaveToPlantTitle": "Save to which plant?",
   "scanSavePickPlantSubtitle": "If you have more than one pot of the same species, pick the right plant—or add a new one.",
+  "scanSavePlantLastHealth": "Last health score: {score}",
+  "@scanSavePlantLastHealth": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
   "scanSaveNewPlant": "Save as new plant",
   "scanSaveToPlantCta": "Save plant",
   "scanSavedToPlantSuccess": "Scan saved to history.",
+  "scanSavedPhotoFailed": "Scan saved, but the photo could not be uploaded. Check Firebase Storage rules.",
   "scanExportPdfCta": "Share PDF report",
   "scanDownloadPdfCta": "Download PDF report",
   "scanPdfDownloadSuccess": "PDF downloaded.",
@@ -148,7 +157,13 @@
   "scanRetry": "Try again",
   "historyTitle": "Scan history",
   "historyHeadline": "Scan timeline",
-  "historySubtitle": "Browse your saved scans day by day, open details, and share PDF reports.",
+  "historySubtitle": "Scans are grouped by species. Multiple pots of the same type appear under one card.",
+  "historyScanCount": "{count} scans",
+  "@historyScanCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "historyEmpty": "No saved scans yet.",
   "historyOpen": "Details",
   "search": "Search",
@@ -218,13 +233,18 @@
   "languageEnglish": "English",
   "healthProgressTitle": "Health progress",
   "healthProgressHeadline": "Trend analysis",
-  "healthProgressSubtitle": "Pick a plant and track trends",
-  "healthProgressHint": "Each entry is one physical plant (pot). For two pots of the same species, choose separately when saving a scan.",
+  "healthProgressSubtitle": "Pick a species; all scans of that type are analyzed together",
+  "healthProgressHint": "The same species appears once in the list even if you have many pots. Charts show the overall health trend for that species.",
+  "healthProgressPickSpeciesTitle": "Species",
+  "healthProgressSelectSpecies": "Select a species",
   "healthProgressNoPlants": "No eligible scans yet. Save a scan to history with both species and disease recognized.",
-  "healthProgressNoChartData": "No eligible scans for this plant in the last 14 days.",
+  "healthProgressNoChartData": "No eligible scans for this species in the last 14 days.",
   "healthProgressSelectPlant": "Select a plant",
   "healthProgressPickPlantTitle": "Pick a plant",
   "healthProgressChartTitle": "Last 14 days",
+  "healthProgressPhotoTimelineTitle": "Scan photos",
+  "healthProgressPhotoTimelineHint": "Tap photos to compare how the plant looked over time.",
+  "healthProgressNoPhotoTimeline": "No photos for this plant yet. Select a region when saving a scan.",
   "healthProgressLegendHealth": "Health",
   "healthProgressLegendDisease": "Disease",
   "healthProgressPlant1": "Monstera",

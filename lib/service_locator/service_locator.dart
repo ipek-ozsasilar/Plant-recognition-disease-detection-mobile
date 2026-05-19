@@ -8,6 +8,8 @@ import 'package:bitirme_mobile/core/services/image_crop_service.dart';
 import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
 import 'package:bitirme_mobile/core/services/inference_api_service.dart';
 import 'package:bitirme_mobile/core/services/catalog_firestore_service.dart';
+import 'package:bitirme_mobile/core/services/daily_tip_api_service.dart';
+import 'package:bitirme_mobile/core/services/daily_tip_cache_service.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/services/pdf_file_save_service.dart';
 import 'package:bitirme_mobile/core/services/pdf_report_service.dart';
@@ -52,6 +54,15 @@ Future<void> setupServiceLocator() async {
     () => InferenceApiService(
       logger: sl<AppLogger>(),
       tflite: sl<TflitePlantInferenceService>(),
+    ),
+  );
+  sl.registerLazySingleton<DailyTipCacheService>(
+    () => DailyTipCacheService(logger: sl<AppLogger>()),
+  );
+  sl.registerLazySingleton<DailyTipApiService>(
+    () => DailyTipApiService(
+      logger: sl<AppLogger>(),
+      cache: sl<DailyTipCacheService>(),
     ),
   );
   sl.registerLazySingleton<GoogleSignInService>(

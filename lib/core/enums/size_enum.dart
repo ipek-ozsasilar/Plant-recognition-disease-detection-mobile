@@ -6,7 +6,13 @@ enum ImageSizesEnum {
   fullWidthBanner(320),
 
   /// Galeriden seçilen büyük görselleri belleğe göre sınırlamak için.
-  galleryPickMax(2048);
+  galleryPickMax(2048),
+
+  /// Geçmiş tarama detayı — fotoğraf için üst yükseklik sınırı.
+  historyScanDetailMaxHeight(320),
+
+  /// Kayıt bottom sheet — bitki kartı üst fotoğrafı.
+  plantPickerPhoto(140);
 
   const ImageSizesEnum(this.pixels);
   final double pixels;
@@ -79,6 +85,15 @@ enum WidgetSizesEnum {
   pdfBodyFont(12);
 
   const WidgetSizesEnum(this.value);
+  final double value;
+}
+
+/// Bottom sheet yükseklik oranları (0..1, ekran yüksekliğine göre).
+enum SheetSizesEnum {
+  modalMaxHeightFraction(0.72),
+  historyPhotoMaxScreenFraction(0.38);
+
+  const SheetSizesEnum(this.value);
   final double value;
 }
 

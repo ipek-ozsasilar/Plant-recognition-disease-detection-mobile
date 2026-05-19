@@ -11,6 +11,10 @@ import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/core/widgets/button/app_primary_button.dart';
+import 'package:bitirme_mobile/core/services/plant_scan_display_helper.dart';
+import 'package:bitirme_mobile/core/widgets/image/scan_detail_preview_image.dart';
+import 'package:bitirme_mobile/core/widgets/image/scan_image_viewer_dialog.dart';
+import 'package:bitirme_mobile/core/widgets/image/scan_thumbnail_image.dart';
 import 'package:bitirme_mobile/features/history/provider/history_firestore_provider.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
@@ -53,7 +57,11 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
                   ? null
                   : () => showSearch(
                       context: context,
-                      delegate: _ScanSearchDelegate(items, context, fmt),
+                      delegate: _ScanSearchDelegate(
+                        items,
+                        context,
+                        fmt,
+                      ),
                     ),
               icon: const Icon(Icons.search_rounded),
             ),
@@ -66,7 +74,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
         error: (err, stack) => _buildEmptyView(context, tt, pad),
         data: (items) => items.isEmpty
             ? _buildEmptyView(context, tt, pad)
-            : _buildGroupedListView(context, items, tt, pad, fmt),
+            : _buildGroupedListView(context, items, tt, pad, fmt, ref),
       ),
     );
   }
@@ -159,14 +167,10 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
     TextTheme tt,
     double pad,
     DateFormat fmt,
+    WidgetRef ref,
   ) {
-    // Tür ismine göre gruplama yapıyoruz
-    final Map<String, List<PlantScanModel>> grouped = {};
-    for (final PlantScanModel item in items) {
-      grouped.putIfAbsent(item.speciesLabel, () => []).add(item);
-    }
-
-    final List<String> speciesKeys = grouped.keys.toList();
+    final Map<String, List<PlantScanModel>> grouped = groupScansBySpeciesLabel(items);
+    final List<String> speciesKeys = sortedSpeciesLabelsFromGrouped(grouped, context);
 
     return ListView.builder(
       padding: EdgeInsets.fromLTRB(
@@ -175,7 +179,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
         pad,
         WidgetSizesEnum.bottomNavHeight.value,
       ),
-      itemCount: speciesKeys.length + 1, // +1 Headline için
+      itemCount: speciesKeys.length + 1,
       itemBuilder: (BuildContext context, int index) {
         if (index == 0) {
           return Column(
@@ -203,82 +207,91 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
 
         final String speciesKey = speciesKeys[index - 1];
         final List<PlantScanModel> speciesScans = grouped[speciesKey]!;
-        final PlantScanModel lastScan = speciesScans.first;
-
+        final String title = speciesScanGroupTitle(
+          context: context,
+          speciesLabel: speciesKey,
+        );
         return Padding(
           padding: EdgeInsets.only(bottom: WidgetSizesEnum.cardRadius.value),
           child: SoftElevationCard(
-            onTap: () => _openActions(context, lastScan),
+            onTap: null,
             padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: <Widget>[
-                    _ScanImage(imageUrl: lastScan.imageUrl),
-                    SizedBox(width: WidgetSizesEnum.cardRadius.value),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            // ID yerine yaygın isim (Common Name) kullanımı
-                            speciesClassDisplayForRaw(context, speciesKey),
-                            style: tt.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: context.palOnSurface,
-                            ),
-                          ),
-                          Text(
-                            '${speciesScans.length} ${context.l10n.profileScansDone}',
-                            style: tt.labelMedium?.copyWith(
-                              color: context.palPrimary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: WidgetSizesEnum.cardRadius.value),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: context.palPrimarySoftBg,
-                    borderRadius: BorderRadius.circular(12),
+              children: <Widget>[
+                Text(
+                  title,
+                  style: tt.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: context.palOnSurface,
                   ),
-                  child: Column(
-                    children: speciesScans.take(2).map((s) {
-                      final String dis = diseaseClassKeyToDisplay(
-                        s.diseaseKey,
-                        context.l10n,
-                      );
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
+                ),
+                SizedBox(height: WidgetSizesEnum.divider.value * 4),
+                Text(
+                  context.l10n.historyScanCount(speciesScans.length),
+                  style: tt.labelMedium?.copyWith(
+                    color: context.palPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
+                ...speciesScans.map((PlantScanModel s) {
+                  final String dis = diseaseClassKeyToDisplay(
+                    s.diseaseKey,
+                    context.l10n,
+                  );
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: WidgetSizesEnum.cardRadius.value * 0.55,
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(
+                        WidgetSizesEnum.chipRadius.value,
+                      ),
+                      onTap: () => _openActions(context, s),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: WidgetSizesEnum.divider.value * 6,
+                          horizontal: WidgetSizesEnum.divider.value * 4,
+                        ),
                         child: Row(
-                          children: [
-                            Icon(
-                              Icons.history,
-                              size: 14,
-                              color: context.palMuted,
+                          children: <Widget>[
+                            ScanThumbnailImage(
+                              imageUrl: s.imageUrl,
+                              size: WidgetSizesEnum.cardRadius.value * 1.75,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.75),
                             Expanded(
-                              child: Text(
-                                '${fmt.format(s.createdAt)}: $dis',
-                                style: tt.bodySmall?.copyWith(
-                                  color: context.palMuted,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    dis,
+                                    style: tt.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      color: context.palOnSurface,
+                                    ),
+                                  ),
+                                  Text(
+                                    fmt.format(s.createdAt),
+                                    style: tt.bodySmall?.copyWith(
+                                      color: context.palMuted,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
+                            ),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: context.palMuted,
                             ),
                           ],
                         ),
-                      );
-                    }).toList(),
-                  ),
-                ),
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -287,32 +300,50 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
     );
   }
 
-  Future<void> _openActions(BuildContext context, PlantScanModel e) async {
+  Future<void> _openActions(
+    BuildContext context,
+    PlantScanModel e,
+  ) async {
     await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
       builder: (BuildContext ctx) {
         final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
+        final double maxSheetHeight =
+            MediaQuery.sizeOf(ctx).height * SheetSizesEnum.modalMaxHeightFraction.value;
         final String diseaseLine = diseaseClassKeyToDisplay(
           e.diseaseKey,
           context.l10n,
         );
-        // Tür ID'si yerine okunabilir ismi alıyoruz
-        final String speciesName = speciesClassDisplayForRaw(
-          context,
-          e.speciesLabel,
+        final String title = speciesScanGroupTitle(
+          context: context,
+          speciesLabel: e.speciesLabel,
         );
 
         return SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(pad, pad, pad, pad),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxSheetHeight),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(pad, pad, pad, pad),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  if (e.imageUrl != null && e.imageUrl!.isNotEmpty)
+                    ScanDetailPreviewImage(
+                    imageUrl: e.imageUrl!,
+                    onTap: () => showScanImageViewerDialog(
+                      context: ctx,
+                      imageUrl: e.imageUrl,
+                      caption: title,
+                    ),
+                  ),
+                if (e.imageUrl != null && e.imageUrl!.isNotEmpty)
+                  SizedBox(height: WidgetSizesEnum.cardRadius.value),
                 Text(
-                  speciesName,
+                  title,
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: TextSizesEnum.subtitle.value,
@@ -451,6 +482,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
               ],
             ),
           ),
+          ),
         );
       },
     );
@@ -492,36 +524,12 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
   }
 }
 
-class _ScanImage extends StatelessWidget {
-  const _ScanImage({required this.imageUrl});
-  final String? imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: WidgetSizesEnum.cardRadius.value * 2.2,
-      height: WidgetSizesEnum.cardRadius.value * 2.2,
-      decoration: BoxDecoration(
-        color: context.palPrimary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
-        child: imageUrl != null
-            ? Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) =>
-                    Icon(Icons.eco_rounded, color: context.palPrimary),
-              )
-            : Icon(Icons.eco_rounded, color: context.palPrimary),
-      ),
-    );
-  }
-}
-
 class _ScanSearchDelegate extends SearchDelegate<PlantScanModel?> {
-  _ScanSearchDelegate(this.allItems, this.context, this.fmt);
+  _ScanSearchDelegate(
+    this.allItems,
+    this.context,
+    this.fmt,
+  );
   final List<PlantScanModel> allItems;
   final BuildContext context;
   final DateFormat fmt;
@@ -548,17 +556,17 @@ class _ScanSearchDelegate extends SearchDelegate<PlantScanModel?> {
   Widget buildSuggestions(BuildContext context) => _buildSearchResults();
 
   Widget _buildSearchResults() {
-    final results = allItems.where((element) {
-      final name = speciesClassDisplayForRaw(
+    final results = allItems.where((PlantScanModel element) {
+      final String species = speciesClassDisplayForRaw(
         context,
         element.speciesLabel,
       ).toLowerCase();
-      final disease = diseaseClassKeyToDisplay(
+      final String disease = diseaseClassKeyToDisplay(
         element.diseaseKey,
         context.l10n,
       ).toLowerCase();
-      return name.contains(query.toLowerCase()) ||
-          disease.contains(query.toLowerCase());
+      final String q = query.toLowerCase();
+      return species.contains(q) || disease.contains(q);
     }).toList();
 
     if (results.isEmpty) {
@@ -571,10 +579,12 @@ class _ScanSearchDelegate extends SearchDelegate<PlantScanModel?> {
       itemBuilder: (context, index) {
         final e = results[index];
         return ListTile(
-          leading: _ScanImage(imageUrl: e.imageUrl),
-          title: Text(speciesClassDisplayForRaw(context, e.speciesLabel)),
+          leading: ScanThumbnailImage(imageUrl: e.imageUrl),
+          title: Text(
+            speciesScanGroupTitle(context: context, speciesLabel: e.speciesLabel),
+          ),
           subtitle: Text(
-            '${diseaseClassKeyToDisplay(e.diseaseKey, context.l10n)} - ${fmt.format(e.createdAt)}',
+            '${diseaseClassKeyToDisplay(e.diseaseKey, context.l10n)} · ${fmt.format(e.createdAt)}',
           ),
           onTap: () => close(context, e),
         );

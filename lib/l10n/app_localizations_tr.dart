@@ -151,6 +151,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get homeTipTitle => 'Günün ipucu';
 
   @override
+  String get homeTipLoading => 'Kişisel ipucu hazırlanıyor…';
+
+  @override
+  String get homeTipAiBadge => 'AI';
+
+  @override
   String get homeTipBody =>
       'Yaprak damarları net görünsün diye yumuşak ışık kullanın; gölgede çekim güven skorunu düşürür.';
 
@@ -331,6 +337,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Aynı türden birden fazla saksınız varsa doğru bitkiyi seçin; yoksa yeni bitki ekleyin.';
 
   @override
+  String scanSavePlantLastHealth(int score) {
+    return 'Son sağlık skoru: $score';
+  }
+
+  @override
   String get scanSaveNewPlant => 'Yeni bitki olarak kaydet';
 
   @override
@@ -338,6 +349,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get scanSavedToPlantSuccess => 'Tarama geçmişe kaydedildi.';
+
+  @override
+  String get scanSavedPhotoFailed =>
+      'Tarama kaydedildi; fotoğraf yüklenemedi. Firebase Storage kurallarını kontrol edin.';
 
   @override
   String get scanExportPdfCta => 'PDF raporu paylaş';
@@ -366,7 +381,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get historySubtitle =>
-      'Kaydettiğin taramaları gün gün görüntüle, detaylara ve PDF rapora hızlıca ulaş.';
+      'Taramalar bitki türüne göre gruplanır. Aynı türden kaç saksı olursa olsun tek kartta listelenir.';
+
+  @override
+  String historyScanCount(int count) {
+    return '$count tarama';
+  }
 
   @override
   String get historyEmpty => 'Henüz kayıtlı tarama yok.';
@@ -574,11 +594,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get healthProgressHeadline => 'Trend analizi';
 
   @override
-  String get healthProgressSubtitle => 'Bitki seçin ve trendi izleyin';
+  String get healthProgressSubtitle =>
+      'Bitki türü seçin; o türdeki tüm taramalar birlikte analiz edilir';
 
   @override
   String get healthProgressHint =>
-      'Her kayıt bir saksıyı (fiziksel bitkiyi) temsil eder. Aynı türden iki saksı varsa kayıt sırasında ayrı seçmeniz gerekir.';
+      'Aynı türden kaç saksı olursa olsun listede bir kez görünür. Grafik ve fotoğraflar o türün genel sağlık trendini gösterir.';
+
+  @override
+  String get healthProgressPickSpeciesTitle => 'Bitki türü';
+
+  @override
+  String get healthProgressSelectSpecies => 'Bir tür seçin';
 
   @override
   String get healthProgressNoPlants =>
@@ -586,7 +613,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get healthProgressNoChartData =>
-      'Son 14 günde bu bitki için uygun tarama bulunamadı.';
+      'Son 14 günde bu tür için uygun tarama bulunamadı.';
 
   @override
   String get healthProgressSelectPlant => 'Bir bitki seçin';
@@ -596,6 +623,17 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get healthProgressChartTitle => 'Son 14 gün';
+
+  @override
+  String get healthProgressPhotoTimelineTitle => 'Tarama fotoğrafları';
+
+  @override
+  String get healthProgressPhotoTimelineHint =>
+      'Zaman içinde yaprak görünümünü karşılaştırmak için fotoğraflara dokunun.';
+
+  @override
+  String get healthProgressNoPhotoTimeline =>
+      'Bu bitki için kayıtlı fotoğraf yok. Yeni taramada bölge seçerek kaydedin.';
 
   @override
   String get healthProgressLegendHealth => 'Sağlık';

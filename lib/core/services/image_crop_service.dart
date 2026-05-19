@@ -115,4 +115,36 @@ class ImageCropService {
       nh: h,
     );
   }
+
+  /// Storage yükleme için JPEG baytları: önce bölge kırpımı, olmazsa tüm fotoğraf.
+  Uint8List? bytesForScanUpload({
+    required Uint8List imageBytes,
+    required List<PlantRegionModel> regions,
+    required int selectedRegionIndex,
+  }) {
+    if (regions.isNotEmpty) {
+      final int idx = selectedRegionIndex.clamp(0, regions.length - 1);
+      final Uint8List? cropped = cropRegion(
+        imageBytes: imageBytes,
+        region: regions[idx],
+      );
+      if (cropped != null) {
+        return cropped;
+      }
+    }
+    return encodeJpeg(imageBytes);
+  }
+
+  Uint8List? encodeJpeg(Uint8List imageBytes) {
+    try {
+      final img.Image? decoded = img.decodeImage(imageBytes);
+      if (decoded == null) {
+        return null;
+      }
+      return Uint8List.fromList(img.encodeJpg(decoded, quality: 92));
+    } catch (e, st) {
+      _logger.e('image_encode_jpeg', e, st);
+      return null;
+    }
+  }
 }

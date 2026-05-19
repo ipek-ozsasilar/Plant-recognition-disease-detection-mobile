@@ -368,6 +368,18 @@ abstract class AppLocalizations {
   /// **'Günün ipucu'**
   String get homeTipTitle;
 
+  /// No description provided for @homeTipLoading.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kişisel ipucu hazırlanıyor…'**
+  String get homeTipLoading;
+
+  /// No description provided for @homeTipAiBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'AI'**
+  String get homeTipAiBadge;
+
   /// No description provided for @homeTipBody.
   ///
   /// In tr, this message translates to:
@@ -674,6 +686,12 @@ abstract class AppLocalizations {
   /// **'Aynı türden birden fazla saksınız varsa doğru bitkiyi seçin; yoksa yeni bitki ekleyin.'**
   String get scanSavePickPlantSubtitle;
 
+  /// No description provided for @scanSavePlantLastHealth.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son sağlık skoru: {score}'**
+  String scanSavePlantLastHealth(int score);
+
   /// No description provided for @scanSaveNewPlant.
   ///
   /// In tr, this message translates to:
@@ -691,6 +709,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tarama geçmişe kaydedildi.'**
   String get scanSavedToPlantSuccess;
+
+  /// No description provided for @scanSavedPhotoFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama kaydedildi; fotoğraf yüklenemedi. Firebase Storage kurallarını kontrol edin.'**
+  String get scanSavedPhotoFailed;
 
   /// No description provided for @scanExportPdfCta.
   ///
@@ -743,8 +767,14 @@ abstract class AppLocalizations {
   /// No description provided for @historySubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Kaydettiğin taramaları gün gün görüntüle, detaylara ve PDF rapora hızlıca ulaş.'**
+  /// **'Taramalar bitki türüne göre gruplanır. Aynı türden kaç saksı olursa olsun tek kartta listelenir.'**
   String get historySubtitle;
+
+  /// No description provided for @historyScanCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} tarama'**
+  String historyScanCount(int count);
 
   /// No description provided for @historyEmpty.
   ///
@@ -1133,14 +1163,26 @@ abstract class AppLocalizations {
   /// No description provided for @healthProgressSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bitki seçin ve trendi izleyin'**
+  /// **'Bitki türü seçin; o türdeki tüm taramalar birlikte analiz edilir'**
   String get healthProgressSubtitle;
 
   /// No description provided for @healthProgressHint.
   ///
   /// In tr, this message translates to:
-  /// **'Her kayıt bir saksıyı (fiziksel bitkiyi) temsil eder. Aynı türden iki saksı varsa kayıt sırasında ayrı seçmeniz gerekir.'**
+  /// **'Aynı türden kaç saksı olursa olsun listede bir kez görünür. Grafik ve fotoğraflar o türün genel sağlık trendini gösterir.'**
   String get healthProgressHint;
+
+  /// No description provided for @healthProgressPickSpeciesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitki türü'**
+  String get healthProgressPickSpeciesTitle;
+
+  /// No description provided for @healthProgressSelectSpecies.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir tür seçin'**
+  String get healthProgressSelectSpecies;
 
   /// No description provided for @healthProgressNoPlants.
   ///
@@ -1151,7 +1193,7 @@ abstract class AppLocalizations {
   /// No description provided for @healthProgressNoChartData.
   ///
   /// In tr, this message translates to:
-  /// **'Son 14 günde bu bitki için uygun tarama bulunamadı.'**
+  /// **'Son 14 günde bu tür için uygun tarama bulunamadı.'**
   String get healthProgressNoChartData;
 
   /// No description provided for @healthProgressSelectPlant.
@@ -1171,6 +1213,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Son 14 gün'**
   String get healthProgressChartTitle;
+
+  /// No description provided for @healthProgressPhotoTimelineTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama fotoğrafları'**
+  String get healthProgressPhotoTimelineTitle;
+
+  /// No description provided for @healthProgressPhotoTimelineHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Zaman içinde yaprak görünümünü karşılaştırmak için fotoğraflara dokunun.'**
+  String get healthProgressPhotoTimelineHint;
+
+  /// No description provided for @healthProgressNoPhotoTimeline.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu bitki için kayıtlı fotoğraf yok. Yeni taramada bölge seçerek kaydedin.'**
+  String get healthProgressNoPhotoTimeline;
 
   /// No description provided for @healthProgressLegendHealth.
   ///

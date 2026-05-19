@@ -1,39 +1,45 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
-import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
+import 'package:bitirme_mobile/core/services/plant_scan_display_helper.dart';
 import 'package:bitirme_mobile/core/services/scan_identification_filter.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/health_progress/provider/health_progress_provider.dart';
 import 'package:bitirme_mobile/features/health_progress/sub_view/disease_progress_chart.dart';
+import 'package:bitirme_mobile/features/health_progress/sub_view/plant_scan_photo_timeline.dart';
 import 'package:bitirme_mobile/features/health_progress/view_model/health_progress_view_model.dart';
 import 'package:bitirme_mobile/features/history/provider/history_firestore_provider.dart';
-import 'package:bitirme_mobile/features/plants/provider/plants_provider.dart';
-import 'package:bitirme_mobile/models/plant_model.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
-/// Geçmiş taramalardan fiziksel bitki bazında hastalık trendi.
-class HealthProgressView extends ConsumerWidget {
+/// Geçmiş taramalardan bitki türü bazında hastalık trendi.
+class HealthProgressView extends ConsumerStatefulWidget {
   const HealthProgressView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HealthProgressView> createState() => _HealthProgressViewState();
+}
+
+class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
+  @override
+  Widget build(BuildContext context) {
     final HealthProgressViewModel vm = HealthProgressViewModel(ref: ref);
     final TextTheme tt = Theme.of(context).textTheme;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
-    final String? selected = ref.watch(healthProgressProvider).selectedPlantId;
+    final String? selected = ref.watch(healthProgressProvider).selectedSpeciesLabel;
     final AsyncValue<List<PlantScanModel>> historyAsync =
         ref.watch(historyFirestoreProvider);
-    ref.watch(plantsProvider);
 
     final Set<String> knownDiseases = knownDiseaseKeysFromList(
       sl<MlMetadataLoader>().diseaseClassKeys,
     );
+    final String loc = Localizations.localeOf(context).languageCode;
+    final DateFormat dayFmt = DateFormat.Md(loc);
 
     return Scaffold(
       backgroundColor: context.palSurface,
@@ -49,61 +55,52 @@ class HealthProgressView extends ConsumerWidget {
           pad,
           selected,
           vm,
-          plantOptions: <_PlantOption>[],
+          speciesOptions: <_SpeciesOption>[],
           chartScans: <PlantScanModel>[],
+          dayFmt: dayFmt,
         ),
         data: (List<PlantScanModel> all) {
           final List<PlantScanModel> identified = all
               .where(
                 (PlantScanModel s) =>
                     isScanFullyIdentified(s, knownDiseaseKeys: knownDiseases) &&
-                    s.plantId.isNotEmpty,
+                    s.speciesLabel.trim().isNotEmpty,
               )
-              .toList();
+              .toList(growable: false);
 
-          final Map<String, PlantModel> plantsById = <String, PlantModel>{
-            for (final PlantModel p in ref.read(plantsProvider).items) p.id: p,
-          };
+          final Map<String, List<PlantScanModel>> grouped =
+              groupScansBySpeciesLabel(identified);
+          final List<String> speciesKeys = sortedSpeciesLabelsFromGrouped(
+            grouped,
+            context,
+          );
 
-          final Map<String, _PlantOption> optionByPlantId = <String, _PlantOption>{};
-          for (final PlantScanModel scan in identified) {
-            final PlantModel? plant = plantsById[scan.plantId];
-            final String title = plant?.name ??
-                speciesClassDisplayForRaw(context, scan.speciesLabel);
-            final String? subtitle = plant != null
-                ? speciesClassDisplayForRaw(context, scan.speciesLabel)
-                : null;
-            optionByPlantId.putIfAbsent(
-              scan.plantId,
-              () => _PlantOption(
-                plantId: scan.plantId,
-                title: title,
-                subtitle: subtitle,
-              ),
-            );
-          }
-
-          final List<_PlantOption> options = optionByPlantId.values.toList()
-            ..sort(
-              (_PlantOption a, _PlantOption b) => a.title.compareTo(b.title),
-            );
+          final List<_SpeciesOption> options = speciesKeys
+              .map(
+                (String speciesLabel) => _SpeciesOption(
+                  speciesLabel: speciesLabel,
+                  title: speciesScanGroupTitle(
+                    context: context,
+                    speciesLabel: speciesLabel,
+                  ),
+                ),
+              )
+              .toList(growable: false);
 
           final String? effectiveSelected =
-              options.any((_PlantOption o) => o.plantId == selected)
+              options.any((_SpeciesOption o) => o.speciesLabel == selected)
                   ? selected
-                  : (options.isNotEmpty ? options.first.plantId : null);
+                  : (options.isNotEmpty ? options.first.speciesLabel : null);
 
           if (effectiveSelected != selected && effectiveSelected != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              vm.selectPlant(effectiveSelected);
+              vm.selectSpecies(effectiveSelected);
             });
           }
 
           final List<PlantScanModel> chartScans = effectiveSelected == null
               ? <PlantScanModel>[]
-              : identified
-                  .where((PlantScanModel s) => s.plantId == effectiveSelected)
-                  .toList();
+              : grouped[effectiveSelected] ?? <PlantScanModel>[];
 
           return _buildScroll(
             context,
@@ -111,8 +108,9 @@ class HealthProgressView extends ConsumerWidget {
             pad,
             effectiveSelected,
             vm,
-            plantOptions: options,
+            speciesOptions: options,
             chartScans: chartScans,
+            dayFmt: dayFmt,
           );
         },
       ),
@@ -125,8 +123,9 @@ class HealthProgressView extends ConsumerWidget {
     double pad,
     String? selected,
     HealthProgressViewModel vm, {
-    required List<_PlantOption> plantOptions,
+    required List<_SpeciesOption> speciesOptions,
     required List<PlantScanModel> chartScans,
+    required DateFormat dayFmt,
   }) {
     return ListView(
       padding: EdgeInsets.fromLTRB(
@@ -161,7 +160,7 @@ class HealthProgressView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                context.l10n.healthProgressPickPlantTitle,
+                context.l10n.healthProgressPickSpeciesTitle,
                 style: tt.titleMedium?.copyWith(
                   fontWeight: FontWeight.w900,
                   color: context.palOnSurface,
@@ -177,7 +176,7 @@ class HealthProgressView extends ConsumerWidget {
                 ),
               ),
               SizedBox(height: WidgetSizesEnum.cardRadius.value),
-              if (plantOptions.isEmpty)
+              if (speciesOptions.isEmpty)
                 Text(
                   context.l10n.healthProgressNoPlants,
                   style: tt.bodyMedium?.copyWith(
@@ -188,30 +187,16 @@ class HealthProgressView extends ConsumerWidget {
               else
                 DropdownButtonFormField<String>(
                   value: selected,
-                  hint: Text(context.l10n.healthProgressSelectPlant),
-                  items: plantOptions
+                  hint: Text(context.l10n.healthProgressSelectSpecies),
+                  items: speciesOptions
                       .map(
-                        (_PlantOption o) => DropdownMenuItem<String>(
-                          value: o.plantId,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(o.title),
-                              if (o.subtitle != null)
-                                Text(
-                                  o.subtitle!,
-                                  style: tt.bodySmall?.copyWith(
-                                    color: context.palMuted,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                            ],
-                          ),
+                        (_SpeciesOption o) => DropdownMenuItem<String>(
+                          value: o.speciesLabel,
+                          child: Text(o.title),
                         ),
                       )
                       .toList(),
-                  onChanged: vm.selectPlant,
+                  onChanged: vm.selectSpecies,
                 ),
             ],
           ),
@@ -230,7 +215,7 @@ class HealthProgressView extends ConsumerWidget {
                   color: context.palOnSurface,
                 ),
               ),
-              SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
+              SizedBox(height: WidgetSizesEnum.divider.value * 0.85),
               SizedBox(
                 height: WidgetSizesEnum.homeHeaderHeight.value * 1.15,
                 child: DiseaseProgressChart(
@@ -244,19 +229,48 @@ class HealthProgressView extends ConsumerWidget {
             ],
           ),
         ),
+        SizedBox(height: WidgetSizesEnum.cardRadius.value),
+        SoftElevationCard(
+          onTap: null,
+          padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 1.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                context.l10n.healthProgressPhotoTimelineTitle,
+                style: tt.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: context.palOnSurface,
+                ),
+              ),
+              SizedBox(height: WidgetSizesEnum.divider.value * 8),
+              Text(
+                context.l10n.healthProgressPhotoTimelineHint,
+                style: tt.bodySmall?.copyWith(
+                  color: context.palMuted,
+                  height: 1.35,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
+              PlantScanPhotoTimeline(
+                scans: chartScans,
+                dateFormat: dayFmt,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 }
 
-final class _PlantOption {
-  const _PlantOption({
-    required this.plantId,
+final class _SpeciesOption {
+  const _SpeciesOption({
+    required this.speciesLabel,
     required this.title,
-    required this.subtitle,
   });
 
-  final String plantId;
+  final String speciesLabel;
   final String title;
-  final String? subtitle;
 }

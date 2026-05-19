@@ -1,6 +1,7 @@
 import 'package:bitirme_mobile/core/constants/preference_keys.dart';
 import 'package:bitirme_mobile/core/enums/notification_follow_up_enum.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -71,6 +72,23 @@ class NotificationService {
     }
   }
 
+  /// İlk kez ana uygulamaya girildiğinde izin ister; varsayılan olarak bildirimleri açar.
+  Future<void> ensureInitialPermissionPrompt() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final bool done =
+          prefs.getBool(PreferenceKeys.notificationInitialPromptDone) ?? false;
+      if (done) {
+        return;
+      }
+      await prefs.setBool(PreferenceKeys.notificationInitialPromptDone, true);
+      await requestPermissions();
+      await setEnabled(true);
+    } catch (e, st) {
+      _logger.e('notifications_initial_prompt', e, st);
+    }
+  }
+
   Future<void> cancelAll() async {
     try {
       await _plugin.cancelAll();
@@ -109,17 +127,9 @@ class NotificationService {
       await cancelFollowUpForPlant(plantId);
 
       final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-      tz.TZDateTime when = tz.TZDateTime(
-        tz.local,
-        now.year,
-        now.month,
-        now.day,
-        _followUpHour,
-        _followUpMinute,
-      ).add(Duration(days: plan.delayDays));
-      if (when.isBefore(now)) {
-        when = when.add(const Duration(days: 1));
-      }
+      final tz.TZDateTime when = kDebugMode
+          ? now.add(Duration(minutes: plan.delayMinutesDebug))
+          : _followUpAtTenAmAfterDays(now: now, delayDays: plan.delayDays);
 
       const AndroidNotificationDetails android = AndroidNotificationDetails(
         'scan_follow_up',
@@ -145,6 +155,24 @@ class NotificationService {
     } catch (e, st) {
       _logger.e('notifications_schedule_follow_up', e, st);
     }
+  }
+
+  tz.TZDateTime _followUpAtTenAmAfterDays({
+    required tz.TZDateTime now,
+    required int delayDays,
+  }) {
+    tz.TZDateTime when = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      _followUpHour,
+      _followUpMinute,
+    ).add(Duration(days: delayDays));
+    if (when.isBefore(now)) {
+      when = when.add(const Duration(days: 1));
+    }
+    return when;
   }
 
   Future<void> showRiskAlert({

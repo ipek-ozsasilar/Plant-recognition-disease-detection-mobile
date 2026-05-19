@@ -214,18 +214,23 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       final String scanId = const Uuid().v4();
 
       String? imageUrl;
+      bool photoUploadFailed = false;
       final Uint8List? originalBytes = s.imageBytes;
-      if (originalBytes != null && s.regions.isNotEmpty) {
-        final int idx = s.selectedRegionIndex.clamp(0, s.regions.length - 1);
-        final Uint8List? cropped = sl<ImageCropService>().cropRegion(
+      if (originalBytes != null) {
+        final Uint8List? jpegBytes = sl<ImageCropService>().bytesForScanUpload(
           imageBytes: originalBytes,
-          region: s.regions[idx],
+          regions: s.regions,
+          selectedRegionIndex: s.selectedRegionIndex,
         );
-        if (cropped != null) {
-          imageUrl = await sl<FirebaseStorageService>().uploadJpegBytes(
-            path: 'users/$uid/scans/$scanId.jpg',
-            bytes: cropped,
+        if (jpegBytes != null) {
+          imageUrl = await sl<FirebaseStorageService>().uploadScanImage(
+            ownerUid: uid,
+            scanId: scanId,
+            jpegBytes: jpegBytes,
           );
+          photoUploadFailed = imageUrl == null || imageUrl.isEmpty;
+        } else {
+          photoUploadFailed = true;
         }
       }
 
@@ -268,8 +273,10 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       }
       showAppSnackBar(
         context,
-        message: context.l10n.scanSavedToPlantSuccess,
-        isError: false,
+        message: photoUploadFailed
+            ? context.l10n.scanSavedPhotoFailed
+            : context.l10n.scanSavedToPlantSuccess,
+        isError: photoUploadFailed,
       );
       context.pop();
     } catch (e, st) {

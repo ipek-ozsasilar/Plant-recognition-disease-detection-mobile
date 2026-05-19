@@ -1,6 +1,7 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
+import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
@@ -12,6 +13,7 @@ import 'package:bitirme_mobile/features/home/sub_view/home_quick_actions_row.dar
 import 'package:bitirme_mobile/features/home/sub_view/home_recent_strip.dart';
 import 'package:bitirme_mobile/features/home/sub_view/home_scan_hero_card.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
+import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +30,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sl<NotificationService>().ensureInitialPermissionPrompt();
+    });
   }
 
   @override

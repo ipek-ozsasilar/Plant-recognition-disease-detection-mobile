@@ -48,6 +48,18 @@ class PlantScanModel extends Equatable {
     };
   }
 
+  static String? _imageUrlFromJson(Map<String, dynamic> json) {
+    final String? direct = json['imageUrl'] as String?;
+    if (direct != null && direct.trim().isNotEmpty) {
+      return direct.trim();
+    }
+    final String? legacy = json['photoUrl'] as String?;
+    if (legacy != null && legacy.trim().isNotEmpty) {
+      return legacy.trim();
+    }
+    return null;
+  }
+
   static PlantScanModel? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
@@ -72,7 +84,7 @@ class PlantScanModel extends Equatable {
       diseaseKey: json['diseaseKey'] as String? ?? '',
       diseaseConfidence: (json['diseaseConfidence'] as num?)?.toDouble() ?? 0,
       healthScore: (json['healthScore'] as num?)?.toInt() ?? 0,
-      imageUrl: json['imageUrl'] as String?,
+      imageUrl: _imageUrlFromJson(json),
       notes: json['notes'] as String?,
     );
   }

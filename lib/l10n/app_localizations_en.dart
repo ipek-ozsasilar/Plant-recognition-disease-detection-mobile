@@ -150,6 +150,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTipTitle => 'Tip of the day';
 
   @override
+  String get homeTipLoading => 'Preparing your personal tip…';
+
+  @override
+  String get homeTipAiBadge => 'AI';
+
+  @override
   String get homeTipBody =>
       'Use soft light so leaf veins are clear; heavy shade lowers confidence scores.';
 
@@ -329,6 +335,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'If you have more than one pot of the same species, pick the right plant—or add a new one.';
 
   @override
+  String scanSavePlantLastHealth(int score) {
+    return 'Last health score: $score';
+  }
+
+  @override
   String get scanSaveNewPlant => 'Save as new plant';
 
   @override
@@ -336,6 +347,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanSavedToPlantSuccess => 'Scan saved to history.';
+
+  @override
+  String get scanSavedPhotoFailed =>
+      'Scan saved, but the photo could not be uploaded. Check Firebase Storage rules.';
 
   @override
   String get scanExportPdfCta => 'Share PDF report';
@@ -364,7 +379,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historySubtitle =>
-      'Browse your saved scans day by day, open details, and share PDF reports.';
+      'Scans are grouped by species. Multiple pots of the same type appear under one card.';
+
+  @override
+  String historyScanCount(int count) {
+    return '$count scans';
+  }
 
   @override
   String get historyEmpty => 'No saved scans yet.';
@@ -572,11 +592,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get healthProgressHeadline => 'Trend analysis';
 
   @override
-  String get healthProgressSubtitle => 'Pick a plant and track trends';
+  String get healthProgressSubtitle =>
+      'Pick a species; all scans of that type are analyzed together';
 
   @override
   String get healthProgressHint =>
-      'Each entry is one physical plant (pot). For two pots of the same species, choose separately when saving a scan.';
+      'The same species appears once in the list even if you have many pots. Charts show the overall health trend for that species.';
+
+  @override
+  String get healthProgressPickSpeciesTitle => 'Species';
+
+  @override
+  String get healthProgressSelectSpecies => 'Select a species';
 
   @override
   String get healthProgressNoPlants =>
@@ -584,7 +611,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthProgressNoChartData =>
-      'No eligible scans for this plant in the last 14 days.';
+      'No eligible scans for this species in the last 14 days.';
 
   @override
   String get healthProgressSelectPlant => 'Select a plant';
@@ -594,6 +621,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get healthProgressChartTitle => 'Last 14 days';
+
+  @override
+  String get healthProgressPhotoTimelineTitle => 'Scan photos';
+
+  @override
+  String get healthProgressPhotoTimelineHint =>
+      'Tap photos to compare how the plant looked over time.';
+
+  @override
+  String get healthProgressNoPhotoTimeline =>
+      'No photos for this plant yet. Select a region when saving a scan.';
 
   @override
   String get healthProgressLegendHealth => 'Health';

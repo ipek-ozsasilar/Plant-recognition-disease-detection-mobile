@@ -19,6 +19,19 @@ class $AssetsColorsGen {
   List<String> get values => [colors];
 }
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/Roboto-Bold.ttf
+  String get robotoBold => 'assets/fonts/Roboto-Bold.ttf';
+
+  /// File path: assets/fonts/Roboto-Regular.ttf
+  String get robotoRegular => 'assets/fonts/Roboto-Regular.ttf';
+
+  /// List of all assets
+  List<String> get values => [robotoBold, robotoRegular];
+}
+
 class $AssetsMlGen {
   const $AssetsMlGen();
 
@@ -55,5 +68,6 @@ class Assets {
   const Assets._();
 
   static const $AssetsColorsGen colors = $AssetsColorsGen();
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsMlGen ml = $AssetsMlGen();
 }
