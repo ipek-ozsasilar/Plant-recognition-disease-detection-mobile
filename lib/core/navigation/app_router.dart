@@ -14,7 +14,6 @@ import 'package:bitirme_mobile/features/onboarding/onboarding_view.dart';
 import 'package:bitirme_mobile/features/plants/plants_add_view.dart';
 import 'package:bitirme_mobile/features/plants/plants_detail_view.dart';
 import 'package:bitirme_mobile/features/plants/plants_list_view.dart';
-import 'package:bitirme_mobile/features/profile/profile_notifications_view.dart';
 import 'package:bitirme_mobile/features/profile/profile_personal_info_view.dart';
 import 'package:bitirme_mobile/features/profile/profile_privacy_view.dart';
 import 'package:bitirme_mobile/features/profile/profile_view.dart';
@@ -125,11 +124,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
             path: 'personal-info',
             builder: (BuildContext context, GoRouterState state) =>
                 const ProfilePersonalInfoView(),
-          ),
-          GoRoute(
-            path: 'notifications',
-            builder: (BuildContext context, GoRouterState state) =>
-                const ProfileNotificationsView(),
           ),
           GoRoute(
             path: 'privacy',

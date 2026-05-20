@@ -72,6 +72,8 @@ dependencies:
   pdf: ^3.11.3
   # PDF önizleme / paylaşım
   printing: ^5.13.4
+  # İndirilen PDF / content URI açma (bildirim tıklaması)
+  open_filex: ^4.7.0
 
 dev_dependencies:
   flutter_test:

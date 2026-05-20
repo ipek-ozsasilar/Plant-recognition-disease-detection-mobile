@@ -52,7 +52,12 @@ app.*.map.json
 .env
 .env.local
 .env.*.local
+backend/.env
 !.env.example
+!backend/.env.example
+
+# envied üretimi — .env içindeki anahtarları gömer (build_runner sonrası)
+lib/core/env/env.g.dart
 
 # Test coverage çıktıları
 coverage/
@@ -78,3 +83,8 @@ coverage/
 
 # Android NDK / CMake önbelleği
 **/.cxx/
+
+# Python backend (sanal ortam)
+backend/.venv/
+backend/**/__pycache__/
+*.pyc

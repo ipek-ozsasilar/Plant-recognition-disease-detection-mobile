@@ -7,12 +7,14 @@ class ProfileStatPill extends StatelessWidget {
     required this.value,
     required this.label,
     required this.accent,
+    this.icon = Icons.eco_rounded,
     super.key,
   });
 
   final String value;
   final String label;
   final Color accent;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class ProfileStatPill extends StatelessWidget {
               color: accent.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
             ),
-            child: Icon(Icons.eco_rounded, color: accent, size: IconSizesEnum.medium.value),
+            child: Icon(icon, color: accent, size: IconSizesEnum.medium.value),
           ),
           SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.75),
           Expanded(

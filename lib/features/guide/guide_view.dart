@@ -18,13 +18,6 @@ class GuideView extends StatelessWidget {
       appBar: appBarWithConditionalBack(
         context: context,
         title: Text(context.l10n.guideTitle),
-        actions: <Widget>[
-          IconButton(
-            tooltip: context.l10n.search,
-            onPressed: null,
-            icon: const Icon(Icons.search_rounded),
-          ),
-        ],
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
@@ -52,6 +45,12 @@ class GuideView extends StatelessWidget {
             ),
           ),
           SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.25),
+          _GuideTextCard(
+            title: context.l10n.guideSectionApp,
+            body: context.l10n.guideAppTips,
+            icon: Icons.dashboard_customize_rounded,
+          ),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value),
           _GuideHeroCard(
             title: context.l10n.guideSectionPhoto,
             body: context.l10n.guidePhotoTips,
@@ -74,6 +73,66 @@ class GuideView extends StatelessWidget {
           ),
           SizedBox(height: WidgetSizesEnum.cardRadius.value),
           _InfoBanner(text: context.l10n.guidesFooterInfo),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tam metin gösterimi (uygulama bölümleri vb.).
+class _GuideTextCard extends StatelessWidget {
+  const _GuideTextCard({
+    required this.title,
+    required this.body,
+    required this.icon,
+  });
+
+  final String title;
+  final String body;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme tt = Theme.of(context).textTheme;
+    return SoftElevationCard(
+      onTap: null,
+      padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 1.05),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  title,
+                  style: tt.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: context.palOnSurface,
+                  ),
+                ),
+              ),
+              Container(
+                width: WidgetSizesEnum.cardRadius.value * 1.85,
+                height: WidgetSizesEnum.cardRadius.value * 1.85,
+                decoration: BoxDecoration(
+                  color: context.palPrimarySoftBg,
+                  borderRadius: BorderRadius.circular(
+                    WidgetSizesEnum.chipRadius.value,
+                  ),
+                ),
+                child: Icon(icon, color: context.palPrimary),
+              ),
+            ],
+          ),
+          SizedBox(height: WidgetSizesEnum.divider.value * 8),
+          Text(
+            body,
+            style: tt.bodyMedium?.copyWith(
+              color: context.palMuted,
+              height: 1.45,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );

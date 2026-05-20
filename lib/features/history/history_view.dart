@@ -16,6 +16,7 @@ import 'package:bitirme_mobile/core/widgets/image/scan_detail_preview_image.dart
 import 'package:bitirme_mobile/core/widgets/image/scan_image_viewer_dialog.dart';
 import 'package:bitirme_mobile/core/widgets/image/scan_thumbnail_image.dart';
 import 'package:bitirme_mobile/features/history/provider/history_firestore_provider.dart';
+import 'package:bitirme_mobile/l10n/app_localizations.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/services.dart';
@@ -490,15 +491,18 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
 
   Future<void> _downloadPdf(PlantScanModel record) async {
     setState(() => _downloadingPdf = true);
+    final AppLocalizations l10n = context.l10n;
     try {
       final PdfReportService pdf = sl<PdfReportService>();
       final Uint8List bytes = await pdf.buildScanReportPdf(
         record: record,
-        l10n: context.l10n,
+        l10n: l10n,
       );
       await sl<PdfFileSaveService>().saveToDevice(
         bytes: bytes,
         filename: 'phytoguard_report.pdf',
+        notificationTitle: l10n.pdfDownloadNotificationTitle,
+        notificationBodyForFile: l10n.pdfDownloadNotificationBody,
       );
       if (mounted) {
         showAppSnackBar(

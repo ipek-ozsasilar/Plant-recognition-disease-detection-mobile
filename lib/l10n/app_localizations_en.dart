@@ -359,11 +359,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanDownloadPdfCta => 'Download PDF report';
 
   @override
-  String get scanPdfDownloadSuccess => 'PDF downloaded.';
+  String get scanPdfDownloadSuccess => 'PDF saved to Downloads folder.';
 
   @override
   String get scanPdfDownloadError =>
       'Could not save the PDF. Please try again.';
+
+  @override
+  String get pdfDownloadNotificationTitle => 'Download complete';
+
+  @override
+  String pdfDownloadNotificationBody(String fileName) {
+    return '$fileName downloaded to your device.';
+  }
 
   @override
   String get scanDone => 'Done';
@@ -403,7 +411,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guidesSubtitle =>
-      'Tips for better results: photo quality, multi-plant usage, and disease scan recommendations.';
+      'Every saved scan goes to History. History and Health progress group by species; you can optionally pick a pot when saving.';
+
+  @override
+  String get guideSectionApp => 'App sections';
+
+  @override
+  String get guideAppTips =>
+      'History: all your scans listed by plant species.\n\nHealth progress: 14/30-day chart and scan photos for the species you select.\n\nMy plants: if you pick a pot when saving, that plant\'s score and scans update.\n\nScan: species first, then disease; results are saved to History automatically.';
 
   @override
   String get guidesEssentialsBadge => 'Essentials';
@@ -422,7 +437,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guidesFooterInfo =>
-      'Tip: Lighting, sharpness, and framing a single plant affect confidence the most.';
+      'After saving, a low health score may schedule follow-up reminders on your device. Manage notifications in Settings.';
 
   @override
   String get guideSectionPhoto => 'Good photos';
@@ -443,7 +458,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideDiseaseTips =>
-      'Symptoms should be visible on the upper leaf surface; blur lowers confidence.';
+      'Keep symptoms clear on leaves; blur lowers confidence. Pick the correct pot when saving to update My plants tracking.';
 
   @override
   String get settingsTitle => 'Settings';
@@ -452,7 +467,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHeadline => 'Preferences';
 
   @override
-  String get settingsSubtitle => 'Manage language and theme preferences.';
+  String get settingsSubtitle =>
+      'Manage language, theme, and notification preferences.';
+
+  @override
+  String get settingsNotificationsSection => 'Notifications';
+
+  @override
+  String get settingsAnalysisSection => 'Analysis & data';
+
+  @override
+  String get settingsAnalysisBody =>
+      'Species and disease detection runs on your device. Your scans and photos are stored securely under your account.';
+
+  @override
+  String get settingsShortcutsSection => 'Shortcuts';
 
   @override
   String get profileTitle => 'Profile';
@@ -473,10 +502,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileHelpCenter => 'Help center';
 
   @override
-  String get profilePlantsTracked => 'plants tracked';
+  String get profilePlantsTracked => 'Saved plants';
 
   @override
-  String get profileScansDone => 'scans';
+  String get profileScansDone => 'Total scans';
+
+  @override
+  String get profileStatsHint =>
+      'Left: pots in My plants. Right: all scans saved to your account.';
 
   @override
   String get profileChangePhotoHint => 'Tap to change photo';
@@ -494,13 +527,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePhotoUploadError => 'Could not upload profile photo.';
 
   @override
-  String get profileDisplayNameLabel => 'Display name';
+  String get profilePersonalInfoIntro =>
+      'Update your name and contact details. If you change email, a verification link will be sent.';
 
   @override
-  String get profileDisplayNameRequired => 'Display name is required';
+  String get profileDisplayNameLabel => 'Full name';
+
+  @override
+  String get profileDisplayNameRequired => 'Name is required';
 
   @override
   String get profileEmailLabel => 'Email';
+
+  @override
+  String get profileEmailRequired => 'Email is required';
+
+  @override
+  String get profileEmailVerificationSent =>
+      'A verification link was sent to your new email. Check your inbox.';
+
+  @override
+  String get profileEmailGoogleHint =>
+      'You signed in with Google; email comes from your Google account and cannot be changed here.';
 
   @override
   String get profilePhoneLabel => 'Phone (optional)';
@@ -554,12 +602,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutTitle => 'About';
 
   @override
-  String get aboutBody =>
-      'This app was developed for a graduation thesis. Predictions are not medical diagnoses; seek expert advice for severely damaged plants.';
+  String get aboutSubtitle =>
+      'Plant species and disease analysis — graduation thesis mobile app';
 
   @override
-  String get aboutThesis =>
-      'See project documentation for the thesis and TÜBİTAK report.';
+  String get aboutPurposeTitle => 'What it does';
+
+  @override
+  String get aboutPurposeBody =>
+      'PhytoGuard uses AI to estimate plant species and disease risk from photos. You can track scans over time, review history grouped by species, and monitor health trends on charts.';
+
+  @override
+  String get aboutFeaturesTitle => 'Features';
+
+  @override
+  String get aboutFeaturesBody =>
+      'Photo-based species and disease analysis (mostly on-device)\nScan history with species grouping and photos\nHealth progress: 14/30-day disease trend charts\nMy plants: pot-level records linked to scans\nFollow-up notifications when health score is low\nPDF report download and share\nCare guide, daily tips, and multi-plant region selection';
+
+  @override
+  String get aboutHowItWorksTitle => 'How it works';
+
+  @override
+  String get aboutHowItWorksBody =>
+      'During a scan, species is predicted first, then disease class. Every saved scan is stored under your account; you can optionally pick which pot it belongs to. Data syncs via Firebase; scan photos are kept in cloud storage.';
+
+  @override
+  String get aboutThesisTitle => 'Graduation project';
+
+  @override
+  String get aboutThesisBody =>
+      'This app was built as a university graduation thesis. Machine learning models, the mobile UI, and cloud backend are the main deliverables of the project.';
+
+  @override
+  String get aboutDisclaimerTitle => 'Important notice';
+
+  @override
+  String get aboutDisclaimerBody =>
+      'Results are informational only, not a definitive diagnosis or treatment plan. Consult an agricultural expert for serious plant health issues.';
+
+  @override
+  String get aboutVersionLabel => 'Version 1.0.0';
 
   @override
   String get themeLabel => 'Theme';
@@ -612,6 +694,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get healthProgressNoChartData =>
       'No eligible scans for this species in the last 14 days.';
+
+  @override
+  String healthProgressNoChartDataDays(int days) {
+    return 'No eligible scans for this species in the last $days days.';
+  }
+
+  @override
+  String healthProgressChartTitleDays(int days) {
+    return 'Last $days days';
+  }
+
+  @override
+  String get healthProgressChartDays14 => '14 days';
+
+  @override
+  String get healthProgressChartDays30 => '30 days';
 
   @override
   String get healthProgressSelectPlant => 'Select a plant';
@@ -743,9 +841,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataLabel => 'Data and privacy';
-
-  @override
-  String get apiHint => 'Server URL is configured via .env.';
 
   @override
   String get inferenceDiseaseBacterial => 'Bacterial';
@@ -926,6 +1021,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorAuthOperationNotAllowed =>
       'This sign-in method is disabled. Enable it in the Firebase console.';
+
+  @override
+  String get errorAuthRequiresRecentLogin =>
+      'For security, sign out and sign in again, then change your email.';
 
   @override
   String get diseaseDetailTitle => 'Disease details';

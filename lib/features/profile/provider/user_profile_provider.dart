@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:bitirme_mobile/core/services/firebase_auth_error_mapper.dart';
 import 'package:bitirme_mobile/core/services/user_profile_firestore_service.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
+import 'package:bitirme_mobile/l10n/app_localizations.dart';
 import 'package:bitirme_mobile/models/user_profile_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,32 +31,61 @@ final class UserProfileNotifier extends AsyncNotifier<UserProfileModel?> {
 
   Future<String?> updatePersonalInfo({
     required String displayName,
+    required String email,
     required String phone,
     required String bio,
+    required AppLocalizations l10n,
   }) async {
     final String? uid = ref.read(authProvider).uid;
     if (uid == null) {
       return null;
     }
     try {
-      await _service.updateProfile(
-        uid: uid,
-        displayName: displayName.trim(),
-        phone: phone.trim(),
-        bio: bio.trim(),
-      );
       final User? user = FirebaseAuth.instance.currentUser;
-      if (user != null && displayName.trim().isNotEmpty) {
-        await user.updateDisplayName(displayName.trim());
+      final UserProfileModel? profile = await _service.getProfile(uid: uid);
+      final bool isGoogleAccount = profile?.authProvider == 'google';
+      final String trimmedName = displayName.trim();
+      final String trimmedEmail = email.trim();
+      final String trimmedPhone = phone.trim();
+      final String trimmedBio = bio.trim();
+
+      if (trimmedEmail.isEmpty) {
+        return l10n.errorAuthInvalidEmail;
+      }
+
+      if (user != null) {
+        final String currentEmail = user.email ?? '';
+        if (trimmedEmail != currentEmail) {
+          if (isGoogleAccount) {
+            return l10n.profileEmailGoogleHint;
+          }
+          await user.verifyBeforeUpdateEmail(trimmedEmail);
+        }
+        if (trimmedName.isNotEmpty) {
+          await user.updateDisplayName(trimmedName);
+        }
         await user.reload();
       }
+
+      await _service.updateProfile(
+        uid: uid,
+        displayName: trimmedName,
+        email: trimmedEmail,
+        phone: trimmedPhone,
+        bio: trimmedBio,
+      );
+
+      final String sessionEmail =
+          user?.email ?? trimmedEmail;
       await ref.read(authProvider.notifier).saveSession(
             uid: uid,
-            email: ref.read(authProvider).email ?? '',
-            name: displayName.trim(),
+            email: sessionEmail,
+            name: trimmedName,
           );
       await reload();
       return null;
+    } on FirebaseAuthException catch (e) {
+      return firebaseAuthCodeToMessage(e.code, l10n);
     } catch (e) {
       return e.toString();
     }

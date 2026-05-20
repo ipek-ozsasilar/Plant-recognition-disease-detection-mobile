@@ -2,6 +2,7 @@
 abstract final class PreferenceKeys {
   static const String languageSelectionDone = 'language_selection_done';
   static const String localeCode = 'app_locale_code';
+  static const String themeMode = 'theme_mode';
   static const String notificationsEnabled = 'notifications_enabled';
 
   /// İlk ana sayfa girişinde sistem bildirim izni istendi mi.
@@ -10,4 +11,7 @@ abstract final class PreferenceKeys {
   static const String dailyTipCacheDay = 'daily_tip_cache_day';
   static const String dailyTipCacheLocale = 'daily_tip_cache_locale';
   static const String dailyTipCacheBody = 'daily_tip_cache_body';
+
+  /// Son indirilen PDF; bildirime basınca açılır.
+  static const String pendingPdfOpenUri = 'pending_pdf_open_uri';
 }

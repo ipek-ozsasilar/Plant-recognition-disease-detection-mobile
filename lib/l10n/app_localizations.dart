@@ -521,7 +521,7 @@ abstract class AppLocalizations {
   /// No description provided for @moreTileAboutDesc.
   ///
   /// In tr, this message translates to:
-  /// **'Proje ve sorumluluk reddi'**
+  /// **'Proje tanıtımı ve uyarılar'**
   String get moreTileAboutDesc;
 
   /// No description provided for @navHome.
@@ -731,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanPdfDownloadSuccess.
   ///
   /// In tr, this message translates to:
-  /// **'PDF indirildi.'**
+  /// **'PDF İndirilenler klasörüne kaydedildi.'**
   String get scanPdfDownloadSuccess;
 
   /// No description provided for @scanPdfDownloadError.
@@ -739,6 +739,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'PDF kaydedilemedi. Lütfen tekrar deneyin.'**
   String get scanPdfDownloadError;
+
+  /// No description provided for @pdfDownloadNotificationTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'İndirme tamamlandı'**
+  String get pdfDownloadNotificationTitle;
+
+  /// No description provided for @pdfDownloadNotificationBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{fileName} telefona indirildi.'**
+  String pdfDownloadNotificationBody(String fileName);
 
   /// No description provided for @scanDone.
   ///
@@ -809,8 +821,20 @@ abstract class AppLocalizations {
   /// No description provided for @guidesSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Taramalarınızı \'Geçmiş\' (hızlı tanı) veya \'Evimdeki Bitkiler\' (takip) olarak kaydedebilirsiniz. \'Geçmiş\' her taramayı tarih sırasına göre saklarken; \'Evimdeki Bitkiler\' saksı bazlı sağlık gelişimini izlemenizi ve hatırlatıcılar almanızı sağlar.'**
+  /// **'Kaydettiğiniz her tarama Geçmiş\'e eklenir. Geçmiş ve Sağlık ilerlemesi bitki türüne göre gruplanır; kayıt sırasında isterseniz hangi saksıya ait olduğunu seçebilirsiniz.'**
   String get guidesSubtitle;
+
+  /// No description provided for @guideSectionApp.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama bölümleri'**
+  String get guideSectionApp;
+
+  /// No description provided for @guideAppTips.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nBitkilerim: kayıt sırasında saksı seçerseniz o bitkinin skoru ve taramaları güncellenir.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş\'e yazılır.'**
+  String get guideAppTips;
 
   /// No description provided for @guidesEssentialsBadge.
   ///
@@ -845,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidesFooterInfo.
   ///
   /// In tr, this message translates to:
-  /// **'Önemli: \'Bitkiyi kaydet\' seçeneğini kullanırsanız, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.'**
+  /// **'Kayıt sonrası sağlık skoru düşükse cihazınızda takip hatırlatıcısı planlanabilir. Bildirimleri Ayarlar\'dan yönetin.'**
   String get guidesFooterInfo;
 
   /// No description provided for @guideSectionPhoto.
@@ -881,7 +905,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideDiseaseTips.
   ///
   /// In tr, this message translates to:
-  /// **'Hastalık tespit edildiğinde \'Bitkiyi kaydet\' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.'**
+  /// **'Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek Bitkilerim takibini günceller.'**
   String get guideDiseaseTips;
 
   /// No description provided for @settingsTitle.
@@ -899,8 +923,32 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Dil ve tema tercihlerini buradan yönetin.'**
+  /// **'Dil, tema ve bildirim tercihlerinizi buradan yönetin.'**
   String get settingsSubtitle;
+
+  /// No description provided for @settingsNotificationsSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler'**
+  String get settingsNotificationsSection;
+
+  /// No description provided for @settingsAnalysisSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Analiz ve veri'**
+  String get settingsAnalysisSection;
+
+  /// No description provided for @settingsAnalysisBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tür ve hastalık tahmini cihazınızda çalışır. Taramalarınız ve fotoğraflarınız hesabınıza bağlı olarak güvenli şekilde saklanır.'**
+  String get settingsAnalysisBody;
+
+  /// No description provided for @settingsShortcutsSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kısayollar'**
+  String get settingsShortcutsSection;
 
   /// No description provided for @profileTitle.
   ///
@@ -941,14 +989,20 @@ abstract class AppLocalizations {
   /// No description provided for @profilePlantsTracked.
   ///
   /// In tr, this message translates to:
-  /// **'takip edilen bitki'**
+  /// **'Kayıtlı bitki'**
   String get profilePlantsTracked;
 
   /// No description provided for @profileScansDone.
   ///
   /// In tr, this message translates to:
-  /// **'tarama'**
+  /// **'Toplam tarama'**
   String get profileScansDone;
+
+  /// No description provided for @profileStatsHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sol: Bitkilerim’de eklediğiniz saksı sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.'**
+  String get profileStatsHint;
 
   /// No description provided for @profileChangePhotoHint.
   ///
@@ -980,16 +1034,22 @@ abstract class AppLocalizations {
   /// **'Profil fotoğrafı yüklenemedi.'**
   String get profilePhotoUploadError;
 
+  /// No description provided for @profilePersonalInfoIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz. E-posta değişikliğinde doğrulama bağlantısı gönderilir.'**
+  String get profilePersonalInfoIntro;
+
   /// No description provided for @profileDisplayNameLabel.
   ///
   /// In tr, this message translates to:
-  /// **'Görünen ad'**
+  /// **'Ad soyad'**
   String get profileDisplayNameLabel;
 
   /// No description provided for @profileDisplayNameRequired.
   ///
   /// In tr, this message translates to:
-  /// **'Görünen ad gerekli'**
+  /// **'Ad gerekli'**
   String get profileDisplayNameRequired;
 
   /// No description provided for @profileEmailLabel.
@@ -997,6 +1057,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'E-posta'**
   String get profileEmailLabel;
+
+  /// No description provided for @profileEmailRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta gerekli'**
+  String get profileEmailRequired;
+
+  /// No description provided for @profileEmailVerificationSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni e-posta adresinize doğrulama bağlantısı gönderildi. Gelen kutunuzu kontrol edin.'**
+  String get profileEmailVerificationSent;
+
+  /// No description provided for @profileEmailGoogleHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google ile giriş yaptığınız için e-posta Google hesabınızdan gelir; buradan değiştirilemez.'**
+  String get profileEmailGoogleHint;
 
   /// No description provided for @profilePhoneLabel.
   ///
@@ -1088,17 +1166,77 @@ abstract class AppLocalizations {
   /// **'Hakkında'**
   String get aboutTitle;
 
-  /// No description provided for @aboutBody.
+  /// No description provided for @aboutSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bu uygulama bitirme tezi kapsamında geliştirilmiştir. Tahminler tıbbi teşhis değildir; ciddi zarar gören bitkiler için uzman görüşü önerilir.'**
-  String get aboutBody;
+  /// **'Bitki türü ve hastalık analizi — bitirme tezi mobil uygulaması'**
+  String get aboutSubtitle;
 
-  /// No description provided for @aboutThesis.
+  /// No description provided for @aboutPurposeTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Tez ve TÜBİTAK raporu için proje dokümantasyonuna bakınız.'**
-  String get aboutThesis;
+  /// **'Ne işe yarar?'**
+  String get aboutPurposeTitle;
+
+  /// No description provided for @aboutPurposeBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'PhytoGuard, bitkilerinizin fotoğrafından yapay zeka destekli tür ve hastalık tahmini sunar. Ev bitkilerinizi veya bahçe bitkilerinizi düzenli taramalarla izleyebilir, geçmiş sonuçlara bakabilir ve sağlık trendini grafiklerle takip edebilirsiniz.'**
+  String get aboutPurposeBody;
+
+  /// No description provided for @aboutFeaturesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Özellikler'**
+  String get aboutFeaturesTitle;
+
+  /// No description provided for @aboutFeaturesBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğrafla tür ve hastalık analizi (tahmin büyük ölçüde cihazınızda çalışır)\nTarama geçmişi; türe göre gruplanmış kayıtlar ve fotoğraflar\nSağlık ilerlemesi: son 14 veya 30 günlük hastalık trendi grafiği\nBitkilerim: saksı bazında kayıt ve tarama bağlama\nHatırlatıcı bildirimler (düşük sağlık skorunda takip)\nPDF analiz raporu indirme ve paylaşma\nRehber, günün ipucu ve çoklu bitki bölge seçimi'**
+  String get aboutFeaturesBody;
+
+  /// No description provided for @aboutHowItWorksTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Nasıl çalışır?'**
+  String get aboutHowItWorksTitle;
+
+  /// No description provided for @aboutHowItWorksBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama akışında önce bitki türü, ardından hastalık sınıfı değerlendirilir. Kaydettiğiniz her tarama hesabınıza yazılır; isteğe bağlı olarak hangi saksıya ait olduğunu seçebilirsiniz. Veriler Firebase ile güvenli şekilde senkronize edilir; tarama fotoğrafları bulut depolamada saklanır.'**
+  String get aboutHowItWorksBody;
+
+  /// No description provided for @aboutThesisTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitirme projesi'**
+  String get aboutThesisTitle;
+
+  /// No description provided for @aboutThesisBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu uygulama bir üniversite bitirme tezi çalışması olarak geliştirilmiştir. Makine öğrenmesi modelleri, mobil arayüz ve bulut altyapısı tezin uygulama bileşenlerini oluşturur.'**
+  String get aboutThesisBody;
+
+  /// No description provided for @aboutDisclaimerTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Önemli uyarı'**
+  String get aboutDisclaimerTitle;
+
+  /// No description provided for @aboutDisclaimerBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sunulan sonuçlar bilgilendirme amaçlıdır; kesin teşhis veya tedavi önerisi değildir. Ciddi bitki hastalığı şüphesinde tarım uzmanı veya bahçıvan desteği alınmalıdır.'**
+  String get aboutDisclaimerBody;
+
+  /// No description provided for @aboutVersionLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sürüm 1.0.0'**
+  String get aboutVersionLabel;
 
   /// No description provided for @themeLabel.
   ///
@@ -1195,6 +1333,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Son 14 günde bu tür için uygun tarama bulunamadı.'**
   String get healthProgressNoChartData;
+
+  /// No description provided for @healthProgressNoChartDataDays.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son {days} günde bu tür için uygun tarama bulunamadı.'**
+  String healthProgressNoChartDataDays(int days);
+
+  /// No description provided for @healthProgressChartTitleDays.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son {days} gün'**
+  String healthProgressChartTitleDays(int days);
+
+  /// No description provided for @healthProgressChartDays14.
+  ///
+  /// In tr, this message translates to:
+  /// **'14 gün'**
+  String get healthProgressChartDays14;
+
+  /// No description provided for @healthProgressChartDays30.
+  ///
+  /// In tr, this message translates to:
+  /// **'30 gün'**
+  String get healthProgressChartDays30;
 
   /// No description provided for @healthProgressSelectPlant.
   ///
@@ -1423,12 +1585,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Veri ve gizlilik'**
   String get dataLabel;
-
-  /// No description provided for @apiHint.
-  ///
-  /// In tr, this message translates to:
-  /// **'Sunucu adresi .env içinden yapılandırılır.'**
-  String get apiHint;
 
   /// No description provided for @inferenceDiseaseBacterial.
   ///
@@ -1777,6 +1933,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Bu giriş yöntemi şu an kullanılamıyor. Firebase konsolunda etkinleştirin.'**
   String get errorAuthOperationNotAllowed;
+
+  /// No description provided for @errorAuthRequiresRecentLogin.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güvenlik için çıkış yapıp tekrar giriş yapın, ardından e-postayı değiştirin.'**
+  String get errorAuthRequiresRecentLogin;
 
   /// No description provided for @diseaseDetailTitle.
   ///

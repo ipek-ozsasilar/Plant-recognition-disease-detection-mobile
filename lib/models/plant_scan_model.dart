@@ -32,6 +32,10 @@ class PlantScanModel extends Equatable {
   final String? imageUrl;
   final String? notes;
 
+  /// Firebase Storage / Firestore `imageUrl` veya `photoUrl` dolu mu.
+  bool get hasStoredImage =>
+      imageUrl != null && imageUrl!.trim().isNotEmpty;
+
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'id': id,

@@ -248,7 +248,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bitkilerinizin sağlık ve hastalık trendlerini görün';
 
   @override
-  String get moreTileAboutDesc => 'Proje ve sorumluluk reddi';
+  String get moreTileAboutDesc => 'Proje tanıtımı ve uyarılar';
 
   @override
   String get navHome => 'Ana';
@@ -361,11 +361,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanDownloadPdfCta => 'PDF raporu indir';
 
   @override
-  String get scanPdfDownloadSuccess => 'PDF indirildi.';
+  String get scanPdfDownloadSuccess => 'PDF İndirilenler klasörüne kaydedildi.';
 
   @override
   String get scanPdfDownloadError =>
       'PDF kaydedilemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get pdfDownloadNotificationTitle => 'İndirme tamamlandı';
+
+  @override
+  String pdfDownloadNotificationBody(String fileName) {
+    return '$fileName telefona indirildi.';
+  }
 
   @override
   String get scanDone => 'Tamam';
@@ -405,7 +413,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guidesSubtitle =>
-      'Taramalarınızı \'Geçmiş\' (hızlı tanı) veya \'Evimdeki Bitkiler\' (takip) olarak kaydedebilirsiniz. \'Geçmiş\' her taramayı tarih sırasına göre saklarken; \'Evimdeki Bitkiler\' saksı bazlı sağlık gelişimini izlemenizi ve hatırlatıcılar almanızı sağlar.';
+      'Kaydettiğiniz her tarama Geçmiş\'e eklenir. Geçmiş ve Sağlık ilerlemesi bitki türüne göre gruplanır; kayıt sırasında isterseniz hangi saksıya ait olduğunu seçebilirsiniz.';
+
+  @override
+  String get guideSectionApp => 'Uygulama bölümleri';
+
+  @override
+  String get guideAppTips =>
+      'Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nBitkilerim: kayıt sırasında saksı seçerseniz o bitkinin skoru ve taramaları güncellenir.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş\'e yazılır.';
 
   @override
   String get guidesEssentialsBadge => 'Temel';
@@ -424,7 +439,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guidesFooterInfo =>
-      'Önemli: \'Bitkiyi kaydet\' seçeneğini kullanırsanız, bitkinizin sağlık durumu kötüleştiğinde size otomatik hatırlatıcılar gönderilir.';
+      'Kayıt sonrası sağlık skoru düşükse cihazınızda takip hatırlatıcısı planlanabilir. Bildirimleri Ayarlar\'dan yönetin.';
 
   @override
   String get guideSectionPhoto => 'İyi fotoğraf';
@@ -445,7 +460,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guideDiseaseTips =>
-      'Hastalık tespit edildiğinde \'Bitkiyi kaydet\' diyerek 1, 3 veya 5 gün sonraki takip hatırlatıcılarını aktif edebilirsiniz.';
+      'Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek Bitkilerim takibini günceller.';
 
   @override
   String get settingsTitle => 'Ayarlar';
@@ -454,7 +469,21 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsHeadline => 'Tercihler';
 
   @override
-  String get settingsSubtitle => 'Dil ve tema tercihlerini buradan yönetin.';
+  String get settingsSubtitle =>
+      'Dil, tema ve bildirim tercihlerinizi buradan yönetin.';
+
+  @override
+  String get settingsNotificationsSection => 'Bildirimler';
+
+  @override
+  String get settingsAnalysisSection => 'Analiz ve veri';
+
+  @override
+  String get settingsAnalysisBody =>
+      'Tür ve hastalık tahmini cihazınızda çalışır. Taramalarınız ve fotoğraflarınız hesabınıza bağlı olarak güvenli şekilde saklanır.';
+
+  @override
+  String get settingsShortcutsSection => 'Kısayollar';
 
   @override
   String get profileTitle => 'Profil';
@@ -475,10 +504,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileHelpCenter => 'Yardım merkezi';
 
   @override
-  String get profilePlantsTracked => 'takip edilen bitki';
+  String get profilePlantsTracked => 'Kayıtlı bitki';
 
   @override
-  String get profileScansDone => 'tarama';
+  String get profileScansDone => 'Toplam tarama';
+
+  @override
+  String get profileStatsHint =>
+      'Sol: Bitkilerim’de eklediğiniz saksı sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.';
 
   @override
   String get profileChangePhotoHint => 'Fotoğrafı değiştirmek için dokunun';
@@ -496,13 +529,28 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profilePhotoUploadError => 'Profil fotoğrafı yüklenemedi.';
 
   @override
-  String get profileDisplayNameLabel => 'Görünen ad';
+  String get profilePersonalInfoIntro =>
+      'Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz. E-posta değişikliğinde doğrulama bağlantısı gönderilir.';
 
   @override
-  String get profileDisplayNameRequired => 'Görünen ad gerekli';
+  String get profileDisplayNameLabel => 'Ad soyad';
+
+  @override
+  String get profileDisplayNameRequired => 'Ad gerekli';
 
   @override
   String get profileEmailLabel => 'E-posta';
+
+  @override
+  String get profileEmailRequired => 'E-posta gerekli';
+
+  @override
+  String get profileEmailVerificationSent =>
+      'Yeni e-posta adresinize doğrulama bağlantısı gönderildi. Gelen kutunuzu kontrol edin.';
+
+  @override
+  String get profileEmailGoogleHint =>
+      'Google ile giriş yaptığınız için e-posta Google hesabınızdan gelir; buradan değiştirilemez.';
 
   @override
   String get profilePhoneLabel => 'Telefon (isteğe bağlı)';
@@ -556,12 +604,46 @@ class AppLocalizationsTr extends AppLocalizations {
   String get aboutTitle => 'Hakkında';
 
   @override
-  String get aboutBody =>
-      'Bu uygulama bitirme tezi kapsamında geliştirilmiştir. Tahminler tıbbi teşhis değildir; ciddi zarar gören bitkiler için uzman görüşü önerilir.';
+  String get aboutSubtitle =>
+      'Bitki türü ve hastalık analizi — bitirme tezi mobil uygulaması';
 
   @override
-  String get aboutThesis =>
-      'Tez ve TÜBİTAK raporu için proje dokümantasyonuna bakınız.';
+  String get aboutPurposeTitle => 'Ne işe yarar?';
+
+  @override
+  String get aboutPurposeBody =>
+      'PhytoGuard, bitkilerinizin fotoğrafından yapay zeka destekli tür ve hastalık tahmini sunar. Ev bitkilerinizi veya bahçe bitkilerinizi düzenli taramalarla izleyebilir, geçmiş sonuçlara bakabilir ve sağlık trendini grafiklerle takip edebilirsiniz.';
+
+  @override
+  String get aboutFeaturesTitle => 'Özellikler';
+
+  @override
+  String get aboutFeaturesBody =>
+      'Fotoğrafla tür ve hastalık analizi (tahmin büyük ölçüde cihazınızda çalışır)\nTarama geçmişi; türe göre gruplanmış kayıtlar ve fotoğraflar\nSağlık ilerlemesi: son 14 veya 30 günlük hastalık trendi grafiği\nBitkilerim: saksı bazında kayıt ve tarama bağlama\nHatırlatıcı bildirimler (düşük sağlık skorunda takip)\nPDF analiz raporu indirme ve paylaşma\nRehber, günün ipucu ve çoklu bitki bölge seçimi';
+
+  @override
+  String get aboutHowItWorksTitle => 'Nasıl çalışır?';
+
+  @override
+  String get aboutHowItWorksBody =>
+      'Tarama akışında önce bitki türü, ardından hastalık sınıfı değerlendirilir. Kaydettiğiniz her tarama hesabınıza yazılır; isteğe bağlı olarak hangi saksıya ait olduğunu seçebilirsiniz. Veriler Firebase ile güvenli şekilde senkronize edilir; tarama fotoğrafları bulut depolamada saklanır.';
+
+  @override
+  String get aboutThesisTitle => 'Bitirme projesi';
+
+  @override
+  String get aboutThesisBody =>
+      'Bu uygulama bir üniversite bitirme tezi çalışması olarak geliştirilmiştir. Makine öğrenmesi modelleri, mobil arayüz ve bulut altyapısı tezin uygulama bileşenlerini oluşturur.';
+
+  @override
+  String get aboutDisclaimerTitle => 'Önemli uyarı';
+
+  @override
+  String get aboutDisclaimerBody =>
+      'Sunulan sonuçlar bilgilendirme amaçlıdır; kesin teşhis veya tedavi önerisi değildir. Ciddi bitki hastalığı şüphesinde tarım uzmanı veya bahçıvan desteği alınmalıdır.';
+
+  @override
+  String get aboutVersionLabel => 'Sürüm 1.0.0';
 
   @override
   String get themeLabel => 'Tema';
@@ -614,6 +696,22 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get healthProgressNoChartData =>
       'Son 14 günde bu tür için uygun tarama bulunamadı.';
+
+  @override
+  String healthProgressNoChartDataDays(int days) {
+    return 'Son $days günde bu tür için uygun tarama bulunamadı.';
+  }
+
+  @override
+  String healthProgressChartTitleDays(int days) {
+    return 'Son $days gün';
+  }
+
+  @override
+  String get healthProgressChartDays14 => '14 gün';
+
+  @override
+  String get healthProgressChartDays30 => '30 gün';
 
   @override
   String get healthProgressSelectPlant => 'Bir bitki seçin';
@@ -746,9 +844,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dataLabel => 'Veri ve gizlilik';
-
-  @override
-  String get apiHint => 'Sunucu adresi .env içinden yapılandırılır.';
 
   @override
   String get inferenceDiseaseBacterial => 'Bakteriyel';
@@ -932,6 +1027,10 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get errorAuthOperationNotAllowed =>
       'Bu giriş yöntemi şu an kullanılamıyor. Firebase konsolunda etkinleştirin.';
+
+  @override
+  String get errorAuthRequiresRecentLogin =>
+      'Güvenlik için çıkış yapıp tekrar giriş yapın, ardından e-postayı değiştirin.';
 
   @override
   String get diseaseDetailTitle => 'Hastalık detayları';

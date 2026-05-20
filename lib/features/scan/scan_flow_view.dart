@@ -114,20 +114,13 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     );
   }
 
-  bool _isInferenceUnrecognized({
-    required InferenceResultModel species,
-    required InferenceResultModel disease,
-  }) {
+  bool _isSpeciesUnrecognized(InferenceResultModel species) {
     final double spUnit = confidenceToUnit(species.top.confidence);
     final String spRaw = (species.top.rawKey ?? species.top.label).trim();
     final bool spIsSink = sl<SinkSpeciesClassRepository>().snapshot.contains(spRaw);
-    final bool spUnrecognized = spIsSink
+    return spIsSink
         ? spUnit < InferenceThresholdEnum.unrecognizedSink.value
         : spUnit < InferenceThresholdEnum.unrecognizedGlobal.value;
-    final double disUnit = confidenceToUnit(disease.top.confidence);
-    final bool disUnrecognized =
-        disUnit < InferenceThresholdEnum.unrecognizedGlobal.value;
-    return spUnrecognized || disUnrecognized;
   }
 
   Future<PlantModel?> _resolvePlantForSave({
@@ -178,7 +171,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       return;
     }
 
-    if (_isInferenceUnrecognized(species: sp, disease: dis)) {
+    if (_isSpeciesUnrecognized(sp)) {
       showAppSnackBar(
         context,
         message: context.l10n.errorSpeciesUnknownSave,
@@ -356,15 +349,18 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       return;
     }
     setState(() => _downloadingPdf = true);
+    final AppLocalizations l10n = context.l10n;
     try {
       final PdfReportService pdf = sl<PdfReportService>();
       final Uint8List bytes = await pdf.buildScanReportPdf(
         record: record,
-        l10n: context.l10n,
+        l10n: l10n,
       );
       await sl<PdfFileSaveService>().saveToDevice(
         bytes: bytes,
         filename: 'phytoguard_report.pdf',
+        notificationTitle: l10n.pdfDownloadNotificationTitle,
+        notificationBodyForFile: l10n.pdfDownloadNotificationBody,
       );
       if (mounted) {
         showAppSnackBar(

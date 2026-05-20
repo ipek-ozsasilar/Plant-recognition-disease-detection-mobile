@@ -10,11 +10,56 @@ class PlantScansFirestoreService {
   final AppLogger _logger;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  /// Görseli olmayan eski tarama kayıtlarını siler (Geçmiş / Sağlık ilerlemesi aynı koleksiyonu kullanır).
+  Future<int> purgeScansWithoutImage({required String ownerUid}) async {
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snap = await _db
+          .collection(FirestoreCollectionEnum.scans.value)
+          .where('ownerUid', isEqualTo: ownerUid)
+          .get();
+
+      final List<DocumentReference<Map<String, dynamic>>> toDelete =
+          <DocumentReference<Map<String, dynamic>>>[];
+
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snap.docs) {
+        final PlantScanModel? scan = PlantScanModel.fromJson(
+          <String, dynamic>{...doc.data(), 'id': doc.id},
+        );
+        if (scan != null && !scan.hasStoredImage) {
+          toDelete.add(doc.reference);
+        }
+      }
+
+      if (toDelete.isEmpty) {
+        return 0;
+      }
+
+      const int batchLimit = 400;
+      for (int i = 0; i < toDelete.length; i += batchLimit) {
+        final WriteBatch batch = _db.batch();
+        final int end = (i + batchLimit < toDelete.length)
+            ? i + batchLimit
+            : toDelete.length;
+        for (int j = i; j < end; j++) {
+          batch.delete(toDelete[j]);
+        }
+        await batch.commit();
+      }
+
+      _logger.i('Purged ${toDelete.length} scans without image for $ownerUid');
+      return toDelete.length;
+    } catch (e, st) {
+      _logger.e('Firestore purge scans without image', e, st);
+      return 0;
+    }
+  }
+
   /// Kullanıcının son taramalarını listeler (limitli).
   Future<List<PlantScanModel>> listUserScans({
     required String ownerUid,
     int limit = 60,
   }) async {
+    await purgeScansWithoutImage(ownerUid: ownerUid);
     try {
       final QuerySnapshot<Map<String, dynamic>> snap = await _db
           .collection(FirestoreCollectionEnum.scans.value)
@@ -25,7 +70,9 @@ class PlantScansFirestoreService {
       return snap.docs
           .map(
             (QueryDocumentSnapshot<Map<String, dynamic>> d) =>
-                PlantScanModel.fromJson(d.data()),
+                PlantScanModel.fromJson(
+                  <String, dynamic>{...d.data(), 'id': d.id},
+                ),
           )
           .whereType<PlantScanModel>()
           .toList(growable: false);
@@ -40,6 +87,7 @@ class PlantScansFirestoreService {
     required String plantId,
     int limit = 60,
   }) async {
+    await purgeScansWithoutImage(ownerUid: ownerUid);
     try {
       final QuerySnapshot<Map<String, dynamic>> snap = await _db
           .collection(FirestoreCollectionEnum.scans.value)
@@ -51,7 +99,9 @@ class PlantScansFirestoreService {
       return snap.docs
           .map(
             (QueryDocumentSnapshot<Map<String, dynamic>> d) =>
-                PlantScanModel.fromJson(d.data()),
+                PlantScanModel.fromJson(
+                  <String, dynamic>{...d.data(), 'id': d.id},
+                ),
           )
           .whereType<PlantScanModel>()
           .toList(growable: false);

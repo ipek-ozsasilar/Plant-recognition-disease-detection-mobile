@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:bitirme_mobile/core/constants/preference_keys.dart';
 import 'package:bitirme_mobile/core/enums/notification_follow_up_enum.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
+import 'package:bitirme_mobile/core/services/pdf_file_save_service.dart';
+import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +21,7 @@ class NotificationService {
 
   static const int _followUpIdBase = 12000;
   static const int _riskAlertId = 11002;
+  static const int _pdfDownloadCompleteId = 11003;
   static const int _followUpHour = 10;
   static const int _followUpMinute = 0;
 
@@ -34,9 +40,92 @@ class NotificationService {
       const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
       const InitializationSettings settings =
           InitializationSettings(android: androidInit, iOS: iosInit);
-      await _plugin.initialize(settings);
+      await _plugin.initialize(
+        settings,
+        onDidReceiveNotificationResponse: _handleNotificationResponse,
+      );
+      await _openPdfIfLaunchedFromNotification();
+      await _drainPendingPdfOpen();
     } catch (e, st) {
       _logger.e('notifications_init', e, st);
+    }
+  }
+
+  void _handleNotificationResponse(NotificationResponse response) {
+    final String? payload = response.payload;
+    if (payload != null && _isPdfOpenPayload(payload)) {
+      unawaited(_openPdfPayload(payload));
+      return;
+    }
+    unawaited(_drainPendingPdfOpen());
+  }
+
+  Future<void> _openPdfIfLaunchedFromNotification() async {
+    try {
+      final NotificationAppLaunchDetails? launchDetails =
+          await _plugin.getNotificationAppLaunchDetails();
+      if (launchDetails?.didNotificationLaunchApp != true) {
+        return;
+      }
+      final String? payload = launchDetails?.notificationResponse?.payload;
+      if (payload != null && _isPdfOpenPayload(payload)) {
+        await _openPdfPayload(payload);
+      }
+    } catch (e, st) {
+      _logger.e('notifications_pdf_launch', e, st);
+    }
+  }
+
+  Future<void> _rememberPendingPdf(String uri) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString(PreferenceKeys.pendingPdfOpenUri, uri);
+    } catch (e, st) {
+      _logger.e('notifications_pdf_remember', e, st);
+    }
+  }
+
+  Future<void> _clearPendingPdf() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove(PreferenceKeys.pendingPdfOpenUri);
+    } catch (e, st) {
+      _logger.e('notifications_pdf_clear', e, st);
+    }
+  }
+
+  Future<void> _drainPendingPdfOpen() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? uri = prefs.getString(PreferenceKeys.pendingPdfOpenUri);
+      if (uri == null || uri.isEmpty || !_isPdfOpenPayload(uri)) {
+        return;
+      }
+      await _openPdfPayload(uri);
+    } catch (e, st) {
+      _logger.e('notifications_pdf_drain', e, st);
+    }
+  }
+
+  bool _isPdfOpenPayload(String payload) {
+    return payload.startsWith('content://') ||
+        payload.endsWith('.pdf') ||
+        payload.contains(RegExp(r'[\\/]Download[\\/]'));
+  }
+
+  Future<void> _openPdfPayload(String payload) async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    try {
+      await sl<PdfFileSaveService>().openSavedPdf(payload);
+      await _clearPendingPdf();
+    } catch (e, st) {
+      _logger.e('notifications_pdf_open', e, st);
     }
   }
 
@@ -173,6 +262,45 @@ class NotificationService {
       when = when.add(const Duration(days: 1));
     }
     return when;
+  }
+
+  /// PDF İndirilenler'e kaydedildiğinde sistem çubuğu bildirimi (Android).
+  Future<void> showPdfDownloadComplete({
+    required String savedPath,
+    required String fileName,
+    String? title,
+    String? body,
+  }) async {
+    try {
+      final String resolvedTitle = title ?? 'Download complete';
+      final String resolvedBody =
+          body ?? '$fileName saved to Downloads folder.';
+
+      final AndroidNotificationDetails android = AndroidNotificationDetails(
+        'pdf_downloads',
+        'File downloads',
+        channelDescription: 'PDF report saved to device',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        autoCancel: true,
+        category: AndroidNotificationCategory.status,
+      );
+      const DarwinNotificationDetails ios = DarwinNotificationDetails();
+      final NotificationDetails details =
+          NotificationDetails(android: android, iOS: ios);
+
+      await _rememberPendingPdf(savedPath);
+      await _plugin.show(
+        _pdfDownloadCompleteId,
+        resolvedTitle,
+        resolvedBody,
+        details,
+        payload: savedPath,
+      );
+    } catch (e, st) {
+      _logger.e('notifications_pdf_download', e, st);
+    }
   }
 
   Future<void> showRiskAlert({

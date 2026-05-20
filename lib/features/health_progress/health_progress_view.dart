@@ -1,3 +1,4 @@
+import 'package:bitirme_mobile/core/enums/chart_window_enum.dart';
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
@@ -7,6 +8,7 @@ import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/health_progress/provider/health_progress_provider.dart';
+import 'package:bitirme_mobile/features/health_progress/provider/health_progress_state.dart';
 import 'package:bitirme_mobile/features/health_progress/sub_view/disease_progress_chart.dart';
 import 'package:bitirme_mobile/features/health_progress/sub_view/plant_scan_photo_timeline.dart';
 import 'package:bitirme_mobile/features/health_progress/view_model/health_progress_view_model.dart';
@@ -31,7 +33,9 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
     final HealthProgressViewModel vm = HealthProgressViewModel(ref: ref);
     final TextTheme tt = Theme.of(context).textTheme;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
-    final String? selected = ref.watch(healthProgressProvider).selectedSpeciesLabel;
+    final HealthProgressState progressState = ref.watch(healthProgressProvider);
+    final String? selected = progressState.selectedSpeciesLabel;
+    final ChartWindowEnum chartWindow = progressState.chartWindow;
     final AsyncValue<List<PlantScanModel>> historyAsync =
         ref.watch(historyFirestoreProvider);
 
@@ -39,7 +43,7 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
       sl<MlMetadataLoader>().diseaseClassKeys,
     );
     final String loc = Localizations.localeOf(context).languageCode;
-    final DateFormat dayFmt = DateFormat.Md(loc);
+    final DateFormat dayFmt = DateFormat('d MMM', loc);
 
     return Scaffold(
       backgroundColor: context.palSurface,
@@ -55,6 +59,7 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
           pad,
           selected,
           vm,
+          chartWindow: chartWindow,
           speciesOptions: <_SpeciesOption>[],
           chartScans: <PlantScanModel>[],
           dayFmt: dayFmt,
@@ -108,6 +113,7 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
             pad,
             effectiveSelected,
             vm,
+            chartWindow: chartWindow,
             speciesOptions: options,
             chartScans: chartScans,
             dayFmt: dayFmt,
@@ -123,6 +129,7 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
     double pad,
     String? selected,
     HealthProgressViewModel vm, {
+    required ChartWindowEnum chartWindow,
     required List<_SpeciesOption> speciesOptions,
     required List<PlantScanModel> chartScans,
     required DateFormat dayFmt,
@@ -208,18 +215,55 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                context.l10n.healthProgressChartTitle,
-                style: tt.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: context.palOnSurface,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: WidgetSizesEnum.divider.value * 2,
+                        right: WidgetSizesEnum.cardRadius.value * 0.5,
+                      ),
+                      child: Text(
+                        context.l10n.healthProgressChartTitleDays(chartWindow.days),
+                        style: tt.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: context.palOnSurface,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SegmentedButton<ChartWindowEnum>(
+                    segments: <ButtonSegment<ChartWindowEnum>>[
+                      ButtonSegment<ChartWindowEnum>(
+                        value: ChartWindowEnum.fourteen,
+                        label: Text(context.l10n.healthProgressChartDays14),
+                      ),
+                      ButtonSegment<ChartWindowEnum>(
+                        value: ChartWindowEnum.thirty,
+                        label: Text(context.l10n.healthProgressChartDays30),
+                      ),
+                    ],
+                    selected: <ChartWindowEnum>{chartWindow},
+                    onSelectionChanged: (Set<ChartWindowEnum> value) {
+                      if (value.isNotEmpty) {
+                        vm.selectChartWindow(value.first);
+                      }
+                    },
+                    style: SegmentedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: WidgetSizesEnum.divider.value * 0.85),
+              SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
               SizedBox(
                 height: WidgetSizesEnum.homeHeaderHeight.value * 1.15,
                 child: DiseaseProgressChart(
+                  key: ValueKey<ChartWindowEnum>(chartWindow),
                   scans: chartScans,
+                  chartWindow: chartWindow,
                   primary: context.palPrimary,
                   accent: context.palAccent,
                   outline: context.palOutline,

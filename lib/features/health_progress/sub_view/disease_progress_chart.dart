@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 class DiseaseProgressChart extends StatelessWidget {
   const DiseaseProgressChart({
     required this.scans,
+    required this.chartWindow,
     required this.primary,
     required this.accent,
     required this.outline,
@@ -21,23 +22,25 @@ class DiseaseProgressChart extends StatelessWidget {
   });
 
   final List<PlantScanModel> scans;
+  final ChartWindowEnum chartWindow;
   final Color primary;
   final Color accent;
   final Color outline;
   final Color muted;
 
-  static const ChartWindowEnum _window = ChartWindowEnum.healthProgress;
-
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = context.l10n;
     final String loc = Localizations.localeOf(context).languageCode;
-    final DateFormat dayFmt = DateFormat.Md(loc);
+    final DateFormat axisDateFmt = DateFormat('d MMM', loc);
+
+    final int windowDays = chartWindow.days;
+    final Set<int> xTickDays = _xAxisTickDays(windowDays);
 
     if (scans.isEmpty) {
       return Center(
         child: Text(
-          l10n.healthProgressNoChartData,
+          l10n.healthProgressNoChartDataDays(windowDays),
           style: TextStyle(
             color: muted,
             fontWeight: FontWeight.w600,
@@ -55,8 +58,8 @@ class DiseaseProgressChart extends StatelessWidget {
 
     final DateTime windowEnd = DateTime.now();
     final DateTime windowStart =
-        windowEnd.subtract(Duration(days: _window.days));
-    final double maxX = _window.days.toDouble();
+        windowEnd.subtract(Duration(days: windowDays));
+    final double maxX = windowDays.toDouble();
 
     final List<_ChartPoint> points = <_ChartPoint>[];
     for (final PlantScanModel scan in sorted) {
@@ -72,7 +75,7 @@ class DiseaseProgressChart extends StatelessWidget {
         _ChartPoint(
           x: x.clamp(0, maxX),
           y: disease.chartY.toDouble(),
-          dateLabel: dayFmt.format(scan.createdAt),
+          dateLabel: axisDateFmt.format(scan.createdAt),
           color: disease.chartColor,
         ),
       );
@@ -81,7 +84,7 @@ class DiseaseProgressChart extends StatelessWidget {
     if (points.isEmpty) {
       return Center(
         child: Text(
-          l10n.healthProgressNoChartData,
+          l10n.healthProgressNoChartDataDays(windowDays),
           style: TextStyle(
             color: muted,
             fontWeight: FontWeight.w600,
@@ -127,7 +130,7 @@ class DiseaseProgressChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               interval: 1,
-              reservedSize: WidgetSizesEnum.cardRadius.value * 3.2,
+              reservedSize: WidgetSizesEnum.cardRadius.value * 3.6,
               getTitlesWidget: (double value, TitleMeta meta) {
                 final int y = value.round();
                 if (!DiseaseClassChartEnum.chartYTicks.contains(y)) {
@@ -140,7 +143,11 @@ class DiseaseProgressChart extends StatelessWidget {
                 final Color tickColor =
                     DiseaseClassChartEnum.forChartY(y)?.chartColor ?? muted;
                 return Padding(
-                  padding: EdgeInsets.only(right: WidgetSizesEnum.divider.value * 6),
+                  padding: EdgeInsets.only(
+                    right: WidgetSizesEnum.divider.value * 6,
+                    top: y == 4 ? WidgetSizesEnum.divider.value * 4 : 0,
+                    bottom: y == 0 ? WidgetSizesEnum.divider.value * 4 : 0,
+                  ),
                   child: Text(
                     label,
                     style: TextStyle(
@@ -158,18 +165,18 @@ class DiseaseProgressChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: WidgetSizesEnum.cardRadius.value * 1.15,
-              interval: maxX / 2,
+              reservedSize: WidgetSizesEnum.cardRadius.value * 1.35,
+              interval: 1,
               getTitlesWidget: (double value, TitleMeta meta) {
                 final int day = value.round();
-                if (day != 0 && day != _window.days ~/ 2 && day != _window.days) {
+                if (!xTickDays.contains(day)) {
                   return const SizedBox.shrink();
                 }
                 final DateTime labelDate = windowStart.add(Duration(days: day));
                 return Padding(
                   padding: EdgeInsets.only(top: WidgetSizesEnum.divider.value * 8),
                   child: Text(
-                    dayFmt.format(labelDate),
+                    axisDateFmt.format(labelDate),
                     style: TextStyle(
                       color: muted,
                       fontSize: TextSizesEnum.caption.value,
@@ -249,6 +256,14 @@ class DiseaseProgressChart extends StatelessWidget {
       curve: Curves.easeOutCubic,
     );
   }
+}
+
+/// X ekseni: seyrek gün indeksleri (pencere başından itibaren gün).
+Set<int> _xAxisTickDays(int windowDays) {
+  if (windowDays <= 14) {
+    return <int>{0, 4, 10, 14};
+  }
+  return <int>{0, 10, 20, 30};
 }
 
 final class _ChartPoint {

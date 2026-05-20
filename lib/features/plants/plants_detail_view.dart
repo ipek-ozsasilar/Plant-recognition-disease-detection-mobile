@@ -1,3 +1,4 @@
+import 'package:bitirme_mobile/core/enums/chart_window_enum.dart';
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/locale/species_class_display.dart';
@@ -181,6 +182,7 @@ class _PlantsDetailViewState extends ConsumerState<PlantsDetailView> {
                           )
                         : DiseaseProgressChart(
                             scans: filteredItems,
+                            chartWindow: ChartWindowEnum.fourteen,
                             primary: context.palPrimary,
                             accent: context.palAccent,
                             outline: context.palOutline,

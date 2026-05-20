@@ -71,6 +71,7 @@ class UserProfileFirestoreService {
   Future<void> updateProfile({
     required String uid,
     String? displayName,
+    String? email,
     String? phone,
     String? bio,
     String? photoUrl,
@@ -81,6 +82,9 @@ class UserProfileFirestoreService {
       };
       if (displayName != null) {
         data['displayName'] = displayName;
+      }
+      if (email != null) {
+        data['email'] = email;
       }
       if (phone != null) {
         data['phone'] = phone;

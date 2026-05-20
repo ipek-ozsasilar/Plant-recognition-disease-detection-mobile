@@ -2,6 +2,7 @@ import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/mixins/scaffold_message_mixin.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/button/app_primary_button.dart';
 import 'package:bitirme_mobile/core/widgets/input/app_text_field.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Ad, telefon ve kısa bio düzenleme.
+/// Ad, e-posta, telefon ve kısa bio düzenleme.
 class ProfilePersonalInfoView extends ConsumerStatefulWidget {
   const ProfilePersonalInfoView({super.key});
 
@@ -25,14 +26,17 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
     with ScaffoldMessageMixin {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
+  final TextEditingController _email = TextEditingController();
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _bio = TextEditingController();
   bool _loading = false;
   bool _hydrated = false;
+  bool _isGoogleAccount = false;
 
   @override
   void dispose() {
     _name.dispose();
+    _email.dispose();
     _phone.dispose();
     _bio.dispose();
     super.dispose();
@@ -43,8 +47,10 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
       return;
     }
     _name.text = profile?.displayName ?? auth.displayName ?? '';
+    _email.text = profile?.email ?? auth.email ?? '';
     _phone.text = profile?.phone ?? '';
     _bio.text = profile?.bio ?? '';
+    _isGoogleAccount = profile?.authProvider == 'google';
     _hydrated = true;
   }
 
@@ -53,20 +59,29 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
       return;
     }
     setState(() => _loading = true);
+    final String emailBefore = (ref.read(authProvider).email ?? '').trim();
     final String? error = await ref.read(userProfileProvider.notifier).updatePersonalInfo(
           displayName: _name.text,
+          email: _email.text,
           phone: _phone.text,
           bio: _bio.text,
+          l10n: context.l10n,
         );
     if (!mounted) {
       return;
     }
     setState(() => _loading = false);
     if (error != null) {
-      showAppSnackBar(context, message: context.l10n.profileSaveError, isError: true);
+      showAppSnackBar(context, message: error, isError: true);
       return;
     }
-    showAppSnackBar(context, message: context.l10n.profileSaveSuccess, isError: false);
+    showAppSnackBar(
+      context,
+      message: _email.text.trim() != emailBefore
+          ? context.l10n.profileEmailVerificationSent
+          : context.l10n.profileSaveSuccess,
+      isError: false,
+    );
     context.pop();
   }
 
@@ -82,9 +97,9 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.profilePersonalInfo),
-        leading: const BackButton(),
       ),
       body: profileAsync.isLoading && !_hydrated
           ? const Center(child: CircularProgressIndicator())
@@ -96,6 +111,15 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
                 WidgetSizesEnum.bottomNavHeight.value,
               ),
               children: <Widget>[
+                Text(
+                  context.l10n.profilePersonalInfoIntro,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: context.palMuted,
+                        height: 1.45,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                SizedBox(height: WidgetSizesEnum.cardRadius.value),
                 SoftElevationCard(
                   onTap: null,
                   padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
@@ -115,31 +139,33 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
                           },
                         ),
                         SizedBox(height: WidgetSizesEnum.cardRadius.value),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                context.l10n.profileEmailLabel,
-                                style: TextStyle(
-                                  fontSize: TextSizesEnum.caption.value,
-                                  fontWeight: FontWeight.w700,
-                                  color: context.palMuted,
-                                ),
-                              ),
-                              SizedBox(height: WidgetSizesEnum.divider.value * 4),
-                              Text(
-                                auth.email ?? context.l10n.placeholderDash,
-                                style: TextStyle(
-                                  fontSize: TextSizesEnum.body.value,
-                                  fontWeight: FontWeight.w600,
-                                  color: context.palOnSurface,
-                                ),
-                              ),
-                            ],
-                          ),
+                        AppTextField(
+                          controller: _email,
+                          label: context.l10n.profileEmailLabel,
+                          keyboardType: TextInputType.emailAddress,
+                          readOnly: _isGoogleAccount,
+                          validator: (String? v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return context.l10n.profileEmailRequired;
+                            }
+                            if (!v.contains('@') || !v.contains('.')) {
+                              return context.l10n.errorAuthInvalidEmail;
+                            }
+                            return null;
+                          },
                         ),
+                        if (_isGoogleAccount) ...<Widget>[
+                          SizedBox(height: WidgetSizesEnum.divider.value * 8),
+                          Text(
+                            context.l10n.profileEmailGoogleHint,
+                            style: TextStyle(
+                              fontSize: TextSizesEnum.caption.value,
+                              color: context.palMuted,
+                              height: 1.35,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                         SizedBox(height: WidgetSizesEnum.cardRadius.value),
                         AppTextField(
                           controller: _phone,

@@ -3,6 +3,7 @@ import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/services/firestore_setup_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
 import 'package:bitirme_mobile/features/profile/sub_view/profile_settings_tile.dart';
@@ -67,9 +68,9 @@ class ProfilePrivacyView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: context.palSurface,
-      appBar: AppBar(
+      appBar: appBarWithConditionalBack(
+        context: context,
         title: Text(context.l10n.profilePrivacySecurity),
-        leading: const BackButton(),
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(

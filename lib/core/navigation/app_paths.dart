@@ -19,7 +19,6 @@ abstract final class AppPaths {
   static const String scan = '/scan';
   static const String profile = '/profile';
   static const String profilePersonalInfo = '/profile/personal-info';
-  static const String profileNotifications = '/profile/notifications';
   static const String profilePrivacy = '/profile/privacy';
   static const String settings = '/settings';
   static const String about = '/about';

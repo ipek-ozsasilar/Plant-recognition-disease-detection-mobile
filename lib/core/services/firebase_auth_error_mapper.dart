@@ -22,6 +22,8 @@ String firebaseAuthCodeToMessage(String code, AppLocalizations l10n) {
       return l10n.errorAuthTooManyRequests;
     case 'operation-not-allowed':
       return l10n.errorAuthOperationNotAllowed;
+    case 'requires-recent-login':
+      return l10n.errorAuthRequiresRecentLogin;
     default:
       return l10n.errorAuth;
   }

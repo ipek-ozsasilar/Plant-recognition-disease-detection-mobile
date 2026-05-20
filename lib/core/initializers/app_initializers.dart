@@ -1,4 +1,5 @@
 import 'package:bitirme_mobile/core/locale/app_locale_provider.dart';
+import 'package:bitirme_mobile/core/theme/theme_mode_provider.dart';
 import 'package:bitirme_mobile/core/services/ml_metadata_loader.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/firebase_options.dart';
@@ -21,5 +22,6 @@ final class AppInitializers {
     await sl<MlMetadataLoader>().ensureLoaded();
     await sl<NotificationService>().init();
     await AppLocaleNotifier.preloadFromDisk();
+    await ThemeModeNotifier.preloadFromDisk();
   }
 }

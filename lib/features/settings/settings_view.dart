@@ -2,17 +2,22 @@ import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/app_locale_mode.dart';
 import 'package:bitirme_mobile/core/locale/app_locale_provider.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
+import 'package:bitirme_mobile/core/navigation/app_paths.dart';
+import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/theme/theme_mode_provider.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
+import 'package:bitirme_mobile/features/profile/sub_view/profile_settings_tile.dart';
+import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// Dil seçenekleri (ayarlar segmenti).
 enum _LocaleSegment { system, turkish, english }
 
-/// Tema ve dil.
+/// Tema, dil ve bildirimler.
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
 
@@ -32,6 +37,21 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
+  bool? _notificationsEnabled;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    final bool enabled = await sl<NotificationService>().isEnabled();
+    if (mounted) {
+      setState(() => _notificationsEnabled = enabled);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeMode mode = ref.watch(themeModeProvider);
@@ -39,6 +59,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final AppLocaleNotifier localeNotifier = ref.read(
       appLocaleProvider.notifier,
     );
+    final NotificationService notifications = sl<NotificationService>();
     final TextTheme tt = Theme.of(context).textTheme;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
 
@@ -74,13 +95,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
           ),
           SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
-          Text(
-            context.l10n.languageLabel,
-            style: tt.titleMedium?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: context.palOnSurface,
-            ),
-          ),
+          _SettingsSectionTitle(text: context.l10n.languageLabel),
           SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
           SoftElevationCard(
             onTap: null,
@@ -116,13 +131,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
           ),
           SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
-          Text(
-            context.l10n.themeLabel,
-            style: tt.titleMedium?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: context.palOnSurface,
-            ),
-          ),
+          _SettingsSectionTitle(text: context.l10n.themeLabel),
           SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
           SoftElevationCard(
             onTap: null,
@@ -162,18 +171,134 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               },
             ),
           ),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value),
-          Text(
-            context.l10n.apiHint,
-            style: TextStyle(
-              fontSize: TextSizesEnum.caption.value,
-              color: context.palMuted,
-              height: 1.35,
-              fontWeight: FontWeight.w600,
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
+          _SettingsSectionTitle(text: context.l10n.settingsNotificationsSection),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
+          SoftElevationCard(
+            onTap: null,
+            padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 0.65),
+            child: SwitchListTile(
+              value: _notificationsEnabled ?? false,
+              onChanged: (bool enabled) async {
+                setState(() => _notificationsEnabled = enabled);
+                await notifications.setEnabled(enabled);
+                if (enabled) {
+                  await notifications.requestPermissions();
+                } else {
+                  await notifications.cancelAll();
+                }
+              },
+              title: Text(
+                context.l10n.notificationsLabel,
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: context.palOnSurface,
+                ),
+              ),
+              subtitle: Text(
+                context.l10n.notificationsSubtitle,
+                style: TextStyle(color: context.palMuted, height: 1.35),
+              ),
+            ),
+          ),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.65),
+          SoftElevationCard(
+            onTap: null,
+            padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
+            child: Text(
+              context.l10n.profileNotificationsDetail,
+              style: tt.bodySmall?.copyWith(
+                color: context.palMuted,
+                height: 1.45,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
+          _SettingsSectionTitle(text: context.l10n.settingsAnalysisSection),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
+          SoftElevationCard(
+            onTap: null,
+            padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(WidgetSizesEnum.divider.value * 10),
+                  decoration: BoxDecoration(
+                    color: context.palPrimarySoftBg,
+                    borderRadius: BorderRadius.circular(
+                      WidgetSizesEnum.chipRadius.value,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.memory_rounded,
+                    color: context.palPrimary,
+                    size: IconSizesEnum.large.value,
+                  ),
+                ),
+                SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.85),
+                Expanded(
+                  child: Text(
+                    context.l10n.settingsAnalysisBody,
+                    style: tt.bodyMedium?.copyWith(
+                      color: context.palMuted,
+                      height: 1.45,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
+          _SettingsSectionTitle(text: context.l10n.settingsShortcutsSection),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
+          SoftElevationCard(
+            onTap: null,
+            padding: EdgeInsets.symmetric(
+              vertical: WidgetSizesEnum.divider.value * 6,
+            ),
+            child: Column(
+              children: <Widget>[
+                ProfileSettingsTile(
+                  icon: Icons.menu_book_rounded,
+                  title: context.l10n.guideTitle,
+                  onTap: () => context.push(AppPaths.guide),
+                ),
+                Divider(
+                  height: 1,
+                  indent: WidgetSizesEnum.cardRadius.value,
+                  endIndent: WidgetSizesEnum.cardRadius.value,
+                  color: context.palOutline.withValues(alpha: 0.35),
+                ),
+                ProfileSettingsTile(
+                  icon: Icons.info_outline_rounded,
+                  title: context.l10n.aboutTitle,
+                  onTap: () => context.push(AppPaths.about),
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SettingsSectionTitle extends StatelessWidget {
+  const _SettingsSectionTitle({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: context.palOnSurface,
+          ),
     );
   }
 }
