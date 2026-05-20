@@ -2,12 +2,10 @@ import 'dart:typed_data';
 
 import 'package:bitirme_mobile/core/enums/notification_follow_up_enum.dart';
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
-import 'package:bitirme_mobile/core/enums/inference_threshold_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/locale/scan_flow_localized_error.dart';
 import 'package:bitirme_mobile/core/mixins/scaffold_message_mixin.dart';
-import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/catalog_firestore_service.dart';
 import 'package:bitirme_mobile/core/services/disease_label_display.dart';
@@ -18,7 +16,6 @@ import 'package:bitirme_mobile/core/services/pdf_report_service.dart';
 import 'package:bitirme_mobile/core/locale/scan_follow_up_notification_text.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/services/image_crop_service.dart';
-import 'package:bitirme_mobile/core/services/sink_species_class_repository.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/utils/confidence_format.dart';
 import 'package:bitirme_mobile/core/widgets/animation/scan_loading_widget.dart';
@@ -34,6 +31,7 @@ import 'package:bitirme_mobile/l10n/app_localizations.dart';
 import 'package:bitirme_mobile/models/inference_result_model.dart';
 import 'package:bitirme_mobile/models/plant_model.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
+import 'package:bitirme_mobile/models/scan_region_analysis_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,6 +54,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     with ScaffoldMessageMixin {
   final ImagePicker _picker = ImagePicker();
   bool _savingScan = false;
+  bool _scanSaveCompleted = false;
   bool _exportingPdf = false;
   bool _downloadingPdf = false;
 
@@ -93,41 +92,62 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     }
   }
 
-  /// Kayıt sonrası bitki bazlı tek takip bildirimi planlar.
-  Future<void> _scheduleFollowUpNotification({
+  /// Kayıt sonrası bildirim: hastalık net değilse tür/bakım; netse risk + takip.
+  Future<void> _notifyAfterSave({
     required PlantScanModel scan,
-    required String plantName,
+    required PlantModel plant,
+    required String speciesDisplayName,
+    required bool diseaseUnrecognized,
   }) async {
     if (!mounted) {
       return;
     }
     final AppLocalizations l10n = context.l10n;
-    await sl<NotificationService>().scheduleScanFollowUp(
+    final NotificationService notifications = sl<NotificationService>();
+
+    if (diseaseUnrecognized) {
+      await notifications.showSpeciesCareTip(
+        title: l10n.notificationSpeciesTipTitle,
+        body: l10n.notificationSpeciesTipBody(plant.name, speciesDisplayName),
+      );
+      await notifications.scheduleScanFollowUp(
+        plantId: scan.plantId,
+        title: l10n.notificationFollowUpTitle,
+        body: l10n.notificationFollowUpSpeciesOnly(plant.name, speciesDisplayName),
+        healthScore: NotificationFollowUpEnum.healthy.minHealthScore,
+      );
+      return;
+    }
+
+    await notifications.scheduleScanFollowUp(
       plantId: scan.plantId,
       title: l10n.notificationFollowUpTitle,
       body: scanFollowUpBody(
         l10n: l10n,
-        plantName: plantName,
+        plantName: plant.name,
         healthScore: scan.healthScore,
       ),
       healthScore: scan.healthScore,
     );
-  }
 
-  bool _isSpeciesUnrecognized(InferenceResultModel species) {
-    final double spUnit = confidenceToUnit(species.top.confidence);
-    final String spRaw = (species.top.rawKey ?? species.top.label).trim();
-    final bool spIsSink = sl<SinkSpeciesClassRepository>().snapshot.contains(spRaw);
-    return spIsSink
-        ? spUnit < InferenceThresholdEnum.unrecognizedSink.value
-        : spUnit < InferenceThresholdEnum.unrecognizedGlobal.value;
+    if (scan.healthScore < NotificationFollowUpEnum.mediumRisk.minHealthScore) {
+      await notifications.showRiskAlert(
+        title: l10n.notificationRiskTitle,
+        body: l10n.notificationRiskBodyFor(plant.name),
+      );
+    }
   }
 
   Future<PlantModel?> _resolvePlantForSave({
     required String ownerUid,
     required String speciesLabel,
     required String displayName,
+    required Map<String, PlantModel> plantBySpecies,
   }) async {
+    final PlantModel? cached = plantBySpecies[speciesLabel];
+    if (cached != null) {
+      return cached;
+    }
     final PlantsFirestoreService plantsService = sl<PlantsFirestoreService>();
     final List<PlantModel> sameSpecies = await plantsService.listPlantsForSpecies(
       ownerUid: ownerUid,
@@ -135,11 +155,13 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     );
 
     if (sameSpecies.isEmpty) {
-      return plantsService.createPlantForSpecies(
+      final PlantModel created = await plantsService.createPlantForSpecies(
         ownerUid: ownerUid,
         speciesLabel: speciesLabel,
         displayName: displayName,
       );
+      plantBySpecies[speciesLabel] = created;
+      return created;
     }
 
     if (!mounted) {
@@ -154,27 +176,32 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       return null;
     }
     if (pick.createNew) {
-      return plantsService.createPlantForSpecies(
+      final PlantModel created = await plantsService.createPlantForSpecies(
         ownerUid: ownerUid,
         speciesLabel: speciesLabel,
         displayName: displayName,
       );
+      plantBySpecies[speciesLabel] = created;
+      return created;
     }
-    return pick.plant;
+    final PlantModel chosen = pick.plant!;
+    plantBySpecies[speciesLabel] = chosen;
+    return chosen;
   }
 
   Future<void> _onSaveScan() async {
     final ScanFlowState s = ref.read(scanFlowProvider);
-    final InferenceResultModel? sp = s.species;
-    final InferenceResultModel? dis = s.disease;
-    if (sp == null || dis == null) {
+    final List<ScanRegionAnalysis> analyses = s.regionAnalyses;
+    if (analyses.isEmpty) {
       return;
     }
 
-    if (_isSpeciesUnrecognized(sp)) {
+    final List<ScanRegionAnalysis> savable =
+        analyses.where((ScanRegionAnalysis a) => a.canSaveToHistory).toList();
+    if (savable.isEmpty) {
       showAppSnackBar(
         context,
-        message: context.l10n.errorSpeciesUnknownSave,
+        message: context.l10n.scanSaveMultiNone,
         isError: true,
       );
       return;
@@ -186,92 +213,111 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     }
 
     setState(() => _savingScan = true);
+    final AppLocalizations l10n = context.l10n;
+    final Map<String, PlantModel> plantBySpecies = <String, PlantModel>{};
+    int savedCount = 0;
+    bool anyPhotoFailed = false;
 
     try {
-      final String speciesLabel = sp.top.rawKey ?? sp.top.label;
-      final String displayName = speciesClassDisplayForRaw(context, speciesLabel);
-      final PlantModel? plant = await _resolvePlantForSave(
-        ownerUid: uid,
-        speciesLabel: speciesLabel,
-        displayName: displayName,
-      );
-      if (plant == null) {
-        return;
-      }
-
-      final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
-      final int healthScore = computeHealthScore(
-        diseaseKey: dis.top.label,
-        diseaseConfidenceUnit: diseaseConfUnit,
-      );
-      final String scanId = const Uuid().v4();
-
-      String? imageUrl;
-      bool photoUploadFailed = false;
-      final Uint8List? originalBytes = s.imageBytes;
-      if (originalBytes != null) {
-        final Uint8List? jpegBytes = sl<ImageCropService>().bytesForScanUpload(
-          imageBytes: originalBytes,
-          regions: s.regions,
-          selectedRegionIndex: s.selectedRegionIndex,
+      for (final ScanRegionAnalysis analysis in savable) {
+        final InferenceResultModel sp = analysis.species;
+        final InferenceResultModel dis = analysis.disease!;
+        final String speciesLabel = sp.top.rawKey ?? sp.top.label;
+        final String displayName = speciesClassDisplayForRaw(context, speciesLabel);
+        final PlantModel? plant = await _resolvePlantForSave(
+          ownerUid: uid,
+          speciesLabel: speciesLabel,
+          displayName: displayName,
+          plantBySpecies: plantBySpecies,
         );
-        if (jpegBytes != null) {
-          imageUrl = await sl<FirebaseStorageService>().uploadScanImage(
-            ownerUid: uid,
-            scanId: scanId,
-            jpegBytes: jpegBytes,
-          );
-          photoUploadFailed = imageUrl == null || imageUrl.isEmpty;
-        } else {
-          photoUploadFailed = true;
+        if (plant == null) {
+          return;
         }
+
+        final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
+        final int healthScore = computeHealthScore(
+          diseaseKey: dis.top.label,
+          diseaseConfidenceUnit: diseaseConfUnit,
+        );
+        final String scanId = const Uuid().v4();
+
+        String? imageUrl;
+        final Uint8List? originalBytes = s.imageBytes;
+        if (originalBytes != null) {
+          final Uint8List? jpegBytes = sl<ImageCropService>().bytesForScanUpload(
+            imageBytes: originalBytes,
+            regions: s.regions,
+            selectedRegionIndex: analysis.regionIndex,
+          );
+          if (jpegBytes != null) {
+            imageUrl = await sl<FirebaseStorageService>().uploadScanImage(
+              ownerUid: uid,
+              scanId: scanId,
+              jpegBytes: jpegBytes,
+            );
+            if (imageUrl == null || imageUrl.isEmpty) {
+              anyPhotoFailed = true;
+            }
+          } else {
+            anyPhotoFailed = true;
+          }
+        }
+
+        final String? regionNote = analyses.length > 1
+            ? l10n.scanRegionNote(analysis.regionIndex + 1)
+            : null;
+
+        final PlantScanModel scan = PlantScanModel(
+          id: scanId,
+          ownerUid: uid,
+          plantId: plant.id,
+          createdAt: DateTime.now(),
+          speciesLabel: speciesLabel,
+          speciesConfidence: confidenceToUnit(sp.top.confidence),
+          diseaseKey: dis.top.label,
+          diseaseConfidence: diseaseConfUnit,
+          healthScore: healthScore,
+          imageUrl: imageUrl,
+          notes: regionNote,
+        );
+
+        await sl<CatalogFirestoreService>().ensureSpecies(rawLabel: scan.speciesLabel);
+        await sl<CatalogFirestoreService>().ensureDisease(diseaseKey: scan.diseaseKey);
+        await sl<PlantScansFirestoreService>().addScan(scan);
+        savedCount++;
+
+        await _notifyAfterSave(
+          scan: scan,
+          plant: plant,
+          speciesDisplayName: displayName,
+          diseaseUnrecognized: analysis.diseaseUnrecognized,
+        );
       }
-
-      final PlantScanModel scan = PlantScanModel(
-        id: scanId,
-        ownerUid: uid,
-        plantId: plant.id,
-        createdAt: DateTime.now(),
-        speciesLabel: speciesLabel,
-        speciesConfidence: confidenceToUnit(sp.top.confidence),
-        diseaseKey: dis.top.label,
-        diseaseConfidence: diseaseConfUnit,
-        healthScore: healthScore,
-        imageUrl: imageUrl,
-      );
-
-      await sl<CatalogFirestoreService>().ensureSpecies(rawLabel: scan.speciesLabel);
-      await sl<CatalogFirestoreService>().ensureDisease(diseaseKey: scan.diseaseKey);
-      await sl<PlantScansFirestoreService>().addScan(scan);
 
       ref.invalidate(historyFirestoreProvider);
       ref.invalidate(homeStatsProvider);
       ref.invalidate(plantsProvider);
       await ref.read(plantsProvider.notifier).load();
-      if (!mounted) {
-        return;
-      }
-      final AppLocalizations l10n = context.l10n;
-      await _scheduleFollowUpNotification(scan: scan, plantName: plant.name);
-
-      if (healthScore < NotificationFollowUpEnum.mediumRisk.minHealthScore) {
-        await sl<NotificationService>().showRiskAlert(
-          title: l10n.notificationRiskTitle,
-          body: l10n.notificationRiskBodyFor(plant.name),
-        );
-      }
 
       if (!mounted) {
         return;
       }
-      showAppSnackBar(
-        context,
-        message: photoUploadFailed
-            ? context.l10n.scanSavedPhotoFailed
-            : context.l10n.scanSavedToPlantSuccess,
-        isError: photoUploadFailed,
-      );
-      context.pop();
+
+      final int skipped = analyses.length - savable.length;
+      String message;
+      if (savedCount == 1) {
+        message = l10n.scanSavedToPlantSuccess;
+      } else if (skipped > 0) {
+        message = l10n.scanSaveMultiWithSkipped(savedCount, skipped);
+      } else {
+        message = l10n.scanSaveMultiSuccess(savedCount);
+      }
+      if (anyPhotoFailed) {
+        message = l10n.scanSavedPhotoFailed;
+      }
+
+      setState(() => _scanSaveCompleted = true);
+      showAppSnackBar(context, message: message, isError: anyPhotoFailed);
     } catch (e, st) {
       sl<AppLogger>().e('scan_save', e, st);
       if (mounted) {
@@ -288,22 +334,25 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     }
   }
 
-  PlantScanModel? _plantScanFromCurrentInference() {
+  PlantScanModel? _plantScanFromFirstSavable() {
     final ScanFlowState s = ref.read(scanFlowProvider);
-    final InferenceResultModel? sp = s.species;
-    final InferenceResultModel? dis = s.disease;
-    if (sp == null || dis == null) {
+    final ScanRegionAnalysis? analysis = s.firstSavableAnalysis;
+    if (analysis == null) {
       return null;
     }
     final String? uid = ref.read(authProvider).uid;
+    final InferenceResultModel? dis = analysis.disease;
+    if (dis == null) {
+      return null;
+    }
     final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
     return PlantScanModel(
       id: const Uuid().v4(),
       ownerUid: uid ?? '',
       plantId: '',
       createdAt: DateTime.now(),
-      speciesLabel: sp.top.rawKey ?? sp.top.label,
-      speciesConfidence: confidenceToUnit(sp.top.confidence),
+      speciesLabel: analysis.species.top.rawKey ?? analysis.species.top.label,
+      speciesConfidence: confidenceToUnit(analysis.species.top.confidence),
       diseaseKey: dis.top.label,
       diseaseConfidence: diseaseConfUnit,
       healthScore: computeHealthScore(
@@ -315,7 +364,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
   }
 
   Future<void> _exportPdfFromCurrent() async {
-    final PlantScanModel? record = _plantScanFromCurrentInference();
+    final PlantScanModel? record = _plantScanFromFirstSavable();
     if (record == null) {
       return;
     }
@@ -344,7 +393,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
   }
 
   Future<void> _downloadPdfFromCurrent() async {
-    final PlantScanModel? record = _plantScanFromCurrentInference();
+    final PlantScanModel? record = _plantScanFromFirstSavable();
     if (record == null) {
       return;
     }
@@ -434,14 +483,12 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
         return _buildPick(context, l10n);
       case ScanStep.selectRegions:
         return _buildRegions(context, l10n, state, notifier);
-      case ScanStep.speciesLoading:
-        return _buildLoading(l10n.scanSpeciesLoading);
+      case ScanStep.analyzingSpecies:
+        return _buildAnalyzing(l10n, state, isSpecies: true);
       case ScanStep.speciesDone:
         return _buildSpeciesDone(context, l10n, state, notifier);
-      case ScanStep.diseaseLoading:
-        return _buildLoading(l10n.scanDiseaseLoading);
-      case ScanStep.diseaseDone:
-        return _buildDiseaseDone(context, l10n, state, notifier);
+      case ScanStep.analyzingDisease:
+        return _buildAnalyzing(l10n, state, isSpecies: false);
       case ScanStep.summary:
         return _buildSummary(context, l10n, state, notifier);
     }
@@ -540,15 +587,28 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
           onPressed: state.regions.isEmpty
               ? null
               : () async {
-                  await notifier.runSpecies();
+                  await notifier.runAllRegionsSpecies();
                 },
         ),
       ],
     );
   }
 
-  Widget _buildLoading(String message) {
-    return ScanLoadingWidget(message: message);
+  Widget _buildAnalyzing(
+    AppLocalizations l10n,
+    ScanFlowState state, {
+    required bool isSpecies,
+  }) {
+    final int current = state.analyzingRegionIndex + 1;
+    final int total = state.regions.length;
+    return ScanLoadingWidget(
+      message: isSpecies ? l10n.scanSpeciesLoading : l10n.scanDiseaseLoading,
+      subtitle: total > 1
+          ? (isSpecies
+              ? l10n.scanAnalyzingRegionSpecies(current, total)
+              : l10n.scanAnalyzingRegionDisease(current, total))
+          : null,
+    );
   }
 
   Widget _buildSpeciesDone(
@@ -557,119 +617,130 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     ScanFlowState state,
     ScanFlowNotifier notifier,
   ) {
-    final InferenceResultModel? sp = state.species;
-    if (sp == null) {
-      return const SizedBox.shrink();
-    }
-    final double unit = confidenceToUnit(sp.top.confidence);
-    final String raw = (sp.top.rawKey ?? sp.top.label).trim();
-    final bool isSink = sl<SinkSpeciesClassRepository>().snapshot.contains(raw);
-    final bool unrecognized = isSink
-        ? unit < InferenceThresholdEnum.unrecognizedSink.value
-        : unit < InferenceThresholdEnum.unrecognizedGlobal.value;
+    final List<ScanRegionAnalysis> analyses = state.regionAnalyses;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          l10n.scanSpeciesTitle,
+          l10n.scanSpeciesResultsTitle,
           style: TextStyle(
             fontSize: TextSizesEnum.title.value,
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        Card(
-          child: ListTile(
-            title: Text(
-              unrecognized
-                  ? l10n.scanUnrecognizedTitle
-                  : speciesInferenceTopForUi(context, sp.top),
-            ),
-            subtitle: Text(
-              unrecognized
-                  ? l10n.scanUnrecognizedBody
-                  : '${l10n.scanSpeciesConfidence}: ${confidencePercentLabel(sp.top.confidence)}',
-            ),
-            trailing: unrecognized
-                ? null
-                : TextButton(
-                    onPressed: () => context.push(
-                      '${AppPaths.speciesDetail}/${Uri.encodeComponent(sp.top.rawKey ?? sp.top.label)}?confidence=$unit',
-                    ),
-                    child: Text(l10n.detailCta),
-                  ),
+        SizedBox(height: WidgetSizesEnum.divider.value * 8),
+        Text(
+          l10n.scanSpeciesResultsHint,
+          style: TextStyle(
+            fontSize: TextSizesEnum.body.value,
+            color: context.palMuted,
+            height: 1.4,
           ),
         ),
-        const Spacer(),
+        SizedBox(height: WidgetSizesEnum.cardRadius.value),
+        Expanded(
+          child: ListView(
+            children: analyses
+                .map(
+                  (ScanRegionAnalysis a) => _buildRegionResultCard(
+                    context,
+                    l10n,
+                    a,
+                    showDisease: false,
+                  ),
+                )
+                .toList(),
+          ),
+        ),
         AppPrimaryButton(
           label: l10n.continueCta,
           onPressed: () async {
-            await notifier.runDisease();
+            await notifier.runAllRegionsDisease();
           },
         ),
       ],
     );
   }
 
-  Widget _buildDiseaseDone(
+  Widget _buildRegionResultCard(
     BuildContext context,
     AppLocalizations l10n,
-    ScanFlowState state,
-    ScanFlowNotifier notifier,
-  ) {
-    final InferenceResultModel? dis = state.disease;
-    if (dis == null) {
-      return const SizedBox.shrink();
-    }
-    final double unit = confidenceToUnit(dis.top.confidence);
-    final bool unrecognized =
-        unit < InferenceThresholdEnum.unrecognizedGlobal.value;
-    final String diseaseText = diseaseClassKeyToDisplay(dis.top.label, l10n);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          l10n.scanDiseaseTitle,
-          style: TextStyle(
-            fontSize: TextSizesEnum.title.value,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        Text(
-          l10n.scanDiseaseNote,
-          style: TextStyle(
-            fontSize: TextSizesEnum.caption.value,
-            color: context.palMuted,
-          ),
-        ),
-        SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        Card(
-          child: ListTile(
-            title: Text(
-              unrecognized ? l10n.scanUnrecognizedTitle : diseaseText,
+    ScanRegionAnalysis analysis, {
+    bool showDisease = true,
+  }) {
+    final String speciesLine = analysis.speciesUnrecognized
+        ? l10n.scanUnrecognizedTitle
+        : '${speciesInferenceTopForUi(context, analysis.species.top)} '
+            '(${confidencePercentLabel(analysis.species.top.confidence)})';
+    final String diseaseLine = !showDisease || !analysis.hasDisease
+        ? l10n.scanDiseasePending
+        : analysis.diseaseUnrecognized
+            ? l10n.scanUnrecognizedTitle
+            : '${diseaseClassKeyToDisplay(analysis.disease!.top.label, l10n)} '
+                '(${confidencePercentLabel(analysis.disease!.top.confidence)})';
+
+    return Card(
+      margin: EdgeInsets.only(bottom: WidgetSizesEnum.cardRadius.value * 0.65),
+      child: Padding(
+        padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value * 0.85),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              l10n.scanRegionLabel(analysis.regionIndex + 1),
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: TextSizesEnum.body.value,
+                color: context.palOnSurface,
+              ),
             ),
-            subtitle: Text(
-              unrecognized
-                  ? l10n.scanUnrecognizedBody
-                  : '${l10n.scanSpeciesConfidence}: ${confidencePercentLabel(dis.top.confidence)}',
+            SizedBox(height: WidgetSizesEnum.divider.value * 6),
+            Text(
+              l10n.scanSpeciesTitle,
+              style: TextStyle(
+                fontSize: TextSizesEnum.caption.value,
+                color: context.palMuted,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            trailing: unrecognized
-                ? null
-                : TextButton(
-                    onPressed: () => context.push(
-                      '${AppPaths.diseaseDetail}/${Uri.encodeComponent(dis.top.label)}?confidence=$unit',
-                    ),
-                    child: Text(l10n.detailCta),
-                  ),
-          ),
+            Text(speciesLine),
+            if (showDisease) ...<Widget>[
+              SizedBox(height: WidgetSizesEnum.divider.value * 6),
+              Text(
+                l10n.scanDiseaseTitle,
+                style: TextStyle(
+                  fontSize: TextSizesEnum.caption.value,
+                  color: context.palMuted,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(diseaseLine),
+            ],
+            if (!showDisease && analysis.speciesUnrecognized) ...<Widget>[
+              SizedBox(height: WidgetSizesEnum.divider.value * 6),
+              Text(
+                l10n.errorSpeciesUnknownSave,
+                style: TextStyle(
+                  fontSize: TextSizesEnum.caption.value,
+                  color: context.palAccent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+            if (showDisease && !analysis.canSaveToHistory) ...<Widget>[
+              SizedBox(height: WidgetSizesEnum.divider.value * 6),
+              Text(
+                l10n.errorSpeciesUnknownSave,
+                style: TextStyle(
+                  fontSize: TextSizesEnum.caption.value,
+                  color: context.palAccent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ],
         ),
-        const Spacer(),
-        AppPrimaryButton(
-          label: l10n.continueCta,
-          onPressed: notifier.goToSummary,
-        ),
-      ],
+      ),
     );
   }
 
@@ -679,23 +750,12 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     ScanFlowState state,
     ScanFlowNotifier notifier,
   ) {
-    final InferenceResultModel? sp = state.species;
-    final InferenceResultModel? dis = state.disease;
-    if (sp == null || dis == null) {
+    final List<ScanRegionAnalysis> analyses = state.regionAnalyses;
+    if (analyses.isEmpty) {
       return const SizedBox.shrink();
     }
-    final double spUnit = confidenceToUnit(sp.top.confidence);
-    final double disUnit = confidenceToUnit(dis.top.confidence);
-    final String spRaw = (sp.top.rawKey ?? sp.top.label).trim();
-    final bool spIsSink = sl<SinkSpeciesClassRepository>().snapshot.contains(
-      spRaw,
-    );
-    final bool spUnrecognized = spIsSink
-        ? spUnit < InferenceThresholdEnum.unrecognizedSink.value
-        : spUnit < InferenceThresholdEnum.unrecognizedGlobal.value;
-    final bool disUnrecognized =
-        disUnit < InferenceThresholdEnum.unrecognizedGlobal.value;
-    final String diseaseText = diseaseClassKeyToDisplay(dis.top.label, l10n);
+    final int savable = state.savableRegionCount;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -706,48 +766,67 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
             fontWeight: FontWeight.bold,
           ),
         ),
+        SizedBox(height: WidgetSizesEnum.divider.value * 8),
+        Text(
+          l10n.scanSummaryMultiHint,
+          style: TextStyle(
+            fontSize: TextSizesEnum.body.value,
+            color: context.palMuted,
+            height: 1.4,
+          ),
+        ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        Card(
-          child: ListTile(
-            title: Text(l10n.scanSpeciesTitle),
-            subtitle: Text(
-              spUnrecognized
-                  ? l10n.scanUnrecognizedTitle
-                  : '${speciesInferenceTopForUi(context, sp.top)} (${confidencePercentLabel(sp.top.confidence)})',
-            ),
+        Expanded(
+          child: ListView(
+            children: analyses
+                .map(
+                  (ScanRegionAnalysis a) => _buildRegionResultCard(
+                    context,
+                    l10n,
+                    a,
+                    showDisease: true,
+                  ),
+                )
+                .toList(),
           ),
         ),
-        Card(
-          child: ListTile(
-            title: Text(l10n.scanDiseaseTitle),
-            subtitle: Text(
-              disUnrecognized
-                  ? l10n.scanUnrecognizedTitle
-                  : '$diseaseText (${confidencePercentLabel(dis.top.confidence)})',
-            ),
-          ),
-        ),
-        const Spacer(),
         AppPrimaryButton(
           label: l10n.scanExportPdfCta,
           isLoading: _exportingPdf,
-          onPressed: _exportPdfFromCurrent,
+          onPressed: savable > 0 ? _exportPdfFromCurrent : null,
         ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value),
         AppPrimaryButton(
           label: l10n.scanDownloadPdfCta,
           isLoading: _downloadingPdf,
-          onPressed: _downloadPdfFromCurrent,
+          onPressed: savable > 0 ? _downloadPdfFromCurrent : null,
         ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value),
+        if (_scanSaveCompleted) ...<Widget>[
+          Text(
+            l10n.scanSavedDoneHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: context.palMuted,
+              fontSize: TextSizesEnum.body.value,
+              height: 1.4,
+            ),
+          ),
+          SizedBox(height: WidgetSizesEnum.cardRadius.value),
+        ],
         AppPrimaryButton(
-          label: l10n.scanSaveToPlantCta,
+          label: _scanSaveCompleted
+              ? l10n.scanAlreadySaved
+              : (savable > 0
+                  ? l10n.scanSaveMultiCta(savable)
+                  : l10n.scanSaveToPlantCta),
           isLoading: _savingScan,
-          onPressed: _onSaveScan,
+          onPressed: _scanSaveCompleted || savable == 0 ? null : _onSaveScan,
         ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value),
         OutlinedButton(
           onPressed: () {
+            setState(() => _scanSaveCompleted = false);
             notifier.reset();
           },
           child: Text(l10n.scanRetry),

@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 class ScanLoadingWidget extends StatefulWidget {
   const ScanLoadingWidget({
     required this.message,
+    this.subtitle,
     super.key,
   });
 
   final String message;
+  final String? subtitle;
 
   @override
   State<ScanLoadingWidget> createState() => _ScanLoadingWidgetState();
@@ -126,6 +128,18 @@ class _ScanLoadingWidgetState extends State<ScanLoadingWidget> with SingleTicker
                   color: context.palOnSurface,
                 ),
               ),
+              if (widget.subtitle != null && widget.subtitle!.isNotEmpty) ...<Widget>[
+                SizedBox(height: WidgetSizesEnum.divider.value * 8),
+                Text(
+                  widget.subtitle!,
+                  textAlign: TextAlign.center,
+                  style: tt.bodyMedium?.copyWith(
+                    color: context.palMuted,
+                    fontWeight: FontWeight.w600,
+                    height: 1.35,
+                  ),
+                ),
+              ],
               SizedBox(height: WidgetSizesEnum.divider.value * 10),
               Text(
                 context.l10n.loading,

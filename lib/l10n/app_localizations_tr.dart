@@ -282,16 +282,74 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get scanRegionsHint =>
-      'Birden fazla bitki varsa görüntüye dokunarak numaralı bölgeler ekleyin; analiz etmek istediğiniz bölgeyi seçin.';
+      'Birden fazla bitki varsa sürükleyerek numaralı bölgeler ekleyin. Analizde her bölge ayrı değerlendirilir.';
 
   @override
-  String get scanRegionsAdd => 'Bölge ekle';
+  String get scanRegionsAdd => 'Bölge';
 
   @override
   String get scanRegionsClear => 'Temizle';
 
   @override
   String get scanRegionsNext => 'Tür analizine geç';
+
+  @override
+  String scanAnalyzingRegion(int current, int total) {
+    return 'Bölge $current / $total analiz ediliyor…';
+  }
+
+  @override
+  String scanAnalyzingRegionSpecies(int current, int total) {
+    return 'Bölge $current / $total — tür analizi…';
+  }
+
+  @override
+  String scanAnalyzingRegionDisease(int current, int total) {
+    return 'Bölge $current / $total — hastalık analizi…';
+  }
+
+  @override
+  String get scanSpeciesResultsTitle => 'Tür sonuçları (bölge bölge)';
+
+  @override
+  String get scanSpeciesResultsHint =>
+      'Her bölge ayrı değerlendirildi. Devam ile hastalık analizi yapılır.';
+
+  @override
+  String get scanDiseasePending => 'Hastalık analizi bekleniyor';
+
+  @override
+  String scanRegionLabel(int index) {
+    return 'Bölge $index';
+  }
+
+  @override
+  String get scanSummaryMultiHint =>
+      'Her bölge ayrı satırda gösterilir. Türü tanınan bölgeler geçmişe ayrı kayıt olarak yazılır.';
+
+  @override
+  String scanSaveMultiSuccess(int saved) {
+    return '$saved tarama geçmişe kaydedildi.';
+  }
+
+  @override
+  String scanSaveMultiWithSkipped(int saved, int skipped) {
+    return '$saved kayıt eklendi. $skipped bölge tür tanınmadığı için atlandı.';
+  }
+
+  @override
+  String get scanSaveMultiNone =>
+      'Kaydedilemedi: tüm bölgelerde bitki türü tanınmadı.';
+
+  @override
+  String scanSaveMultiCta(int count) {
+    return 'Kaydedilebilir bölgeleri kaydet ($count)';
+  }
+
+  @override
+  String scanRegionNote(int index) {
+    return 'Fotoğraf bölgesi $index';
+  }
 
   @override
   String get scanRegionsSelectPrompt =>
@@ -361,7 +419,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanDownloadPdfCta => 'PDF raporu indir';
 
   @override
-  String get scanPdfDownloadSuccess => 'PDF İndirilenler klasörüne kaydedildi.';
+  String get scanPdfDownloadSuccess =>
+      'PDF indirildi. Açmak için bildirime dokunun.';
 
   @override
   String get scanPdfDownloadError =>
@@ -829,6 +888,26 @@ class AppLocalizationsTr extends AppLocalizations {
   String notificationFollowUpUrgent(String plantName) {
     return '$plantName ciddi risk göstermişti. Lütfen en kısa sürede tekrar tarayın.';
   }
+
+  @override
+  String get notificationSpeciesTipTitle => 'Bitki kaydedildi';
+
+  @override
+  String notificationSpeciesTipBody(String plantName, String species) {
+    return '$plantName ($species) kaydedildi. Sulama ve ışık için tür rehberine bakın; hastalık bu taramada net değildi.';
+  }
+
+  @override
+  String notificationFollowUpSpeciesOnly(String plantName, String species) {
+    return '$plantName ($species) için bir hafta içinde yeni fotoğrafla kontrol edin.';
+  }
+
+  @override
+  String get scanAlreadySaved => 'Kaydedildi';
+
+  @override
+  String get scanSavedDoneHint =>
+      'Tarama kaydedildi. Yeni tarama için aşağıdan tekrar deneyin.';
 
   @override
   String get notificationRiskTitle => 'Bitki riski artıyor olabilir';

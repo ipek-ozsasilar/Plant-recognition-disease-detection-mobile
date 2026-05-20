@@ -16,23 +16,35 @@ class ImageCropService {
     required PlantRegionModel region,
   }) {
     try {
-      final img.Image? decoded = img.decodeImage(imageBytes);
-      if (decoded == null) {
+      final img.Image? raw = img.decodeImage(imageBytes);
+      if (raw == null) {
         return null;
       }
+      final img.Image decoded = img.bakeOrientation(raw);
       final int w = decoded.width;
       final int h = decoded.height;
       final int left = (region.nx * w).round().clamp(0, w - 1);
       final int top = (region.ny * h).round().clamp(0, h - 1);
-      final int cropW = (region.nw * w).round().clamp(1, w - left);
-      final int cropH = (region.nh * h).round().clamp(1, h - top);
-      final img.Image cropped = img.copyCrop(
+      int cropW = (region.nw * w).round().clamp(1, w - left);
+      int cropH = (region.nh * h).round().clamp(1, h - top);
+      const int minSide = 96;
+      img.Image cropped = img.copyCrop(
         decoded,
         x: left,
         y: top,
         width: cropW,
         height: cropH,
       );
+      if (cropped.width < minSide || cropped.height < minSide) {
+        final int targetW = cropped.width < minSide ? minSide : cropped.width;
+        final int targetH = cropped.height < minSide ? minSide : cropped.height;
+        cropped = img.copyResize(
+          cropped,
+          width: targetW,
+          height: targetH,
+          interpolation: img.Interpolation.linear,
+        );
+      }
       final Uint8List out = Uint8List.fromList(img.encodeJpg(cropped, quality: 92));
       return out;
     } catch (e, st) {

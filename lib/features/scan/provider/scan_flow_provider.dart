@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/image_crop_service.dart';
 import 'package:bitirme_mobile/core/services/inference_api_service.dart';
-import 'package:bitirme_mobile/models/inference_result_model.dart';
+import 'package:bitirme_mobile/models/scan_region_analysis_model.dart';
 import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,10 +13,9 @@ import 'package:uuid/uuid.dart';
 enum ScanStep {
   pickImage,
   selectRegions,
-  speciesLoading,
+  analyzingSpecies,
   speciesDone,
-  diseaseLoading,
-  diseaseDone,
+  analyzingDisease,
   summary,
 }
 
@@ -27,8 +26,8 @@ class ScanFlowState {
     this.imageBytes,
     this.regions = const <PlantRegionModel>[],
     this.selectedRegionIndex = 0,
-    this.species,
-    this.disease,
+    this.regionAnalyses = const <ScanRegionAnalysis>[],
+    this.analyzingRegionIndex = 0,
     this.errorMessage,
   });
 
@@ -36,20 +35,31 @@ class ScanFlowState {
   final Uint8List? imageBytes;
   final List<PlantRegionModel> regions;
   final int selectedRegionIndex;
-  final InferenceResultModel? species;
-  final InferenceResultModel? disease;
+  final List<ScanRegionAnalysis> regionAnalyses;
+  final int analyzingRegionIndex;
   final String? errorMessage;
+
+  ScanRegionAnalysis? get firstSavableAnalysis {
+    for (final ScanRegionAnalysis a in regionAnalyses) {
+      if (a.canSaveToHistory) {
+        return a;
+      }
+    }
+    return null;
+  }
+
+  int get savableRegionCount =>
+      regionAnalyses.where((ScanRegionAnalysis a) => a.canSaveToHistory).length;
 
   ScanFlowState copyWith({
     ScanStep? step,
     Uint8List? imageBytes,
     List<PlantRegionModel>? regions,
     int? selectedRegionIndex,
-    InferenceResultModel? species,
-    InferenceResultModel? disease,
+    List<ScanRegionAnalysis>? regionAnalyses,
+    int? analyzingRegionIndex,
     String? errorMessage,
-    bool clearSpecies = false,
-    bool clearDisease = false,
+    bool clearAnalyses = false,
     bool clearError = false,
   }) {
     return ScanFlowState(
@@ -57,14 +67,16 @@ class ScanFlowState {
       imageBytes: imageBytes ?? this.imageBytes,
       regions: regions ?? this.regions,
       selectedRegionIndex: selectedRegionIndex ?? this.selectedRegionIndex,
-      species: clearSpecies ? null : (species ?? this.species),
-      disease: clearDisease ? null : (disease ?? this.disease),
+      regionAnalyses: clearAnalyses
+          ? const <ScanRegionAnalysis>[]
+          : (regionAnalyses ?? this.regionAnalyses),
+      analyzingRegionIndex: analyzingRegionIndex ?? this.analyzingRegionIndex,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 }
 
-/// Tarama akışı iş mantığı (tür → hastalık).
+/// Çoklu bölge: önce tüm bölgelerde tür, sonra Devam ile hastalık.
 class ScanFlowNotifier extends Notifier<ScanFlowState> {
   final Uuid _uuid = const Uuid();
 
@@ -152,118 +164,161 @@ class ScanFlowNotifier extends Notifier<ScanFlowState> {
   }
 
   void clearRegions() {
-    state = state.copyWith(regions: <PlantRegionModel>[], selectedRegionIndex: 0, clearError: true);
+    state = state.copyWith(
+      regions: <PlantRegionModel>[],
+      selectedRegionIndex: 0,
+      clearAnalyses: true,
+      clearError: true,
+    );
   }
 
-  Future<void> runSpecies() async {
+  Future<Uint8List?> _cropForRegion({
+    required Uint8List imageBytes,
+    required PlantRegionModel region,
+    required int regionIndex,
+    required List<PlantRegionModel> regions,
+    required ScanStep backStep,
+  }) async {
+    final Uint8List? cropped = sl<ImageCropService>().cropRegion(
+      imageBytes: imageBytes,
+      region: region,
+    );
+    if (cropped == null) {
+      state = ScanFlowState(
+        step: backStep,
+        imageBytes: imageBytes,
+        regions: regions,
+        selectedRegionIndex: regionIndex,
+        regionAnalyses: state.regionAnalyses,
+        errorMessage: '@@errorCrop',
+      );
+    }
+    return cropped;
+  }
+
+  /// Her bölge için yalnızca tür analizi.
+  Future<void> runAllRegionsSpecies() async {
     final List<PlantRegionModel> regions = state.regions;
     final Uint8List? imageBytes = state.imageBytes;
     if (imageBytes == null || regions.isEmpty) {
       state = state.copyWith(errorMessage: '@@scanRegionsSelectPrompt');
       return;
     }
-    final int idx = state.selectedRegionIndex.clamp(0, regions.length - 1);
-    final PlantRegionModel region = regions[idx];
+
+    final InferenceApiService inference = sl<InferenceApiService>();
+
     state = ScanFlowState(
-      step: ScanStep.speciesLoading,
+      step: ScanStep.analyzingSpecies,
       imageBytes: imageBytes,
       regions: regions,
-      selectedRegionIndex: idx,
-      species: state.species,
-      disease: state.disease,
+      selectedRegionIndex: state.selectedRegionIndex,
+      analyzingRegionIndex: 0,
+      regionAnalyses: const <ScanRegionAnalysis>[],
     );
+
+    final List<ScanRegionAnalysis> results = <ScanRegionAnalysis>[];
+
     try {
-      final Uint8List? cropped = sl<ImageCropService>().cropRegion(
-        imageBytes: imageBytes,
-        region: region,
-      );
-      if (cropped == null) {
-        state = ScanFlowState(
-          step: ScanStep.selectRegions,
+      for (int i = 0; i < regions.length; i++) {
+        state = state.copyWith(analyzingRegionIndex: i);
+        final PlantRegionModel region = regions[i];
+        final Uint8List? cropped = await _cropForRegion(
           imageBytes: imageBytes,
+          region: region,
+          regionIndex: i,
           regions: regions,
-          selectedRegionIndex: idx,
-          errorMessage: '@@errorCrop',
+          backStep: ScanStep.selectRegions,
         );
-        return;
+        if (cropped == null) {
+          return;
+        }
+        final species = await inference.predictSpecies(cropped);
+        results.add(
+          ScanRegionAnalysis(
+            regionIndex: i,
+            region: region,
+            species: species,
+          ),
+        );
       }
-      final InferenceResultModel result = await sl<InferenceApiService>().predictSpecies(cropped);
+
       state = ScanFlowState(
         step: ScanStep.speciesDone,
         imageBytes: imageBytes,
         regions: regions,
-        selectedRegionIndex: idx,
-        species: result,
-        disease: state.disease,
+        selectedRegionIndex: state.selectedRegionIndex,
+        regionAnalyses: results,
       );
     } catch (e, st) {
-      sl<AppLogger>().e('inference_species', e, st);
+      sl<AppLogger>().e('inference_species_regions', e, st);
       state = ScanFlowState(
         step: ScanStep.selectRegions,
         imageBytes: imageBytes,
         regions: regions,
-        selectedRegionIndex: idx,
+        selectedRegionIndex: state.analyzingRegionIndex,
         errorMessage: '@@errorInference',
       );
     }
   }
 
-  Future<void> runDisease() async {
+  /// Tür sonrası: her bölge için hastalık analizi, ardından özet.
+  Future<void> runAllRegionsDisease() async {
     final List<PlantRegionModel> regions = state.regions;
     final Uint8List? imageBytes = state.imageBytes;
-    if (imageBytes == null || regions.isEmpty) {
+    final List<ScanRegionAnalysis> prior = state.regionAnalyses;
+    if (imageBytes == null || regions.isEmpty || prior.isEmpty) {
       return;
     }
-    final int idx = state.selectedRegionIndex.clamp(0, regions.length - 1);
-    final PlantRegionModel region = regions[idx];
+
+    final InferenceApiService inference = sl<InferenceApiService>();
+
     state = ScanFlowState(
-      step: ScanStep.diseaseLoading,
+      step: ScanStep.analyzingDisease,
       imageBytes: imageBytes,
       regions: regions,
-      selectedRegionIndex: idx,
-      species: state.species,
-      disease: state.disease,
+      selectedRegionIndex: state.selectedRegionIndex,
+      analyzingRegionIndex: 0,
+      regionAnalyses: prior,
     );
+
+    final List<ScanRegionAnalysis> results = <ScanRegionAnalysis>[];
+
     try {
-      final Uint8List? cropped = sl<ImageCropService>().cropRegion(
-        imageBytes: imageBytes,
-        region: region,
-      );
-      if (cropped == null) {
-        state = ScanFlowState(
-          step: ScanStep.speciesDone,
+      for (int i = 0; i < prior.length; i++) {
+        state = state.copyWith(analyzingRegionIndex: i);
+        final ScanRegionAnalysis entry = prior[i];
+        final Uint8List? cropped = await _cropForRegion(
           imageBytes: imageBytes,
+          region: entry.region,
+          regionIndex: entry.regionIndex,
           regions: regions,
-          selectedRegionIndex: idx,
-          species: state.species,
-          errorMessage: '@@errorCrop',
+          backStep: ScanStep.speciesDone,
         );
-        return;
+        if (cropped == null) {
+          return;
+        }
+        final disease = await inference.predictDisease(cropped);
+        results.add(entry.copyWithDisease(disease));
       }
-      final InferenceResultModel result = await sl<InferenceApiService>().predictDisease(cropped);
+
       state = ScanFlowState(
-        step: ScanStep.diseaseDone,
+        step: ScanStep.summary,
         imageBytes: imageBytes,
         regions: regions,
-        selectedRegionIndex: idx,
-        species: state.species,
-        disease: result,
+        selectedRegionIndex: state.selectedRegionIndex,
+        regionAnalyses: results,
       );
     } catch (e, st) {
-      sl<AppLogger>().e('inference_disease', e, st);
+      sl<AppLogger>().e('inference_disease_regions', e, st);
       state = ScanFlowState(
         step: ScanStep.speciesDone,
         imageBytes: imageBytes,
         regions: regions,
-        selectedRegionIndex: idx,
-        species: state.species,
+        selectedRegionIndex: state.analyzingRegionIndex,
+        regionAnalyses: prior,
         errorMessage: '@@errorInference',
       );
     }
-  }
-
-  void goToSummary() {
-    state = state.copyWith(step: ScanStep.summary);
   }
 }
 

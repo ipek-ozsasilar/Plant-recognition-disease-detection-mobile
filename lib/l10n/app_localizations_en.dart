@@ -280,16 +280,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanRegionsHint =>
-      'If there are multiple plants, tap to add numbered regions; tap a region to select it for analysis.';
+      'Drag to add numbered regions when several plants appear in one photo. Each region is analyzed separately.';
 
   @override
-  String get scanRegionsAdd => 'Add region';
+  String get scanRegionsAdd => 'Region';
 
   @override
   String get scanRegionsClear => 'Clear';
 
   @override
-  String get scanRegionsNext => 'Continue to species';
+  String get scanRegionsNext => 'Analyze species';
+
+  @override
+  String scanAnalyzingRegion(int current, int total) {
+    return 'Analyzing region $current of $total…';
+  }
+
+  @override
+  String scanAnalyzingRegionSpecies(int current, int total) {
+    return 'Region $current / $total — species…';
+  }
+
+  @override
+  String scanAnalyzingRegionDisease(int current, int total) {
+    return 'Region $current / $total — disease…';
+  }
+
+  @override
+  String get scanSpeciesResultsTitle => 'Species results (per region)';
+
+  @override
+  String get scanSpeciesResultsHint =>
+      'Each region was analyzed separately. Continue for disease analysis.';
+
+  @override
+  String get scanDiseasePending => 'Disease analysis pending';
+
+  @override
+  String scanRegionLabel(int index) {
+    return 'Region $index';
+  }
+
+  @override
+  String get scanSummaryMultiHint =>
+      'Each region is listed below. Recognized species are saved as separate history entries.';
+
+  @override
+  String scanSaveMultiSuccess(int saved) {
+    return '$saved scan(s) saved to history.';
+  }
+
+  @override
+  String scanSaveMultiWithSkipped(int saved, int skipped) {
+    return '$saved saved. $skipped region(s) skipped (species not recognized).';
+  }
+
+  @override
+  String get scanSaveMultiNone =>
+      'Nothing saved: plant species was not recognized in any region.';
+
+  @override
+  String scanSaveMultiCta(int count) {
+    return 'Save savable regions ($count)';
+  }
+
+  @override
+  String scanRegionNote(int index) {
+    return 'Photo region $index';
+  }
 
   @override
   String get scanRegionsSelectPrompt =>
@@ -359,7 +417,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanDownloadPdfCta => 'Download PDF report';
 
   @override
-  String get scanPdfDownloadSuccess => 'PDF saved to Downloads folder.';
+  String get scanPdfDownloadSuccess =>
+      'PDF downloaded. Tap the notification to open it.';
 
   @override
   String get scanPdfDownloadError =>
@@ -826,6 +885,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationFollowUpUrgent(String plantName) {
     return '$plantName showed serious risk. Please scan again as soon as you can.';
   }
+
+  @override
+  String get notificationSpeciesTipTitle => 'Plant saved';
+
+  @override
+  String notificationSpeciesTipBody(String plantName, String species) {
+    return '$plantName ($species) was saved. Check the species guide for watering and light; disease was unclear in this scan.';
+  }
+
+  @override
+  String notificationFollowUpSpeciesOnly(String plantName, String species) {
+    return 'Check $plantName ($species) again within a week with a new photo.';
+  }
+
+  @override
+  String get scanAlreadySaved => 'Saved';
+
+  @override
+  String get scanSavedDoneHint => 'Scan saved. Use retry below for a new scan.';
 
   @override
   String get notificationRiskTitle => 'Plant risk may be increasing';

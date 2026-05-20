@@ -587,13 +587,13 @@ abstract class AppLocalizations {
   /// No description provided for @scanRegionsHint.
   ///
   /// In tr, this message translates to:
-  /// **'Birden fazla bitki varsa görüntüye dokunarak numaralı bölgeler ekleyin; analiz etmek istediğiniz bölgeyi seçin.'**
+  /// **'Birden fazla bitki varsa sürükleyerek numaralı bölgeler ekleyin. Analizde her bölge ayrı değerlendirilir.'**
   String get scanRegionsHint;
 
   /// No description provided for @scanRegionsAdd.
   ///
   /// In tr, this message translates to:
-  /// **'Bölge ekle'**
+  /// **'Bölge'**
   String get scanRegionsAdd;
 
   /// No description provided for @scanRegionsClear.
@@ -607,6 +607,84 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tür analizine geç'**
   String get scanRegionsNext;
+
+  /// No description provided for @scanAnalyzingRegion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölge {current} / {total} analiz ediliyor…'**
+  String scanAnalyzingRegion(int current, int total);
+
+  /// No description provided for @scanAnalyzingRegionSpecies.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölge {current} / {total} — tür analizi…'**
+  String scanAnalyzingRegionSpecies(int current, int total);
+
+  /// No description provided for @scanAnalyzingRegionDisease.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölge {current} / {total} — hastalık analizi…'**
+  String scanAnalyzingRegionDisease(int current, int total);
+
+  /// No description provided for @scanSpeciesResultsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tür sonuçları (bölge bölge)'**
+  String get scanSpeciesResultsTitle;
+
+  /// No description provided for @scanSpeciesResultsHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her bölge ayrı değerlendirildi. Devam ile hastalık analizi yapılır.'**
+  String get scanSpeciesResultsHint;
+
+  /// No description provided for @scanDiseasePending.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hastalık analizi bekleniyor'**
+  String get scanDiseasePending;
+
+  /// No description provided for @scanRegionLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölge {index}'**
+  String scanRegionLabel(int index);
+
+  /// No description provided for @scanSummaryMultiHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her bölge ayrı satırda gösterilir. Türü tanınan bölgeler geçmişe ayrı kayıt olarak yazılır.'**
+  String get scanSummaryMultiHint;
+
+  /// No description provided for @scanSaveMultiSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'{saved} tarama geçmişe kaydedildi.'**
+  String scanSaveMultiSuccess(int saved);
+
+  /// No description provided for @scanSaveMultiWithSkipped.
+  ///
+  /// In tr, this message translates to:
+  /// **'{saved} kayıt eklendi. {skipped} bölge tür tanınmadığı için atlandı.'**
+  String scanSaveMultiWithSkipped(int saved, int skipped);
+
+  /// No description provided for @scanSaveMultiNone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilemedi: tüm bölgelerde bitki türü tanınmadı.'**
+  String get scanSaveMultiNone;
+
+  /// No description provided for @scanSaveMultiCta.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilebilir bölgeleri kaydet ({count})'**
+  String scanSaveMultiCta(int count);
+
+  /// No description provided for @scanRegionNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğraf bölgesi {index}'**
+  String scanRegionNote(int index);
 
   /// No description provided for @scanRegionsSelectPrompt.
   ///
@@ -731,7 +809,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanPdfDownloadSuccess.
   ///
   /// In tr, this message translates to:
-  /// **'PDF İndirilenler klasörüne kaydedildi.'**
+  /// **'PDF indirildi. Açmak için bildirime dokunun.'**
   String get scanPdfDownloadSuccess;
 
   /// No description provided for @scanPdfDownloadError.
@@ -1561,6 +1639,36 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{plantName} ciddi risk göstermişti. Lütfen en kısa sürede tekrar tarayın.'**
   String notificationFollowUpUrgent(String plantName);
+
+  /// No description provided for @notificationSpeciesTipTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitki kaydedildi'**
+  String get notificationSpeciesTipTitle;
+
+  /// No description provided for @notificationSpeciesTipBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{plantName} ({species}) kaydedildi. Sulama ve ışık için tür rehberine bakın; hastalık bu taramada net değildi.'**
+  String notificationSpeciesTipBody(String plantName, String species);
+
+  /// No description provided for @notificationFollowUpSpeciesOnly.
+  ///
+  /// In tr, this message translates to:
+  /// **'{plantName} ({species}) için bir hafta içinde yeni fotoğrafla kontrol edin.'**
+  String notificationFollowUpSpeciesOnly(String plantName, String species);
+
+  /// No description provided for @scanAlreadySaved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedildi'**
+  String get scanAlreadySaved;
+
+  /// No description provided for @scanSavedDoneHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarama kaydedildi. Yeni tarama için aşağıdan tekrar deneyin.'**
+  String get scanSavedDoneHint;
 
   /// No description provided for @notificationRiskTitle.
   ///

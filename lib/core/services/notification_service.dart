@@ -21,6 +21,7 @@ class NotificationService {
 
   static const int _followUpIdBase = 12000;
   static const int _riskAlertId = 11002;
+  static const int _speciesTipId = 11004;
   static const int _pdfDownloadCompleteId = 11003;
   static const int _followUpHour = 10;
   static const int _followUpMinute = 0;
@@ -45,7 +46,6 @@ class NotificationService {
         onDidReceiveNotificationResponse: _handleNotificationResponse,
       );
       await _openPdfIfLaunchedFromNotification();
-      await _drainPendingPdfOpen();
     } catch (e, st) {
       _logger.e('notifications_init', e, st);
     }
@@ -55,9 +55,7 @@ class NotificationService {
     final String? payload = response.payload;
     if (payload != null && _isPdfOpenPayload(payload)) {
       unawaited(_openPdfPayload(payload));
-      return;
     }
-    unawaited(_drainPendingPdfOpen());
   }
 
   Future<void> _openPdfIfLaunchedFromNotification() async {
@@ -94,35 +92,35 @@ class NotificationService {
     }
   }
 
-  Future<void> _drainPendingPdfOpen() async {
-    if (!Platform.isAndroid) {
-      return;
+  bool _isPdfOpenPayload(String payload) {
+    if (payload.contains(_cachePdfMarker)) {
+      return true;
     }
-    try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String? uri = prefs.getString(PreferenceKeys.pendingPdfOpenUri);
-      if (uri == null || uri.isEmpty || !_isPdfOpenPayload(uri)) {
-        return;
-      }
-      await _openPdfPayload(uri);
-    } catch (e, st) {
-      _logger.e('notifications_pdf_drain', e, st);
-    }
+    return payload.endsWith('.pdf') && !payload.startsWith('content://');
   }
 
-  bool _isPdfOpenPayload(String payload) {
-    return payload.startsWith('content://') ||
-        payload.endsWith('.pdf') ||
-        payload.contains(RegExp(r'[\\/]Download[\\/]'));
-  }
+  static const String _cachePdfMarker = '/pdf_open/';
 
   Future<void> _openPdfPayload(String payload) async {
-    if (!Platform.isAndroid) {
+    if (!Platform.isAndroid && !Platform.isIOS) {
       return;
     }
-    await Future<void>.delayed(const Duration(milliseconds: 400));
     try {
-      await sl<PdfFileSaveService>().openSavedPdf(payload);
+      await _plugin.cancel(_pdfDownloadCompleteId);
+    } catch (e, st) {
+      _logger.w('notifications_pdf_cancel', e, st);
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+    try {
+      final PdfFileSaveService pdf = sl<PdfFileSaveService>();
+      String path = payload;
+      if (payload.startsWith('content://') || !await File(path).exists()) {
+        final String? latest = await pdf.latestCachePdfPath();
+        if (latest != null) {
+          path = latest;
+        }
+      }
+      await pdf.openSavedPdf(path);
       await _clearPendingPdf();
     } catch (e, st) {
       _logger.e('notifications_pdf_open', e, st);
@@ -300,6 +298,33 @@ class NotificationService {
       );
     } catch (e, st) {
       _logger.e('notifications_pdf_download', e, st);
+    }
+  }
+
+  /// Hastalık net değilken: tür / bakım odaklı anlık bildirim (risk değil).
+  Future<void> showSpeciesCareTip({
+    required String title,
+    required String body,
+  }) async {
+    try {
+      final bool enabled = await isEnabled();
+      if (!enabled) {
+        return;
+      }
+      const AndroidNotificationDetails android = AndroidNotificationDetails(
+        'species_care_tips',
+        'Plant care tips',
+        channelDescription: 'Tips after saving a scan when disease was unclear',
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
+      );
+      const DarwinNotificationDetails ios = DarwinNotificationDetails();
+      const NotificationDetails details =
+          NotificationDetails(android: android, iOS: ios);
+
+      await _plugin.show(_speciesTipId, title, body, details);
+    } catch (e, st) {
+      _logger.e('notifications_species_tip', e, st);
     }
   }
 

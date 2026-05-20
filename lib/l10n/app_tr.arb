@@ -122,10 +122,67 @@
   "scanPickCamera": "Kamera",
   "scanPickGallery": "Galeri",
   "scanRegionsTitle": "Bitki bölgeleri",
-  "scanRegionsHint": "Birden fazla bitki varsa görüntüye dokunarak numaralı bölgeler ekleyin; analiz etmek istediğiniz bölgeyi seçin.",
-  "scanRegionsAdd": "Bölge ekle",
+  "scanRegionsHint": "Birden fazla bitki varsa sürükleyerek numaralı bölgeler ekleyin. Analizde her bölge ayrı değerlendirilir.",
+  "scanRegionsAdd": "Bölge",
   "scanRegionsClear": "Temizle",
   "scanRegionsNext": "Tür analizine geç",
+  "scanAnalyzingRegion": "Bölge {current} / {total} analiz ediliyor…",
+  "scanAnalyzingRegionSpecies": "Bölge {current} / {total} — tür analizi…",
+  "@scanAnalyzingRegionSpecies": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "scanAnalyzingRegionDisease": "Bölge {current} / {total} — hastalık analizi…",
+  "@scanAnalyzingRegionDisease": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "scanSpeciesResultsTitle": "Tür sonuçları (bölge bölge)",
+  "scanSpeciesResultsHint": "Her bölge ayrı değerlendirildi. Devam ile hastalık analizi yapılır.",
+  "scanDiseasePending": "Hastalık analizi bekleniyor",
+  "@scanAnalyzingRegion": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "scanRegionLabel": "Bölge {index}",
+  "@scanRegionLabel": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "scanSummaryMultiHint": "Her bölge ayrı satırda gösterilir. Türü tanınan bölgeler geçmişe ayrı kayıt olarak yazılır.",
+  "scanSaveMultiSuccess": "{saved} tarama geçmişe kaydedildi.",
+  "@scanSaveMultiSuccess": {
+    "placeholders": {
+      "saved": { "type": "int" }
+    }
+  },
+  "scanSaveMultiWithSkipped": "{saved} kayıt eklendi. {skipped} bölge tür tanınmadığı için atlandı.",
+  "@scanSaveMultiWithSkipped": {
+    "placeholders": {
+      "saved": { "type": "int" },
+      "skipped": { "type": "int" }
+    }
+  },
+  "scanSaveMultiNone": "Kaydedilemedi: tüm bölgelerde bitki türü tanınmadı.",
+  "scanSaveMultiCta": "Kaydedilebilir bölgeleri kaydet ({count})",
+  "@scanSaveMultiCta": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "scanRegionNote": "Fotoğraf bölgesi {index}",
+  "@scanRegionNote": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
   "scanRegionsSelectPrompt": "Lütfen en az bir bölge ekleyin veya seçin.",
   "scanSpeciesLoading": "Bitki türü tahmin ediliyor…",
   "scanSpeciesTitle": "Tür sonucu",
@@ -151,7 +208,7 @@
   "scanSavedPhotoFailed": "Tarama kaydedildi; fotoğraf yüklenemedi. Firebase Storage kurallarını kontrol edin.",
   "scanExportPdfCta": "PDF raporu paylaş",
   "scanDownloadPdfCta": "PDF raporu indir",
-  "scanPdfDownloadSuccess": "PDF İndirilenler klasörüne kaydedildi.",
+  "scanPdfDownloadSuccess": "PDF indirildi. Açmak için bildirime dokunun.",
   "scanPdfDownloadError": "PDF kaydedilemedi. Lütfen tekrar deneyin.",
   "pdfDownloadNotificationTitle": "İndirme tamamlandı",
   "pdfDownloadNotificationBody": "{fileName} telefona indirildi.",
@@ -335,6 +392,23 @@
       "plantName": { "type": "String" }
     }
   },
+  "notificationSpeciesTipTitle": "Bitki kaydedildi",
+  "notificationSpeciesTipBody": "{plantName} ({species}) kaydedildi. Sulama ve ışık için tür rehberine bakın; hastalık bu taramada net değildi.",
+  "@notificationSpeciesTipBody": {
+    "placeholders": {
+      "plantName": { "type": "String" },
+      "species": { "type": "String" }
+    }
+  },
+  "notificationFollowUpSpeciesOnly": "{plantName} ({species}) için bir hafta içinde yeni fotoğrafla kontrol edin.",
+  "@notificationFollowUpSpeciesOnly": {
+    "placeholders": {
+      "plantName": { "type": "String" },
+      "species": { "type": "String" }
+    }
+  },
+  "scanAlreadySaved": "Kaydedildi",
+  "scanSavedDoneHint": "Tarama kaydedildi. Yeni tarama için aşağıdan tekrar deneyin.",
   "notificationRiskTitle": "Bitki riski artıyor olabilir",
   "notificationRiskBody": "Son taramada risk tespit edildi. Bitkini kontrol edip önerilere göz at.",
   "notificationRiskBodyFor": "{plantName} için ciddi risk tespit edildi. Hemen kontrol edin.",

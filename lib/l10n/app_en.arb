@@ -122,10 +122,67 @@
   "scanPickCamera": "Camera",
   "scanPickGallery": "Gallery",
   "scanRegionsTitle": "Plant regions",
-  "scanRegionsHint": "If there are multiple plants, tap to add numbered regions; tap a region to select it for analysis.",
-  "scanRegionsAdd": "Add region",
+  "scanRegionsHint": "Drag to add numbered regions when several plants appear in one photo. Each region is analyzed separately.",
+  "scanRegionsAdd": "Region",
   "scanRegionsClear": "Clear",
-  "scanRegionsNext": "Continue to species",
+  "scanRegionsNext": "Analyze species",
+  "scanAnalyzingRegion": "Analyzing region {current} of {total}…",
+  "scanAnalyzingRegionSpecies": "Region {current} / {total} — species…",
+  "@scanAnalyzingRegionSpecies": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "scanAnalyzingRegionDisease": "Region {current} / {total} — disease…",
+  "@scanAnalyzingRegionDisease": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "scanSpeciesResultsTitle": "Species results (per region)",
+  "scanSpeciesResultsHint": "Each region was analyzed separately. Continue for disease analysis.",
+  "scanDiseasePending": "Disease analysis pending",
+  "@scanAnalyzingRegion": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "scanRegionLabel": "Region {index}",
+  "@scanRegionLabel": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "scanSummaryMultiHint": "Each region is listed below. Recognized species are saved as separate history entries.",
+  "scanSaveMultiSuccess": "{saved} scan(s) saved to history.",
+  "@scanSaveMultiSuccess": {
+    "placeholders": {
+      "saved": { "type": "int" }
+    }
+  },
+  "scanSaveMultiWithSkipped": "{saved} saved. {skipped} region(s) skipped (species not recognized).",
+  "@scanSaveMultiWithSkipped": {
+    "placeholders": {
+      "saved": { "type": "int" },
+      "skipped": { "type": "int" }
+    }
+  },
+  "scanSaveMultiNone": "Nothing saved: plant species was not recognized in any region.",
+  "scanSaveMultiCta": "Save savable regions ({count})",
+  "@scanSaveMultiCta": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "scanRegionNote": "Photo region {index}",
+  "@scanRegionNote": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
   "scanRegionsSelectPrompt": "Please add or select at least one region.",
   "scanSpeciesLoading": "Predicting plant species…",
   "scanSpeciesTitle": "Species result",
@@ -151,7 +208,7 @@
   "scanSavedPhotoFailed": "Scan saved, but the photo could not be uploaded. Check Firebase Storage rules.",
   "scanExportPdfCta": "Share PDF report",
   "scanDownloadPdfCta": "Download PDF report",
-  "scanPdfDownloadSuccess": "PDF saved to Downloads folder.",
+  "scanPdfDownloadSuccess": "PDF downloaded. Tap the notification to open it.",
   "scanPdfDownloadError": "Could not save the PDF. Please try again.",
   "pdfDownloadNotificationTitle": "Download complete",
   "pdfDownloadNotificationBody": "{fileName} downloaded to your device.",
@@ -335,6 +392,23 @@
       "plantName": { "type": "String" }
     }
   },
+  "notificationSpeciesTipTitle": "Plant saved",
+  "notificationSpeciesTipBody": "{plantName} ({species}) was saved. Check the species guide for watering and light; disease was unclear in this scan.",
+  "@notificationSpeciesTipBody": {
+    "placeholders": {
+      "plantName": { "type": "String" },
+      "species": { "type": "String" }
+    }
+  },
+  "notificationFollowUpSpeciesOnly": "Check {plantName} ({species}) again within a week with a new photo.",
+  "@notificationFollowUpSpeciesOnly": {
+    "placeholders": {
+      "plantName": { "type": "String" },
+      "species": { "type": "String" }
+    }
+  },
+  "scanAlreadySaved": "Saved",
+  "scanSavedDoneHint": "Scan saved. Use retry below for a new scan.",
   "notificationRiskTitle": "Plant risk may be increasing",
   "notificationRiskBody": "Risk was detected in the latest scan. Check your plant and review recommendations.",
   "notificationRiskBodyFor": "Serious risk for {plantName}. Check your plant right away.",
