@@ -1,6 +1,6 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
-import 'package:bitirme_mobile/core/navigation/app_paths.dart';
+import 'package:bitirme_mobile/core/navigation/scan_flow_launcher.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -38,7 +38,7 @@ class MainShellView extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(WidgetSizesEnum.cardRadius.value * 1.35),
           ),
-          onPressed: () => context.push(AppPaths.scan),
+          onPressed: () => launchScanFlow(context),
           tooltip: context.l10n.navScan,
           child: Icon(Icons.photo_camera_rounded, size: IconSizesEnum.large.value),
         ),

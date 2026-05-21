@@ -1,6 +1,7 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
+import 'package:bitirme_mobile/core/navigation/scan_flow_launcher.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
@@ -67,13 +68,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
             sliver: SliverList(
               delegate: SliverChildListDelegate(<Widget>[
                 HomeQuickActionsRow(
-                  onScan: () => context.push(AppPaths.scan),
+                  onScan: () => launchScanFlow(context),
                   onHistory: () => context.go(AppPaths.history),
                   onGuide: () => context.push(AppPaths.guide),
                   onSettings: () => context.push(AppPaths.settings),
                 ),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
-                HomeScanHeroCard(onTap: () => context.push(AppPaths.scan)),
+                HomeScanHeroCard(onTap: () => launchScanFlow(context)),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
                 HomeInsightBanner(),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.5),
@@ -143,7 +144,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   error: (err, stack) => const SizedBox.shrink(),
                   data: (history) => history.isEmpty
                       ? HomeEmptyState(
-                          onStartScan: () => context.push(AppPaths.scan),
+                          onStartScan: () => launchScanFlow(context),
                         )
                       : HomeRecentStrip(records: history.take(8).toList()),
                 ),

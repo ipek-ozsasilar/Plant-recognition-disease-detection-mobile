@@ -157,7 +157,7 @@
     }
   },
   "scanSummaryMultiHint": "Each region is listed below. Recognized species are saved as separate history entries.",
-  "scanSaveMultiSuccess": "{saved} scan(s) saved to history.",
+  "scanSaveMultiSuccess": "{saved} plant record(s) added to history.",
   "@scanSaveMultiSuccess": {
     "placeholders": {
       "saved": { "type": "int" }
@@ -187,7 +187,7 @@
   "scanSpeciesLoading": "Predicting plant species…",
   "scanSpeciesTitle": "Species result",
   "scanSpeciesConfidence": "Confidence",
-  "scanDiseaseLoading": "Analyzing disease / health…",
+  "scanDiseaseLoading": "Detecting disease…",
   "scanDiseaseTitle": "Disease / overall status",
   "scanDiseaseNote": "The model performs a general classification independent of species; results are advisory only.",
   "scanUnrecognizedTitle": "Not recognized",
@@ -204,7 +204,7 @@
   },
   "scanSaveNewPlant": "Save as new plant",
   "scanSaveToPlantCta": "Save plant",
-  "scanSavedToPlantSuccess": "Scan saved to history.",
+  "scanSavedToPlantSuccess": "Plant saved.",
   "scanSavedPhotoFailed": "Scan saved, but the photo could not be uploaded. Check Firebase Storage rules.",
   "scanExportPdfCta": "Share PDF report",
   "scanDownloadPdfCta": "Download PDF report",
@@ -221,6 +221,7 @@
   "scanRetry": "Try again",
   "historyTitle": "Scan history",
   "historyHeadline": "Scan timeline",
+  "historyDiseaseUnknown": "Disease unknown",
   "historySubtitle": "Scans are grouped by species. Multiple pots of the same type appear under one card.",
   "historyScanCount": "{count} scans",
   "@historyScanCount": {
@@ -233,9 +234,9 @@
   "search": "Search",
   "guideTitle": "Guide",
   "guidesHeadline": "Plant care guide",
-  "guidesSubtitle": "Every saved scan goes to History. History and Health progress group by species; you can optionally pick a pot when saving.",
+  "guidesSubtitle": "Every saved scan goes to History. Health progress shows species trends; you can optionally pick a pot when saving.",
   "guideSectionApp": "App sections",
-  "guideAppTips": "History: all your scans listed by plant species.\n\nHealth progress: 14/30-day chart and scan photos for the species you select.\n\nMy plants: if you pick a pot when saving, that plant's score and scans update.\n\nScan: species first, then disease; results are saved to History automatically.",
+  "guideAppTips": "History: all your scans listed by plant species.\n\nHealth progress: 14/30-day chart and scan photos for the species you select.\n\nScan: species first, then disease; results are saved to History automatically. You can pick a pot when saving.",
   "guidesEssentialsBadge": "Essentials",
   "guidesAdvancedBadge": "Advanced",
   "guidesLearnMore": "Learn more",
@@ -247,7 +248,7 @@
   "guideSectionMulti": "Multiple plants",
   "guideMultiTips": "Mark a separate region for each plant to reduce mismatches.",
   "guideSectionDisease": "Disease scan",
-  "guideDiseaseTips": "Keep symptoms clear on leaves; blur lowers confidence. Pick the correct pot when saving to update My plants tracking.",
+  "guideDiseaseTips": "Keep symptoms clear on leaves; blur lowers confidence. Pick the correct pot when saving to keep records organized.",
   "settingsTitle": "Settings",
   "settingsHeadline": "Preferences",
   "settingsSubtitle": "Manage language, theme, and notification preferences.",
@@ -263,13 +264,17 @@
   "profileHelpCenter": "Help center",
   "profilePlantsTracked": "Saved plants",
   "profileScansDone": "Total scans",
-  "profileStatsHint": "Left: pots in My plants. Right: all scans saved to your account.",
+  "profileSpeciesCount": "Species count",
+  "profileDiseaseCount": "Disease count",
+  "profileStatsHint": "Left: recognized plant species count. Right: all scans saved to your account.",
   "profileChangePhotoHint": "Tap to change photo",
   "profilePhotoGallery": "Choose from gallery",
   "profilePhotoCamera": "Camera",
   "profilePhotoUploadSuccess": "Profile photo updated.",
   "profilePhotoUploadError": "Could not upload profile photo.",
-  "profilePersonalInfoIntro": "Update your name and contact details. If you change email, a verification link will be sent.",
+  "profilePersonalInfoIntro": "Update your name and contact details.",
+  "profileEmailChangeSection": "Change email",
+  "profileEmailChangeHint": "A verification link is sent to your new address. After you confirm it, your sign-in email is updated.",
   "profileDisplayNameLabel": "Full name",
   "profileDisplayNameRequired": "Name is required",
   "profileEmailLabel": "Email",
@@ -284,6 +289,20 @@
   "profileNotificationsDetail": "Notifications are scheduled locally on your device. One follow-up reminder is kept per plant based on your latest scan.",
   "profilePrivacyIntro": "Account security and your data.",
   "profileChangePassword": "Reset password",
+  "profilePasswordResetHint": "A password reset link will be sent to {email}.",
+  "@profilePasswordResetHint": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "profilePasswordResetConfirmTitle": "Reset password",
+  "profilePasswordResetConfirmBody": "Send a password reset link to {email}?",
+  "@profilePasswordResetConfirmBody": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "profilePasswordGoogleHint": "You signed in with Google; reset your password in your Google account security settings.",
   "profilePrivacyDataNote": "Your plant and scan data is linked to {email} in Firebase. Photos are stored in secure cloud storage.",
   "@profilePrivacyDataNote": {
     "placeholders": {
@@ -296,15 +315,15 @@
   "profileDeleteDataHint": "Your login stays active; only app data is removed.",
   "profileDeleteDataError": "Could not delete data.",
   "aboutTitle": "About",
-  "aboutSubtitle": "Plant species and disease analysis — graduation thesis mobile app",
-  "aboutPurposeTitle": "What it does",
-  "aboutPurposeBody": "PhytoGuard uses AI to estimate plant species and disease risk from photos. You can track scans over time, review history grouped by species, and monitor health trends on charts.",
-  "aboutFeaturesTitle": "Features",
-  "aboutFeaturesBody": "Photo-based species and disease analysis (mostly on-device)\nScan history with species grouping and photos\nHealth progress: 14/30-day disease trend charts\nMy plants: pot-level records linked to scans\nFollow-up notifications when health score is low\nPDF report download and share\nCare guide, daily tips, and multi-plant region selection",
-  "aboutHowItWorksTitle": "How it works",
-  "aboutHowItWorksBody": "During a scan, species is predicted first, then disease class. Every saved scan is stored under your account; you can optionally pick which pot it belongs to. Data syncs via Firebase; scan photos are kept in cloud storage.",
-  "aboutThesisTitle": "Graduation project",
-  "aboutThesisBody": "This app was built as a university graduation thesis. Machine learning models, the mobile UI, and cloud backend are the main deliverables of the project.",
+  "aboutSubtitle": "Atatürk University Computer Engineering graduation thesis — AI plant recognition and disease detection mobile app",
+  "aboutPurposeTitle": "Project goal",
+  "aboutPurposeBody": "This graduation project delivers PhytoGuard, a cloud-enabled mobile application. Users take or upload leaf photos to identify plant species and assess possible disease status with artificial intelligence. The aim is fast, accessible decision support where expert diagnosis is limited. The system combines species recognition and disease detection in one app and stores scan history for long-term health tracking.",
+  "aboutFeaturesTitle": "System components",
+  "aboutFeaturesBody": "Species model: EfficientNetB3-based ~93-class model (Leafsnap and PlantNet-300K datasets); runs on-device via TensorFlow Lite\nDisease model: Species-independent 5-class general model (healthy, mold, rust, blight, mildew); local TFLite inference\nMobile app: Flutter; multi-region selection, scan history, health charts, PDF reports, notifications\nCloud: Firebase Authentication, Firestore records, and Storage for photo sync\nWorkflow: Species first, then disease; results saved to your account",
+  "aboutHowItWorksTitle": "Technical approach",
+  "aboutHowItWorksBody": "Models were trained in Python with TensorFlow/Keras and converted to TensorFlow Lite for mobile use. In the app you select regions on the photo; species is predicted first, then disease class. Saves are blocked if species is unrecognized; low-confidence disease appears as \"Disease unknown\" in history. Scans can be linked to a plant record. Outputs are informational only—not a substitute for professional diagnosis.",
+  "aboutThesisTitle": "Graduation thesis",
+  "aboutThesisBody": "Thesis title: Artificial Intelligence Supported Plant Recognition and Disease Detection Cloud-Based Mobile Application\n\nAuthor: İpek ÖZSAŞILAR (220707057)\nAdvisor: Assoc. Prof. Dr. Ferhat BOZKURT\nAtatürk University — Faculty of Engineering, Department of Computer Engineering\nComputer Engineering Selected Design Course I — June 2026\n\nThe study integrates image processing, deep learning, mobile development, and cloud computing.",
   "aboutDisclaimerTitle": "Important notice",
   "aboutDisclaimerBody": "Results are informational only, not a definitive diagnosis or treatment plan. Consult an agricultural expert for serious plant health issues.",
   "aboutVersionLabel": "Version 1.0.0",

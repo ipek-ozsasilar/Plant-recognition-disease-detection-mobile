@@ -36,8 +36,9 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
     final HealthProgressState progressState = ref.watch(healthProgressProvider);
     final String? selected = progressState.selectedSpeciesLabel;
     final ChartWindowEnum chartWindow = progressState.chartWindow;
-    final AsyncValue<List<PlantScanModel>> historyAsync =
-        ref.watch(historyFirestoreProvider);
+    final AsyncValue<List<PlantScanModel>> historyAsync = ref.watch(
+      historyFirestoreProvider,
+    );
 
     final Set<String> knownDiseases = knownDiseaseKeysFromList(
       sl<MlMetadataLoader>().diseaseClassKeys,
@@ -94,8 +95,8 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
 
           final String? effectiveSelected =
               options.any((_SpeciesOption o) => o.speciesLabel == selected)
-                  ? selected
-                  : (options.isNotEmpty ? options.first.speciesLabel : null);
+              ? selected
+              : (options.isNotEmpty ? options.first.speciesLabel : null);
 
           if (effectiveSelected != selected && effectiveSelected != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -225,7 +226,9 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
                         right: WidgetSizesEnum.cardRadius.value * 0.5,
                       ),
                       child: Text(
-                        context.l10n.healthProgressChartTitleDays(chartWindow.days),
+                        context.l10n.healthProgressChartTitleDays(
+                          chartWindow.days,
+                        ),
                         style: tt.titleMedium?.copyWith(
                           fontWeight: FontWeight.w900,
                           color: context.palOnSurface,
@@ -297,10 +300,7 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
                 ),
               ),
               SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
-              PlantScanPhotoTimeline(
-                scans: chartScans,
-                dateFormat: dayFmt,
-              ),
+              PlantScanPhotoTimeline(scans: chartScans, dateFormat: dayFmt),
             ],
           ),
         ),
@@ -310,10 +310,7 @@ class _HealthProgressViewState extends ConsumerState<HealthProgressView> {
 }
 
 final class _SpeciesOption {
-  const _SpeciesOption({
-    required this.speciesLabel,
-    required this.title,
-  });
+  const _SpeciesOption({required this.speciesLabel, required this.title});
 
   final String speciesLabel;
   final String title;

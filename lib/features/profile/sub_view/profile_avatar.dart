@@ -87,8 +87,10 @@ class ProfileAvatar extends StatelessWidget {
     }
     final String? url = profile?.photoUrl;
     if (url != null && url.isNotEmpty) {
+      final Object cacheKey = profile?.updatedAt?.millisecondsSinceEpoch ?? url;
       return Image.network(
         url,
+        key: ValueKey<Object>(cacheKey),
         fit: BoxFit.cover,
         errorBuilder: (_, __, ___) => _placeholder(context),
       );

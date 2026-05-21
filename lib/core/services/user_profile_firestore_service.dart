@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:bitirme_mobile/core/enums/firestore_collection_enum.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/firebase_storage_service.dart';
+import 'package:bitirme_mobile/core/services/image_crop_service.dart';
 import 'package:bitirme_mobile/models/user_profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,11 +13,14 @@ class UserProfileFirestoreService {
   UserProfileFirestoreService({
     required AppLogger logger,
     required FirebaseStorageService storage,
+    required ImageCropService imageCrop,
   })  : _logger = logger,
-        _storage = storage;
+        _storage = storage,
+        _imageCrop = imageCrop;
 
   final AppLogger _logger;
   final FirebaseStorageService _storage;
+  final ImageCropService _imageCrop;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<UserProfileModel?> getProfile({required String uid}) async {
@@ -109,14 +113,14 @@ class UserProfileFirestoreService {
     required String uid,
     required Uint8List bytes,
   }) async {
-    try {
-      return _storage.uploadJpegBytes(
-        path: 'users/$uid/profile.jpg',
-        bytes: bytes,
-      );
-    } catch (e, st) {
-      _logger.e('Profile photo upload', e, st);
+    final Uint8List? jpeg = _imageCrop.encodeJpeg(bytes);
+    if (jpeg == null || jpeg.isEmpty) {
+      _logger.e('Profile photo encode failed', null, null);
       return null;
     }
+    return _storage.uploadJpegBytes(
+      path: 'users/$uid/profile.jpg',
+      bytes: jpeg,
+    );
   }
 }

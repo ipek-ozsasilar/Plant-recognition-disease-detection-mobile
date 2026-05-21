@@ -26,10 +26,10 @@ import 'package:bitirme_mobile/features/settings/home_stats_provider.dart';
 import 'package:bitirme_mobile/features/plants/provider/plants_provider.dart';
 import 'package:bitirme_mobile/features/scan/provider/scan_flow_provider.dart';
 import 'package:bitirme_mobile/features/scan/sub_view/plant_region_picker_widget.dart';
-import 'package:bitirme_mobile/features/scan/sub_view/scan_plant_picker_sheet.dart';
 import 'package:bitirme_mobile/l10n/app_localizations.dart';
 import 'package:bitirme_mobile/models/inference_result_model.dart';
 import 'package:bitirme_mobile/models/plant_model.dart';
+import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:bitirme_mobile/models/scan_region_analysis_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
@@ -54,7 +54,6 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     with ScaffoldMessageMixin {
   final ImagePicker _picker = ImagePicker();
   bool _savingScan = false;
-  bool _scanSaveCompleted = false;
   bool _exportingPdf = false;
   bool _downloadingPdf = false;
 
@@ -138,7 +137,8 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     }
   }
 
-  Future<PlantModel?> _resolvePlantForSave({
+  /// Tür etiketine göre bitki: yoksa oluşturur, varsa en son taramalı kaydı kullanır.
+  Future<PlantModel> _resolvePlantForSave({
     required String ownerUid,
     required String speciesLabel,
     required String displayName,
@@ -154,39 +154,38 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       speciesLabel: speciesLabel,
     );
 
+    final PlantModel resolved;
     if (sameSpecies.isEmpty) {
-      final PlantModel created = await plantsService.createPlantForSpecies(
+      resolved = await plantsService.createPlantForSpecies(
         ownerUid: ownerUid,
         speciesLabel: speciesLabel,
         displayName: displayName,
       );
-      plantBySpecies[speciesLabel] = created;
-      return created;
+    } else {
+      resolved = _defaultPlantForSpecies(sameSpecies);
     }
+    plantBySpecies[speciesLabel] = resolved;
+    return resolved;
+  }
 
-    if (!mounted) {
-      return null;
+  PlantModel _defaultPlantForSpecies(List<PlantModel> plants) {
+    if (plants.length == 1) {
+      return plants.first;
     }
-
-    final ScanPlantPickerOutcome? pick = await showScanPlantPickerSheet(
-      context: context,
-      existingPlants: sameSpecies,
-    );
-    if (pick == null) {
-      return null;
-    }
-    if (pick.createNew) {
-      final PlantModel created = await plantsService.createPlantForSpecies(
-        ownerUid: ownerUid,
-        speciesLabel: speciesLabel,
-        displayName: displayName,
-      );
-      plantBySpecies[speciesLabel] = created;
-      return created;
-    }
-    final PlantModel chosen = pick.plant!;
-    plantBySpecies[speciesLabel] = chosen;
-    return chosen;
+    return plants.reduce((PlantModel best, PlantModel candidate) {
+      final DateTime? bestScan = best.lastScanDate;
+      final DateTime? candidateScan = candidate.lastScanDate;
+      if (bestScan != null && candidateScan != null) {
+        return candidateScan.isAfter(bestScan) ? candidate : best;
+      }
+      if (candidateScan != null) {
+        return candidate;
+      }
+      if (bestScan != null) {
+        return best;
+      }
+      return candidate.createdAt.isAfter(best.createdAt) ? candidate : best;
+    });
   }
 
   Future<void> _onSaveScan() async {
@@ -219,47 +218,81 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     bool anyPhotoFailed = false;
 
     try {
+      final bool multiRegion = s.regions.length > 1;
+
       for (final ScanRegionAnalysis analysis in savable) {
         final InferenceResultModel sp = analysis.species;
         final InferenceResultModel dis = analysis.disease!;
         final String speciesLabel = sp.top.rawKey ?? sp.top.label;
-        final String displayName = speciesClassDisplayForRaw(context, speciesLabel);
-        final PlantModel? plant = await _resolvePlantForSave(
+        final String displayName = speciesClassDisplayForExport(l10n, speciesLabel);
+        final PlantModel plant = await _resolvePlantForSave(
           ownerUid: uid,
           speciesLabel: speciesLabel,
           displayName: displayName,
           plantBySpecies: plantBySpecies,
         );
-        if (plant == null) {
-          return;
-        }
 
-        final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
+        final bool diseaseUnrecognized =
+            isDiseaseInferenceUnrecognized(dis);
+        final String storedDiseaseKey = diseaseKeyForScanStorage(
+          diseaseUnrecognized: diseaseUnrecognized,
+          modelLabel: dis.top.rawKey ?? dis.top.label,
+        );
+        final double diseaseConfUnit = diseaseUnrecognized
+            ? 0.0
+            : confidenceToUnit(dis.top.confidence);
         final int healthScore = computeHealthScore(
-          diseaseKey: dis.top.label,
+          diseaseKey: storedDiseaseKey,
           diseaseConfidenceUnit: diseaseConfUnit,
         );
         final String scanId = const Uuid().v4();
 
         String? imageUrl;
+        String? thumbnailUrl;
+        List<PlantRegionModel>? regionMarkers;
+        int? regionIndex;
         final Uint8List? originalBytes = s.imageBytes;
         if (originalBytes != null) {
-          final Uint8List? jpegBytes = sl<ImageCropService>().bytesForScanUpload(
-            imageBytes: originalBytes,
-            regions: s.regions,
-            selectedRegionIndex: analysis.regionIndex,
-          );
-          if (jpegBytes != null) {
-            imageUrl = await sl<FirebaseStorageService>().uploadScanImage(
-              ownerUid: uid,
-              scanId: scanId,
-              jpegBytes: jpegBytes,
+          final ImageCropService cropService = sl<ImageCropService>();
+          if (multiRegion) {
+            final int idx = analysis.regionIndex.clamp(0, s.regions.length - 1);
+            final Uint8List? regionJpeg = cropService.cropRegion(
+              imageBytes: originalBytes,
+              region: s.regions[idx],
             );
-            if (imageUrl == null || imageUrl.isEmpty) {
+            if (regionJpeg != null) {
+              imageUrl = await sl<FirebaseStorageService>().uploadScanImage(
+                ownerUid: uid,
+                scanId: scanId,
+                jpegBytes: regionJpeg,
+              );
+              if (imageUrl == null || imageUrl.isEmpty) {
+                anyPhotoFailed = true;
+              } else {
+                thumbnailUrl = imageUrl;
+              }
+            } else {
               anyPhotoFailed = true;
             }
+            regionIndex = analysis.regionIndex;
           } else {
-            anyPhotoFailed = true;
+            final Uint8List? jpegBytes = cropService.bytesForScanUpload(
+              imageBytes: originalBytes,
+              regions: s.regions,
+              selectedRegionIndex: analysis.regionIndex,
+            );
+            if (jpegBytes != null) {
+              imageUrl = await sl<FirebaseStorageService>().uploadScanImage(
+                ownerUid: uid,
+                scanId: scanId,
+                jpegBytes: jpegBytes,
+              );
+              if (imageUrl == null || imageUrl.isEmpty) {
+                anyPhotoFailed = true;
+              }
+            } else {
+              anyPhotoFailed = true;
+            }
           }
         }
 
@@ -274,15 +307,20 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
           createdAt: DateTime.now(),
           speciesLabel: speciesLabel,
           speciesConfidence: confidenceToUnit(sp.top.confidence),
-          diseaseKey: dis.top.label,
+          diseaseKey: storedDiseaseKey,
           diseaseConfidence: diseaseConfUnit,
           healthScore: healthScore,
           imageUrl: imageUrl,
+          thumbnailUrl: thumbnailUrl,
+          regionMarkers: regionMarkers,
+          regionIndex: regionIndex,
           notes: regionNote,
         );
 
         await sl<CatalogFirestoreService>().ensureSpecies(rawLabel: scan.speciesLabel);
-        await sl<CatalogFirestoreService>().ensureDisease(diseaseKey: scan.diseaseKey);
+        if (!diseaseUnrecognized) {
+          await sl<CatalogFirestoreService>().ensureDisease(diseaseKey: scan.diseaseKey);
+        }
         await sl<PlantScansFirestoreService>().addScan(scan);
         savedCount++;
 
@@ -290,7 +328,7 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
           scan: scan,
           plant: plant,
           speciesDisplayName: displayName,
-          diseaseUnrecognized: analysis.diseaseUnrecognized,
+          diseaseUnrecognized: diseaseUnrecognized,
         );
       }
 
@@ -316,8 +354,15 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
         message = l10n.scanSavedPhotoFailed;
       }
 
-      setState(() => _scanSaveCompleted = true);
-      showAppSnackBar(context, message: message, isError: anyPhotoFailed);
+      if (savedCount > 0) {
+        context.pop(message);
+      } else {
+        showAppSnackBar(
+          context,
+          message: l10n.scanSaveMultiNone,
+          isError: true,
+        );
+      }
     } catch (e, st) {
       sl<AppLogger>().e('scan_save', e, st);
       if (mounted) {
@@ -345,7 +390,14 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     if (dis == null) {
       return null;
     }
-    final double diseaseConfUnit = confidenceToUnit(dis.top.confidence);
+    final bool diseaseUnrecognized = isDiseaseInferenceUnrecognized(dis);
+    final String storedDiseaseKey = diseaseKeyForScanStorage(
+      diseaseUnrecognized: diseaseUnrecognized,
+      modelLabel: dis.top.rawKey ?? dis.top.label,
+    );
+    final double diseaseConfUnit = diseaseUnrecognized
+        ? 0.0
+        : confidenceToUnit(dis.top.confidence);
     return PlantScanModel(
       id: const Uuid().v4(),
       ownerUid: uid ?? '',
@@ -353,10 +405,10 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       createdAt: DateTime.now(),
       speciesLabel: analysis.species.top.rawKey ?? analysis.species.top.label,
       speciesConfidence: confidenceToUnit(analysis.species.top.confidence),
-      diseaseKey: dis.top.label,
+      diseaseKey: storedDiseaseKey,
       diseaseConfidence: diseaseConfUnit,
       healthScore: computeHealthScore(
-        diseaseKey: dis.top.label,
+        diseaseKey: storedDiseaseKey,
         diseaseConfidenceUnit: diseaseConfUnit,
       ),
       imageUrl: null,
@@ -455,9 +507,15 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     final ScanFlowState state = ref.watch(scanFlowProvider);
     final ScanFlowNotifier notifier = ref.read(scanFlowProvider.notifier);
 
+    final String appBarTitle = switch (state.step) {
+      ScanStep.analyzingSpecies => l10n.scanSpeciesLoading,
+      ScanStep.analyzingDisease => l10n.scanDiseaseLoading,
+      _ => l10n.scanTitle,
+    };
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.scanTitle),
+        title: Text(appBarTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
@@ -484,11 +542,11 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
       case ScanStep.selectRegions:
         return _buildRegions(context, l10n, state, notifier);
       case ScanStep.analyzingSpecies:
-        return _buildAnalyzing(l10n, state, isSpecies: true);
+        return _buildAnalyzingPage(l10n, state, isSpecies: true);
       case ScanStep.speciesDone:
         return _buildSpeciesDone(context, l10n, state, notifier);
       case ScanStep.analyzingDisease:
-        return _buildAnalyzing(l10n, state, isSpecies: false);
+        return _buildAnalyzingPage(l10n, state, isSpecies: false);
       case ScanStep.summary:
         return _buildSummary(context, l10n, state, notifier);
     }
@@ -594,20 +652,29 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
     );
   }
 
-  Widget _buildAnalyzing(
+  /// Tür / hastalık analizi — tam ekran laser yükleme (aynı bileşen).
+  Widget _buildAnalyzingPage(
     AppLocalizations l10n,
     ScanFlowState state, {
     required bool isSpecies,
   }) {
     final int current = state.analyzingRegionIndex + 1;
     final int total = state.regions.length;
-    return ScanLoadingWidget(
-      message: isSpecies ? l10n.scanSpeciesLoading : l10n.scanDiseaseLoading,
-      subtitle: total > 1
-          ? (isSpecies
-              ? l10n.scanAnalyzingRegionSpecies(current, total)
-              : l10n.scanAnalyzingRegionDisease(current, total))
-          : null,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          child: ScanLoadingWidget(
+            message: isSpecies ? l10n.scanSpeciesLoading : l10n.scanDiseaseLoading,
+            icon: isSpecies ? Icons.eco_rounded : Icons.biotech_rounded,
+            subtitle: total > 1
+                ? (isSpecies
+                    ? l10n.scanAnalyzingRegionSpecies(current, total)
+                    : l10n.scanAnalyzingRegionDisease(current, total))
+                : null,
+          ),
+        ),
+      ],
     );
   }
 
@@ -674,10 +741,11 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
             '(${confidencePercentLabel(analysis.species.top.confidence)})';
     final String diseaseLine = !showDisease || !analysis.hasDisease
         ? l10n.scanDiseasePending
-        : analysis.diseaseUnrecognized
-            ? l10n.scanUnrecognizedTitle
-            : '${diseaseClassKeyToDisplay(analysis.disease!.top.label, l10n)} '
-                '(${confidencePercentLabel(analysis.disease!.top.confidence)})';
+        : '${diseaseDisplayForInference(
+            analysis.disease!.top,
+            l10n,
+            unrecognized: analysis.diseaseUnrecognized,
+          )} (${confidencePercentLabel(analysis.disease!.top.confidence)})';
 
     return Card(
       margin: EdgeInsets.only(bottom: WidgetSizesEnum.cardRadius.value * 0.65),
@@ -802,34 +870,12 @@ class _ScanFlowViewState extends ConsumerState<ScanFlowView>
           onPressed: savable > 0 ? _downloadPdfFromCurrent : null,
         ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        if (_scanSaveCompleted) ...<Widget>[
-          Text(
-            l10n.scanSavedDoneHint,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: context.palMuted,
-              fontSize: TextSizesEnum.body.value,
-              height: 1.4,
-            ),
-          ),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        ],
         AppPrimaryButton(
-          label: _scanSaveCompleted
-              ? l10n.scanAlreadySaved
-              : (savable > 0
-                  ? l10n.scanSaveMultiCta(savable)
-                  : l10n.scanSaveToPlantCta),
+          label: savable > 0
+              ? l10n.scanSaveMultiCta(savable)
+              : l10n.scanSaveToPlantCta,
           isLoading: _savingScan,
-          onPressed: _scanSaveCompleted || savable == 0 ? null : _onSaveScan,
-        ),
-        SizedBox(height: WidgetSizesEnum.cardRadius.value),
-        OutlinedButton(
-          onPressed: () {
-            setState(() => _scanSaveCompleted = false);
-            notifier.reset();
-          },
-          child: Text(l10n.scanRetry),
+          onPressed: savable == 0 ? null : _onSaveScan,
         ),
       ],
     );

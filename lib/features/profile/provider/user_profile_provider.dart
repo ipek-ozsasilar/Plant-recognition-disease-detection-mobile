@@ -93,8 +93,8 @@ final class UserProfileNotifier extends AsyncNotifier<UserProfileModel?> {
 
   Future<String?> updateProfilePhoto(Uint8List bytes) async {
     final String? uid = ref.read(authProvider).uid;
-    if (uid == null) {
-      return null;
+    if (uid == null || uid.isEmpty) {
+      return 'not_signed_in';
     }
     try {
       final String? url = await _service.uploadProfilePhoto(uid: uid, bytes: bytes);
@@ -102,6 +102,11 @@ final class UserProfileNotifier extends AsyncNotifier<UserProfileModel?> {
         return 'upload_failed';
       }
       await _service.updateProfile(uid: uid, photoUrl: url);
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.updatePhotoURL(url);
+        await user.reload();
+      }
       await reload();
       return null;
     } catch (e) {

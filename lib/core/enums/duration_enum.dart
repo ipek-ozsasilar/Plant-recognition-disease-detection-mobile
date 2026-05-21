@@ -5,7 +5,9 @@ enum DurationEnum {
   snackBarShort(2500),
   debounceSearch(400),
   retryDelay(800),
-  scanLaserCycle(1300);
+  scanLaserCycle(1300),
+  /// Tarama yükleme ekranının en az görünür kalma süresi.
+  scanLoadingMin(450);
 
   const DurationEnum(this.milliseconds);
   final int milliseconds;

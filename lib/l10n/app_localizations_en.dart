@@ -327,7 +327,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String scanSaveMultiSuccess(int saved) {
-    return '$saved scan(s) saved to history.';
+    return '$saved plant record(s) added to history.';
   }
 
   @override
@@ -363,7 +363,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanSpeciesConfidence => 'Confidence';
 
   @override
-  String get scanDiseaseLoading => 'Analyzing disease / health…';
+  String get scanDiseaseLoading => 'Detecting disease…';
 
   @override
   String get scanDiseaseTitle => 'Disease / overall status';
@@ -404,7 +404,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanSaveToPlantCta => 'Save plant';
 
   @override
-  String get scanSavedToPlantSuccess => 'Scan saved to history.';
+  String get scanSavedToPlantSuccess => 'Plant saved.';
 
   @override
   String get scanSavedPhotoFailed =>
@@ -445,6 +445,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyHeadline => 'Scan timeline';
 
   @override
+  String get historyDiseaseUnknown => 'Disease unknown';
+
+  @override
   String get historySubtitle =>
       'Scans are grouped by species. Multiple pots of the same type appear under one card.';
 
@@ -470,14 +473,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guidesSubtitle =>
-      'Every saved scan goes to History. History and Health progress group by species; you can optionally pick a pot when saving.';
+      'Every saved scan goes to History. Health progress shows species trends; you can optionally pick a pot when saving.';
 
   @override
   String get guideSectionApp => 'App sections';
 
   @override
   String get guideAppTips =>
-      'History: all your scans listed by plant species.\n\nHealth progress: 14/30-day chart and scan photos for the species you select.\n\nMy plants: if you pick a pot when saving, that plant\'s score and scans update.\n\nScan: species first, then disease; results are saved to History automatically.';
+      'History: all your scans listed by plant species.\n\nHealth progress: 14/30-day chart and scan photos for the species you select.\n\nScan: species first, then disease; results are saved to History automatically. You can pick a pot when saving.';
 
   @override
   String get guidesEssentialsBadge => 'Essentials';
@@ -517,7 +520,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideDiseaseTips =>
-      'Keep symptoms clear on leaves; blur lowers confidence. Pick the correct pot when saving to update My plants tracking.';
+      'Keep symptoms clear on leaves; blur lowers confidence. Pick the correct pot when saving to keep records organized.';
 
   @override
   String get settingsTitle => 'Settings';
@@ -567,8 +570,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileScansDone => 'Total scans';
 
   @override
+  String get profileSpeciesCount => 'Species count';
+
+  @override
+  String get profileDiseaseCount => 'Disease count';
+
+  @override
   String get profileStatsHint =>
-      'Left: pots in My plants. Right: all scans saved to your account.';
+      'Left: recognized plant species count. Right: all scans saved to your account.';
 
   @override
   String get profileChangePhotoHint => 'Tap to change photo';
@@ -587,7 +596,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePersonalInfoIntro =>
-      'Update your name and contact details. If you change email, a verification link will be sent.';
+      'Update your name and contact details.';
+
+  @override
+  String get profileEmailChangeSection => 'Change email';
+
+  @override
+  String get profileEmailChangeHint =>
+      'A verification link is sent to your new address. After you confirm it, your sign-in email is updated.';
 
   @override
   String get profileDisplayNameLabel => 'Full name';
@@ -636,6 +652,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileChangePassword => 'Reset password';
 
   @override
+  String profilePasswordResetHint(String email) {
+    return 'A password reset link will be sent to $email.';
+  }
+
+  @override
+  String get profilePasswordResetConfirmTitle => 'Reset password';
+
+  @override
+  String profilePasswordResetConfirmBody(String email) {
+    return 'Send a password reset link to $email?';
+  }
+
+  @override
+  String get profilePasswordGoogleHint =>
+      'You signed in with Google; reset your password in your Google account security settings.';
+
+  @override
   String profilePrivacyDataNote(String email) {
     return 'Your plant and scan data is linked to $email in Firebase. Photos are stored in secure cloud storage.';
   }
@@ -662,35 +695,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutSubtitle =>
-      'Plant species and disease analysis — graduation thesis mobile app';
+      'Atatürk University Computer Engineering graduation thesis — AI plant recognition and disease detection mobile app';
 
   @override
-  String get aboutPurposeTitle => 'What it does';
+  String get aboutPurposeTitle => 'Project goal';
 
   @override
   String get aboutPurposeBody =>
-      'PhytoGuard uses AI to estimate plant species and disease risk from photos. You can track scans over time, review history grouped by species, and monitor health trends on charts.';
+      'This graduation project delivers PhytoGuard, a cloud-enabled mobile application. Users take or upload leaf photos to identify plant species and assess possible disease status with artificial intelligence. The aim is fast, accessible decision support where expert diagnosis is limited. The system combines species recognition and disease detection in one app and stores scan history for long-term health tracking.';
 
   @override
-  String get aboutFeaturesTitle => 'Features';
+  String get aboutFeaturesTitle => 'System components';
 
   @override
   String get aboutFeaturesBody =>
-      'Photo-based species and disease analysis (mostly on-device)\nScan history with species grouping and photos\nHealth progress: 14/30-day disease trend charts\nMy plants: pot-level records linked to scans\nFollow-up notifications when health score is low\nPDF report download and share\nCare guide, daily tips, and multi-plant region selection';
+      'Species model: EfficientNetB3-based ~93-class model (Leafsnap and PlantNet-300K datasets); runs on-device via TensorFlow Lite\nDisease model: Species-independent 5-class general model (healthy, mold, rust, blight, mildew); local TFLite inference\nMobile app: Flutter; multi-region selection, scan history, health charts, PDF reports, notifications\nCloud: Firebase Authentication, Firestore records, and Storage for photo sync\nWorkflow: Species first, then disease; results saved to your account';
 
   @override
-  String get aboutHowItWorksTitle => 'How it works';
+  String get aboutHowItWorksTitle => 'Technical approach';
 
   @override
   String get aboutHowItWorksBody =>
-      'During a scan, species is predicted first, then disease class. Every saved scan is stored under your account; you can optionally pick which pot it belongs to. Data syncs via Firebase; scan photos are kept in cloud storage.';
+      'Models were trained in Python with TensorFlow/Keras and converted to TensorFlow Lite for mobile use. In the app you select regions on the photo; species is predicted first, then disease class. Saves are blocked if species is unrecognized; low-confidence disease appears as \"Disease unknown\" in history. Scans can be linked to a plant record. Outputs are informational only—not a substitute for professional diagnosis.';
 
   @override
-  String get aboutThesisTitle => 'Graduation project';
+  String get aboutThesisTitle => 'Graduation thesis';
 
   @override
   String get aboutThesisBody =>
-      'This app was built as a university graduation thesis. Machine learning models, the mobile UI, and cloud backend are the main deliverables of the project.';
+      'Thesis title: Artificial Intelligence Supported Plant Recognition and Disease Detection Cloud-Based Mobile Application\n\nAuthor: İpek ÖZSAŞILAR (220707057)\nAdvisor: Assoc. Prof. Dr. Ferhat BOZKURT\nAtatürk University — Faculty of Engineering, Department of Computer Engineering\nComputer Engineering Selected Design Course I — June 2026\n\nThe study integrates image processing, deep learning, mobile development, and cloud computing.';
 
   @override
   String get aboutDisclaimerTitle => 'Important notice';

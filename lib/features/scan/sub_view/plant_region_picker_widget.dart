@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
-import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:flutter/material.dart';
 
@@ -76,7 +75,6 @@ class _PlantRegionPickerWidgetState extends State<PlantRegionPickerWidget> {
         final double scale = math.min(maxW / iw, maxH / ih);
         final double dw = iw * scale;
         final double dh = ih * scale;
-        final Color accent = context.palPrimary;
         final Offset? dragStart = _dragStart;
         final Offset? dragNow = _dragNow;
         Rect? liveRect;
@@ -158,17 +156,17 @@ class _PlantRegionPickerWidgetState extends State<PlantRegionPickerWidget> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: sel ? accent : Colors.white70,
-                            width: 2,
+                            color: Colors.white,
+                            width: sel ? 3 : 2,
                           ),
-                          color: (sel ? accent : Colors.white54).withValues(alpha: 0.15),
+                          color: Colors.white.withValues(alpha: sel ? 0.14 : 0.08),
                         ),
                         child: Text(
                           '${idx + 1}',
-                          style: TextStyle(
-                            color: sel ? accent : Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: TextSizesEnum.caption.value,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -181,8 +179,8 @@ class _PlantRegionPickerWidgetState extends State<PlantRegionPickerWidget> {
                     child: IgnorePointer(
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: accent, width: 2),
-                          color: accent.withValues(alpha: 0.10),
+                          border: Border.all(color: Colors.white, width: 2.5),
+                          color: Colors.white.withValues(alpha: 0.12),
                         ),
                       ),
                     ),

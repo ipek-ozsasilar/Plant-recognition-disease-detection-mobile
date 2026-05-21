@@ -1,6 +1,7 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/services/disease_label_display.dart';
+import 'package:bitirme_mobile/core/services/plant_scan_display_helper.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/image/scan_image_viewer_dialog.dart';
 import 'package:bitirme_mobile/core/widgets/image/scan_thumbnail_image.dart';
@@ -47,18 +48,17 @@ class PlantScanPhotoTimeline extends StatelessWidget {
         separatorBuilder: (_, __) => SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.65),
         itemBuilder: (BuildContext context, int index) {
           final PlantScanModel scan = sorted[index];
-          final String disease = diseaseClassKeyToDisplay(
-            scan.diseaseKey,
-            context.l10n,
-          );
+          final String disease = diseaseDisplayForScan(scan, context.l10n);
           final String caption =
               '${dateFormat.format(scan.createdAt)} · $disease';
 
           return GestureDetector(
             onTap: () => showScanImageViewerDialog(
               context: context,
-              imageUrl: scan.imageUrl,
+              imageUrl: scan.fullImageUrl,
               caption: caption,
+              regions: scanRegionsForDisplay(scan),
+              highlightRegionIndex: 0,
             ),
             child: SizedBox(
               width: _thumbSize + WidgetSizesEnum.divider.value * 4,
@@ -66,7 +66,7 @@ class PlantScanPhotoTimeline extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   ScanThumbnailImage(
-                    imageUrl: scan.imageUrl,
+                    imageUrl: scan.listThumbnailUrl,
                     size: _thumbSize,
                   ),
                   SizedBox(height: WidgetSizesEnum.divider.value * 6),

@@ -659,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanSaveMultiSuccess.
   ///
   /// In tr, this message translates to:
-  /// **'{saved} tarama geçmişe kaydedildi.'**
+  /// **'{saved} bitki kaydı geçmişe eklendi.'**
   String scanSaveMultiSuccess(int saved);
 
   /// No description provided for @scanSaveMultiWithSkipped.
@@ -713,7 +713,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanDiseaseLoading.
   ///
   /// In tr, this message translates to:
-  /// **'Hastalık / sağlık durumu analiz ediliyor…'**
+  /// **'Hastalık tanınıyor…'**
   String get scanDiseaseLoading;
 
   /// No description provided for @scanDiseaseTitle.
@@ -785,7 +785,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanSavedToPlantSuccess.
   ///
   /// In tr, this message translates to:
-  /// **'Tarama geçmişe kaydedildi.'**
+  /// **'Bitki kaydedildi.'**
   String get scanSavedToPlantSuccess;
 
   /// No description provided for @scanSavedPhotoFailed.
@@ -854,6 +854,12 @@ abstract class AppLocalizations {
   /// **'Tarama geçmişi'**
   String get historyHeadline;
 
+  /// No description provided for @historyDiseaseUnknown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hastalık bilinmiyor'**
+  String get historyDiseaseUnknown;
+
   /// No description provided for @historySubtitle.
   ///
   /// In tr, this message translates to:
@@ -899,7 +905,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidesSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Kaydettiğiniz her tarama Geçmiş\'e eklenir. Geçmiş ve Sağlık ilerlemesi bitki türüne göre gruplanır; kayıt sırasında isterseniz hangi saksıya ait olduğunu seçebilirsiniz.'**
+  /// **'Kaydettiğiniz her tarama Geçmiş\'e eklenir. Sağlık ilerlemesi tür bazında grafik sunar; kayıt sırasında isterseniz saksı seçebilirsiniz.'**
   String get guidesSubtitle;
 
   /// No description provided for @guideSectionApp.
@@ -911,7 +917,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideAppTips.
   ///
   /// In tr, this message translates to:
-  /// **'Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nBitkilerim: kayıt sırasında saksı seçerseniz o bitkinin skoru ve taramaları güncellenir.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş\'e yazılır.'**
+  /// **'Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş\'e yazılır. Kayıt sırasında saksı seçebilirsiniz.'**
   String get guideAppTips;
 
   /// No description provided for @guidesEssentialsBadge.
@@ -983,7 +989,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideDiseaseTips.
   ///
   /// In tr, this message translates to:
-  /// **'Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek Bitkilerim takibini günceller.'**
+  /// **'Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek takibi kolaylaştırır.'**
   String get guideDiseaseTips;
 
   /// No description provided for @settingsTitle.
@@ -1076,10 +1082,22 @@ abstract class AppLocalizations {
   /// **'Toplam tarama'**
   String get profileScansDone;
 
+  /// No description provided for @profileSpeciesCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tür sayısı'**
+  String get profileSpeciesCount;
+
+  /// No description provided for @profileDiseaseCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hastalık sayısı'**
+  String get profileDiseaseCount;
+
   /// No description provided for @profileStatsHint.
   ///
   /// In tr, this message translates to:
-  /// **'Sol: Bitkilerim’de eklediğiniz saksı sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.'**
+  /// **'Sol: tanınan bitki türü sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.'**
   String get profileStatsHint;
 
   /// No description provided for @profileChangePhotoHint.
@@ -1115,8 +1133,20 @@ abstract class AppLocalizations {
   /// No description provided for @profilePersonalInfoIntro.
   ///
   /// In tr, this message translates to:
-  /// **'Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz. E-posta değişikliğinde doğrulama bağlantısı gönderilir.'**
+  /// **'Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz.'**
   String get profilePersonalInfoIntro;
+
+  /// No description provided for @profileEmailChangeSection.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta değiştir'**
+  String get profileEmailChangeSection;
+
+  /// No description provided for @profileEmailChangeHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni e-posta adresinize doğrulama bağlantısı gönderilir. Bağlantıyı onayladıktan sonra giriş e-postanız güncellenir.'**
+  String get profileEmailChangeHint;
 
   /// No description provided for @profileDisplayNameLabel.
   ///
@@ -1202,6 +1232,30 @@ abstract class AppLocalizations {
   /// **'Şifre sıfırlama'**
   String get profileChangePassword;
 
+  /// No description provided for @profilePasswordResetHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kayıtlı e-postanıza ({email}) şifre sıfırlama bağlantısı gönderilir.'**
+  String profilePasswordResetHint(String email);
+
+  /// No description provided for @profilePasswordResetConfirmTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şifre sıfırlama'**
+  String get profilePasswordResetConfirmTitle;
+
+  /// No description provided for @profilePasswordResetConfirmBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{email} adresine şifre sıfırlama bağlantısı gönderilsin mi?'**
+  String profilePasswordResetConfirmBody(String email);
+
+  /// No description provided for @profilePasswordGoogleHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google ile giriş yaptığınız için şifre bu uygulamadan sıfırlanmaz. Google hesap güvenliği ayarlarını kullanın.'**
+  String get profilePasswordGoogleHint;
+
   /// No description provided for @profilePrivacyDataNote.
   ///
   /// In tr, this message translates to:
@@ -1247,55 +1301,55 @@ abstract class AppLocalizations {
   /// No description provided for @aboutSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bitki türü ve hastalık analizi — bitirme tezi mobil uygulaması'**
+  /// **'Atatürk Üniversitesi Bilgisayar Mühendisliği bitirme tezi — yapay zekâ destekli bitki tanıma ve hastalık tespiti mobil uygulaması'**
   String get aboutSubtitle;
 
   /// No description provided for @aboutPurposeTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Ne işe yarar?'**
+  /// **'Proje amacı'**
   String get aboutPurposeTitle;
 
   /// No description provided for @aboutPurposeBody.
   ///
   /// In tr, this message translates to:
-  /// **'PhytoGuard, bitkilerinizin fotoğrafından yapay zeka destekli tür ve hastalık tahmini sunar. Ev bitkilerinizi veya bahçe bitkilerinizi düzenli taramalarla izleyebilir, geçmiş sonuçlara bakabilir ve sağlık trendini grafiklerle takip edebilirsiniz.'**
+  /// **'Bu bitirme çalışması, PhytoGuard adlı bulut destekli mobil uygulamayı geliştirmeyi hedefler. Kullanıcılar yaprak fotoğraflarını çekerek veya yükleyerek bitki türünü tanıyabilir; varsa hastalık durumunu yapay zekâ ile değerlendirebilir. Amaç, uzman desteğine sınırlı erişilen ortamlarda hızlı, erişilebilir ve anlaşılır bir karar destek aracı sunmaktır. Sistem, bitki tanıma ile hastalık tespitini tek bir mobil uygulamada birleştirir; geçmiş taramaları saklayarak uzun vadeli sağlık takibine olanak tanır.'**
   String get aboutPurposeBody;
 
   /// No description provided for @aboutFeaturesTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Özellikler'**
+  /// **'Sistem bileşenleri'**
   String get aboutFeaturesTitle;
 
   /// No description provided for @aboutFeaturesBody.
   ///
   /// In tr, this message translates to:
-  /// **'Fotoğrafla tür ve hastalık analizi (tahmin büyük ölçüde cihazınızda çalışır)\nTarama geçmişi; türe göre gruplanmış kayıtlar ve fotoğraflar\nSağlık ilerlemesi: son 14 veya 30 günlük hastalık trendi grafiği\nBitkilerim: saksı bazında kayıt ve tarama bağlama\nHatırlatıcı bildirimler (düşük sağlık skorunda takip)\nPDF analiz raporu indirme ve paylaşma\nRehber, günün ipucu ve çoklu bitki bölge seçimi'**
+  /// **'Tür modeli: EfficientNetB3 tabanlı ~93 sınıflı model (Leafsnap ve PlantNet-300K veri kümeleri); TensorFlow Lite ile cihazda çalışır\nHastalık modeli: Türden bağımsız 5 sınıflı genel model (sağlıklı, küf, pas, yanıklık, külleme); TFLite ile yerel çıkarım\nMobil uygulama: Flutter; çoklu bölge seçimi, tarama geçmişi, sağlık grafikleri, PDF rapor, bildirimler\nBulut altyapısı: Firebase kimlik doğrulama, Firestore kayıtları ve Storage ile fotoğraf senkronizasyonu\nKullanım kolaylığı: Önce tür, sonra hastalık analizi; sonuçlar hesabınıza kaydedilir'**
   String get aboutFeaturesBody;
 
   /// No description provided for @aboutHowItWorksTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Nasıl çalışır?'**
+  /// **'Teknik yaklaşım'**
   String get aboutHowItWorksTitle;
 
   /// No description provided for @aboutHowItWorksBody.
   ///
   /// In tr, this message translates to:
-  /// **'Tarama akışında önce bitki türü, ardından hastalık sınıfı değerlendirilir. Kaydettiğiniz her tarama hesabınıza yazılır; isteğe bağlı olarak hangi saksıya ait olduğunu seçebilirsiniz. Veriler Firebase ile güvenli şekilde senkronize edilir; tarama fotoğrafları bulut depolamada saklanır.'**
+  /// **'Modeller Python ortamında TensorFlow/Keras ile eğitilmiş, mobil kullanım için TensorFlow Lite formatına dönüştürülmüştür. Uygulamada fotoğraf üzerinde ilgili bölgeler seçilir; önce tür, ardından hastalık sınıfı tahmin edilir. Tür tanınmadığında kayıt yapılmaz; hastalık güven skoru düşükse geçmişte \"Hastalık bilinmiyor\" olarak gösterilir. Tarama sonuçları isteğe bağlı olarak bitki kaydına bağlanır. Çıktılar bilgilendirme amaçlıdır; profesyonel tarım teşhisi yerine geçmez.'**
   String get aboutHowItWorksBody;
 
   /// No description provided for @aboutThesisTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Bitirme projesi'**
+  /// **'Bitirme tezi'**
   String get aboutThesisTitle;
 
   /// No description provided for @aboutThesisBody.
   ///
   /// In tr, this message translates to:
-  /// **'Bu uygulama bir üniversite bitirme tezi çalışması olarak geliştirilmiştir. Makine öğrenmesi modelleri, mobil arayüz ve bulut altyapısı tezin uygulama bileşenlerini oluşturur.'**
+  /// **'Tez başlığı: Yapay Zekâ Destekli Bitki Tanıma ve Hastalık Tespiti İçin Bulut Tabanlı Mobil Uygulama\n\nHazırlayan: İpek ÖZSAŞILAR (220707057)\nProje danışmanı: Doç. Dr. Ferhat BOZKURT\nAtatürk Üniversitesi — Mühendislik Fakültesi, Bilgisayar Mühendisliği Bölümü\nBilgisayar Mühendisliği Seçmeli Tasarım Dersi I — Haziran 2026\n\nÇalışma; görüntü işleme, derin öğrenme, mobil uygulama geliştirme ve bulut bilişimi alanlarını bir araya getiren bütünleşik bir bitirme projesidir.'**
   String get aboutThesisBody;
 
   /// No description provided for @aboutDisclaimerTitle.

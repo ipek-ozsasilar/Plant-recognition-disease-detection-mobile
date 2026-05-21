@@ -32,10 +32,7 @@ class PdfReportService {
       record.diseaseKey,
       l10n,
     );
-    final String diseaseDisplay = diseaseClassKeyToDisplay(
-      record.diseaseKey,
-      l10n,
-    );
+    final String diseaseDisplay = diseaseDisplayForScan(record, l10n);
     final String speciesDisplay = speciesClassDisplayForExport(
       l10n,
       record.speciesLabel,

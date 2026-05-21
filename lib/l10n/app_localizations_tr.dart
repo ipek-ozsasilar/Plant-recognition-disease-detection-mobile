@@ -329,7 +329,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String scanSaveMultiSuccess(int saved) {
-    return '$saved tarama geçmişe kaydedildi.';
+    return '$saved bitki kaydı geçmişe eklendi.';
   }
 
   @override
@@ -365,7 +365,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanSpeciesConfidence => 'Güven';
 
   @override
-  String get scanDiseaseLoading => 'Hastalık / sağlık durumu analiz ediliyor…';
+  String get scanDiseaseLoading => 'Hastalık tanınıyor…';
 
   @override
   String get scanDiseaseTitle => 'Hastalık / genel durum';
@@ -406,7 +406,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get scanSaveToPlantCta => 'Bitkiyi kaydet';
 
   @override
-  String get scanSavedToPlantSuccess => 'Tarama geçmişe kaydedildi.';
+  String get scanSavedToPlantSuccess => 'Bitki kaydedildi.';
 
   @override
   String get scanSavedPhotoFailed =>
@@ -447,6 +447,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get historyHeadline => 'Tarama geçmişi';
 
   @override
+  String get historyDiseaseUnknown => 'Hastalık bilinmiyor';
+
+  @override
   String get historySubtitle =>
       'Taramalar bitki türüne göre gruplanır. Aynı türden kaç saksı olursa olsun tek kartta listelenir.';
 
@@ -472,14 +475,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guidesSubtitle =>
-      'Kaydettiğiniz her tarama Geçmiş\'e eklenir. Geçmiş ve Sağlık ilerlemesi bitki türüne göre gruplanır; kayıt sırasında isterseniz hangi saksıya ait olduğunu seçebilirsiniz.';
+      'Kaydettiğiniz her tarama Geçmiş\'e eklenir. Sağlık ilerlemesi tür bazında grafik sunar; kayıt sırasında isterseniz saksı seçebilirsiniz.';
 
   @override
   String get guideSectionApp => 'Uygulama bölümleri';
 
   @override
   String get guideAppTips =>
-      'Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nBitkilerim: kayıt sırasında saksı seçerseniz o bitkinin skoru ve taramaları güncellenir.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş\'e yazılır.';
+      'Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş\'e yazılır. Kayıt sırasında saksı seçebilirsiniz.';
 
   @override
   String get guidesEssentialsBadge => 'Temel';
@@ -519,7 +522,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get guideDiseaseTips =>
-      'Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek Bitkilerim takibini günceller.';
+      'Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek takibi kolaylaştırır.';
 
   @override
   String get settingsTitle => 'Ayarlar';
@@ -569,8 +572,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileScansDone => 'Toplam tarama';
 
   @override
+  String get profileSpeciesCount => 'Tür sayısı';
+
+  @override
+  String get profileDiseaseCount => 'Hastalık sayısı';
+
+  @override
   String get profileStatsHint =>
-      'Sol: Bitkilerim’de eklediğiniz saksı sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.';
+      'Sol: tanınan bitki türü sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.';
 
   @override
   String get profileChangePhotoHint => 'Fotoğrafı değiştirmek için dokunun';
@@ -589,7 +598,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profilePersonalInfoIntro =>
-      'Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz. E-posta değişikliğinde doğrulama bağlantısı gönderilir.';
+      'Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz.';
+
+  @override
+  String get profileEmailChangeSection => 'E-posta değiştir';
+
+  @override
+  String get profileEmailChangeHint =>
+      'Yeni e-posta adresinize doğrulama bağlantısı gönderilir. Bağlantıyı onayladıktan sonra giriş e-postanız güncellenir.';
 
   @override
   String get profileDisplayNameLabel => 'Ad soyad';
@@ -638,6 +654,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileChangePassword => 'Şifre sıfırlama';
 
   @override
+  String profilePasswordResetHint(String email) {
+    return 'Kayıtlı e-postanıza ($email) şifre sıfırlama bağlantısı gönderilir.';
+  }
+
+  @override
+  String get profilePasswordResetConfirmTitle => 'Şifre sıfırlama';
+
+  @override
+  String profilePasswordResetConfirmBody(String email) {
+    return '$email adresine şifre sıfırlama bağlantısı gönderilsin mi?';
+  }
+
+  @override
+  String get profilePasswordGoogleHint =>
+      'Google ile giriş yaptığınız için şifre bu uygulamadan sıfırlanmaz. Google hesap güvenliği ayarlarını kullanın.';
+
+  @override
   String profilePrivacyDataNote(String email) {
     return 'Tarama ve bitki verileriniz Firebase üzerinde $email hesabına bağlıdır. Fotoğraflar güvenli depolamada saklanır.';
   }
@@ -664,35 +697,35 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get aboutSubtitle =>
-      'Bitki türü ve hastalık analizi — bitirme tezi mobil uygulaması';
+      'Atatürk Üniversitesi Bilgisayar Mühendisliği bitirme tezi — yapay zekâ destekli bitki tanıma ve hastalık tespiti mobil uygulaması';
 
   @override
-  String get aboutPurposeTitle => 'Ne işe yarar?';
+  String get aboutPurposeTitle => 'Proje amacı';
 
   @override
   String get aboutPurposeBody =>
-      'PhytoGuard, bitkilerinizin fotoğrafından yapay zeka destekli tür ve hastalık tahmini sunar. Ev bitkilerinizi veya bahçe bitkilerinizi düzenli taramalarla izleyebilir, geçmiş sonuçlara bakabilir ve sağlık trendini grafiklerle takip edebilirsiniz.';
+      'Bu bitirme çalışması, PhytoGuard adlı bulut destekli mobil uygulamayı geliştirmeyi hedefler. Kullanıcılar yaprak fotoğraflarını çekerek veya yükleyerek bitki türünü tanıyabilir; varsa hastalık durumunu yapay zekâ ile değerlendirebilir. Amaç, uzman desteğine sınırlı erişilen ortamlarda hızlı, erişilebilir ve anlaşılır bir karar destek aracı sunmaktır. Sistem, bitki tanıma ile hastalık tespitini tek bir mobil uygulamada birleştirir; geçmiş taramaları saklayarak uzun vadeli sağlık takibine olanak tanır.';
 
   @override
-  String get aboutFeaturesTitle => 'Özellikler';
+  String get aboutFeaturesTitle => 'Sistem bileşenleri';
 
   @override
   String get aboutFeaturesBody =>
-      'Fotoğrafla tür ve hastalık analizi (tahmin büyük ölçüde cihazınızda çalışır)\nTarama geçmişi; türe göre gruplanmış kayıtlar ve fotoğraflar\nSağlık ilerlemesi: son 14 veya 30 günlük hastalık trendi grafiği\nBitkilerim: saksı bazında kayıt ve tarama bağlama\nHatırlatıcı bildirimler (düşük sağlık skorunda takip)\nPDF analiz raporu indirme ve paylaşma\nRehber, günün ipucu ve çoklu bitki bölge seçimi';
+      'Tür modeli: EfficientNetB3 tabanlı ~93 sınıflı model (Leafsnap ve PlantNet-300K veri kümeleri); TensorFlow Lite ile cihazda çalışır\nHastalık modeli: Türden bağımsız 5 sınıflı genel model (sağlıklı, küf, pas, yanıklık, külleme); TFLite ile yerel çıkarım\nMobil uygulama: Flutter; çoklu bölge seçimi, tarama geçmişi, sağlık grafikleri, PDF rapor, bildirimler\nBulut altyapısı: Firebase kimlik doğrulama, Firestore kayıtları ve Storage ile fotoğraf senkronizasyonu\nKullanım kolaylığı: Önce tür, sonra hastalık analizi; sonuçlar hesabınıza kaydedilir';
 
   @override
-  String get aboutHowItWorksTitle => 'Nasıl çalışır?';
+  String get aboutHowItWorksTitle => 'Teknik yaklaşım';
 
   @override
   String get aboutHowItWorksBody =>
-      'Tarama akışında önce bitki türü, ardından hastalık sınıfı değerlendirilir. Kaydettiğiniz her tarama hesabınıza yazılır; isteğe bağlı olarak hangi saksıya ait olduğunu seçebilirsiniz. Veriler Firebase ile güvenli şekilde senkronize edilir; tarama fotoğrafları bulut depolamada saklanır.';
+      'Modeller Python ortamında TensorFlow/Keras ile eğitilmiş, mobil kullanım için TensorFlow Lite formatına dönüştürülmüştür. Uygulamada fotoğraf üzerinde ilgili bölgeler seçilir; önce tür, ardından hastalık sınıfı tahmin edilir. Tür tanınmadığında kayıt yapılmaz; hastalık güven skoru düşükse geçmişte \"Hastalık bilinmiyor\" olarak gösterilir. Tarama sonuçları isteğe bağlı olarak bitki kaydına bağlanır. Çıktılar bilgilendirme amaçlıdır; profesyonel tarım teşhisi yerine geçmez.';
 
   @override
-  String get aboutThesisTitle => 'Bitirme projesi';
+  String get aboutThesisTitle => 'Bitirme tezi';
 
   @override
   String get aboutThesisBody =>
-      'Bu uygulama bir üniversite bitirme tezi çalışması olarak geliştirilmiştir. Makine öğrenmesi modelleri, mobil arayüz ve bulut altyapısı tezin uygulama bileşenlerini oluşturur.';
+      'Tez başlığı: Yapay Zekâ Destekli Bitki Tanıma ve Hastalık Tespiti İçin Bulut Tabanlı Mobil Uygulama\n\nHazırlayan: İpek ÖZSAŞILAR (220707057)\nProje danışmanı: Doç. Dr. Ferhat BOZKURT\nAtatürk Üniversitesi — Mühendislik Fakültesi, Bilgisayar Mühendisliği Bölümü\nBilgisayar Mühendisliği Seçmeli Tasarım Dersi I — Haziran 2026\n\nÇalışma; görüntü işleme, derin öğrenme, mobil uygulama geliştirme ve bulut bilişimi alanlarını bir araya getiren bütünleşik bir bitirme projesidir.';
 
   @override
   String get aboutDisclaimerTitle => 'Önemli uyarı';

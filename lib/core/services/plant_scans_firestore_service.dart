@@ -135,8 +135,8 @@ class PlantScansFirestoreService {
             'lastScanDate': FieldValue.serverTimestamp(),
             'updatedAt': FieldValue.serverTimestamp(),
             'speciesLabel': scan.speciesLabel,
-            if (scan.imageUrl != null && scan.imageUrl!.isNotEmpty)
-              'photoUrl': scan.imageUrl,
+            if (scan.listThumbnailUrl != null && scan.listThumbnailUrl!.isNotEmpty)
+              'photoUrl': scan.listThumbnailUrl,
           },
           SetOptions(merge: true),
         );

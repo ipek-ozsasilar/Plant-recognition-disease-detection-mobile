@@ -97,10 +97,7 @@ class HomeRecentStrip extends StatelessWidget {
                           ),
                           SizedBox(height: WidgetSizesEnum.divider.value * 6),
                           Text(
-                            diseaseClassKeyToDisplay(
-                              e.diseaseKey,
-                              context.l10n,
-                            ),
+                            diseaseDisplayForScan(e, context.l10n),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: tt.bodySmall?.copyWith(

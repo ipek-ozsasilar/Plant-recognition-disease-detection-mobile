@@ -81,6 +81,7 @@ Future<void> setupServiceLocator() async {
     () => UserProfileFirestoreService(
       logger: sl<AppLogger>(),
       storage: sl<FirebaseStorageService>(),
+      imageCrop: sl<ImageCropService>(),
     ),
   );
   sl.registerLazySingleton<PdfReportService>(() => const PdfReportService());

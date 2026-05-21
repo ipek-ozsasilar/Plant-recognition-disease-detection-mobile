@@ -2,17 +2,14 @@ import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/app_locale_mode.dart';
 import 'package:bitirme_mobile/core/locale/app_locale_provider.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
-import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/services/notification_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/theme/theme_mode_provider.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
-import 'package:bitirme_mobile/features/profile/sub_view/profile_settings_tile.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 /// Dil seçenekleri (ayarlar segmenti).
 enum _LocaleSegment { system, turkish, english }
@@ -212,72 +209,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 height: 1.45,
                 fontWeight: FontWeight.w500,
               ),
-            ),
-          ),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
-          _SettingsSectionTitle(text: context.l10n.settingsAnalysisSection),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
-          SoftElevationCard(
-            onTap: null,
-            padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(WidgetSizesEnum.divider.value * 10),
-                  decoration: BoxDecoration(
-                    color: context.palPrimarySoftBg,
-                    borderRadius: BorderRadius.circular(
-                      WidgetSizesEnum.chipRadius.value,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.memory_rounded,
-                    color: context.palPrimary,
-                    size: IconSizesEnum.large.value,
-                  ),
-                ),
-                SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.85),
-                Expanded(
-                  child: Text(
-                    context.l10n.settingsAnalysisBody,
-                    style: tt.bodyMedium?.copyWith(
-                      color: context.palMuted,
-                      height: 1.45,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.35),
-          _SettingsSectionTitle(text: context.l10n.settingsShortcutsSection),
-          SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
-          SoftElevationCard(
-            onTap: null,
-            padding: EdgeInsets.symmetric(
-              vertical: WidgetSizesEnum.divider.value * 6,
-            ),
-            child: Column(
-              children: <Widget>[
-                ProfileSettingsTile(
-                  icon: Icons.menu_book_rounded,
-                  title: context.l10n.guideTitle,
-                  onTap: () => context.push(AppPaths.guide),
-                ),
-                Divider(
-                  height: 1,
-                  indent: WidgetSizesEnum.cardRadius.value,
-                  endIndent: WidgetSizesEnum.cardRadius.value,
-                  color: context.palOutline.withValues(alpha: 0.35),
-                ),
-                ProfileSettingsTile(
-                  icon: Icons.info_outline_rounded,
-                  title: context.l10n.aboutTitle,
-                  onTap: () => context.push(AppPaths.about),
-                ),
-              ],
             ),
           ),
         ],

@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:bitirme_mobile/core/enums/duration_enum.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/image_crop_service.dart';
 import 'package:bitirme_mobile/core/services/inference_api_service.dart';
 import 'package:bitirme_mobile/models/scan_region_analysis_model.dart';
 import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -172,6 +174,20 @@ class ScanFlowNotifier extends Notifier<ScanFlowState> {
     );
   }
 
+  /// Yükleme adımının en az bir kare çizilmesini sağlar.
+  Future<void> _ensureLoadingScreenVisible() async {
+    await Future<void>.delayed(Duration.zero);
+    await SchedulerBinding.instance.endOfFrame;
+  }
+
+  Future<void> _ensureMinLoadingDuration(Stopwatch elapsed) async {
+    final int remaining =
+        DurationEnum.scanLoadingMin.milliseconds - elapsed.elapsedMilliseconds;
+    if (remaining > 0) {
+      await Future<void>.delayed(Duration(milliseconds: remaining));
+    }
+  }
+
   Future<Uint8List?> _cropForRegion({
     required Uint8List imageBytes,
     required PlantRegionModel region,
@@ -215,6 +231,8 @@ class ScanFlowNotifier extends Notifier<ScanFlowState> {
       analyzingRegionIndex: 0,
       regionAnalyses: const <ScanRegionAnalysis>[],
     );
+    final Stopwatch loadingTimer = Stopwatch()..start();
+    await _ensureLoadingScreenVisible();
 
     final List<ScanRegionAnalysis> results = <ScanRegionAnalysis>[];
 
@@ -242,6 +260,7 @@ class ScanFlowNotifier extends Notifier<ScanFlowState> {
         );
       }
 
+      await _ensureMinLoadingDuration(loadingTimer);
       state = ScanFlowState(
         step: ScanStep.speciesDone,
         imageBytes: imageBytes,
@@ -280,6 +299,8 @@ class ScanFlowNotifier extends Notifier<ScanFlowState> {
       analyzingRegionIndex: 0,
       regionAnalyses: prior,
     );
+    final Stopwatch loadingTimer = Stopwatch()..start();
+    await _ensureLoadingScreenVisible();
 
     final List<ScanRegionAnalysis> results = <ScanRegionAnalysis>[];
 
@@ -301,6 +322,7 @@ class ScanFlowNotifier extends Notifier<ScanFlowState> {
         results.add(entry.copyWithDisease(disease));
       }
 
+      await _ensureMinLoadingDuration(loadingTimer);
       state = ScanFlowState(
         step: ScanStep.summary,
         imageBytes: imageBytes,

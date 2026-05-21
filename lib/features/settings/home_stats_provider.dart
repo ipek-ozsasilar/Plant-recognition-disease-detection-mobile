@@ -23,13 +23,21 @@ final homeStatsProvider = FutureProvider<HomeStatsModel>((ref) async {
     if (scans.isEmpty) return HomeStatsModel.empty();
 
     final int totalScans = scans.length;
-    final Set<String> uniqueSpecies = scans.map((e) => e.speciesLabel).toSet();
+    final Set<String> uniqueSpecies = scans
+        .map((PlantScanModel e) => e.speciesLabel.trim())
+        .where((String s) => s.isNotEmpty)
+        .toSet();
+    final Set<String> uniqueDiseases = scans
+        .map((PlantScanModel e) => e.diseaseKey.trim())
+        .where((String k) => k.isNotEmpty)
+        .toSet();
     // Sağlık skoru 55'in altındakileri "Uyarı" olarak sayıyoruz
-    final int alerts = scans.where((e) => e.healthScore < 55).length;
+    final int alerts = scans.where((PlantScanModel e) => e.healthScore < 55).length;
 
     return HomeStatsModel(
       totalScans: totalScans,
       uniqueSpeciesCount: uniqueSpecies.length,
+      uniqueDiseaseCount: uniqueDiseases.length,
       alertCount: alerts,
     );
   } catch (e) {

@@ -1,4 +1,5 @@
 import 'package:bitirme_mobile/core/enums/inference_threshold_enum.dart';
+import 'package:bitirme_mobile/core/services/disease_label_display.dart';
 import 'package:bitirme_mobile/core/services/sink_species_class_repository.dart';
 import 'package:bitirme_mobile/core/utils/confidence_format.dart';
 import 'package:bitirme_mobile/models/inference_result_model.dart';
@@ -35,8 +36,7 @@ class ScanRegionAnalysis extends Equatable {
     if (disease == null) {
       return true;
     }
-    final double unit = confidenceToUnit(disease!.top.confidence);
-    return unit < InferenceThresholdEnum.unrecognizedGlobal.value;
+    return isDiseaseInferenceUnrecognized(disease!);
   }
 
   /// Özet ekranında hastalık da tamamlandıktan sonra kayıt mümkün.

@@ -40,20 +40,34 @@ class FirestoreSetupService {
     String displayName,
   ) async {
     try {
-      // createdAt değerini sadece döküman yoksa eklemek için
-      // serverTimestamp() kullanan set(merge: true) yapısı uygundur.
-      await _db
+      final DocumentReference<Map<String, dynamic>> ref = _db
           .collection(FirestoreCollectionEnum.users.value)
-          .doc(uid)
-          .set(<String, dynamic>{
-            'email': email,
-            'displayName': displayName,
-            'authProvider': _auth.currentUser?.providerData.isNotEmpty == true
-                ? _auth.currentUser!.providerData.first.providerId
-                : 'email',
-            'photoUrl': _auth.currentUser?.photoURL,
-            'updatedAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+          .doc(uid);
+      final DocumentSnapshot<Map<String, dynamic>> snap = await ref.get();
+
+      final Map<String, dynamic> data = <String, dynamic>{
+        'email': email,
+        'displayName': displayName,
+        'authProvider': _auth.currentUser?.providerData.isNotEmpty == true
+            ? _auth.currentUser!.providerData.first.providerId
+            : 'email',
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      // Firebase Auth'ta foto yoksa null yazma — Storage'dan yüklenen profil fotoğrafı silinmesin.
+      final String? authPhoto = _auth.currentUser?.photoURL;
+      if (authPhoto != null && authPhoto.isNotEmpty) {
+        final String? existingPhoto = snap.data()?['photoUrl'] as String?;
+        if (existingPhoto == null || existingPhoto.isEmpty) {
+          data['photoUrl'] = authPhoto;
+        }
+      }
+
+      if (!snap.exists) {
+        data['createdAt'] = FieldValue.serverTimestamp();
+      }
+
+      await ref.set(data, SetOptions(merge: true));
 
       // Not: Eğer her girişte 'createdAt' bilgisini de set ederseniz merge:true olsa bile üzerine yazar.
       // Gerçekten döküman var mı yok mu kontrolü yapmak için 'get()' gerekir,

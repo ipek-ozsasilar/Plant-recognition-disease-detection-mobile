@@ -10,11 +10,13 @@ class ScanLoadingWidget extends StatefulWidget {
   const ScanLoadingWidget({
     required this.message,
     this.subtitle,
+    this.icon = Icons.eco_rounded,
     super.key,
   });
 
   final String message;
   final String? subtitle;
+  final IconData icon;
 
   @override
   State<ScanLoadingWidget> createState() => _ScanLoadingWidgetState();
@@ -78,7 +80,7 @@ class _ScanLoadingWidgetState extends State<ScanLoadingWidget> with SingleTicker
                           ),
                           Center(
                             child: Icon(
-                              Icons.eco_rounded,
+                              widget.icon,
                               size: ImageSizesEnum.hero.value * 0.55,
                               color: context.palPrimary,
                             ),

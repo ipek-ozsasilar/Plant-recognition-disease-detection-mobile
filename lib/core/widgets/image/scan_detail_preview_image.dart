@@ -2,17 +2,24 @@ import 'dart:math' as math;
 
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/image/scan_image_with_region_overlays.dart';
+import 'package:bitirme_mobile/core/widgets/image/scan_region_frame_style.dart';
+import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:flutter/material.dart';
 
 /// Tarama detayında fotoğrafın tamamı görünsün (kırpılmadan, orana göre boyut).
 class ScanDetailPreviewImage extends StatefulWidget {
   const ScanDetailPreviewImage({
     required this.imageUrl,
+    this.regions,
+    this.highlightRegionIndex,
     this.onTap,
     super.key,
   });
 
   final String imageUrl;
+  final List<PlantRegionModel>? regions;
+  final int? highlightRegionIndex;
   final VoidCallback? onTap;
 
   @override
@@ -91,6 +98,8 @@ class _ScanDetailPreviewImageState extends State<ScanDetailPreviewImage> {
       ImageSizesEnum.historyScanDetailMaxHeight.value,
     );
     final double radius = WidgetSizesEnum.chipRadius.value;
+    final List<PlantRegionModel> regions = widget.regions ?? <PlantRegionModel>[];
+    final bool showOverlays = regions.isNotEmpty;
 
     Widget imageBody = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -122,16 +131,24 @@ class _ScanDetailPreviewImageState extends State<ScanDetailPreviewImage> {
           child: SizedBox(
             width: width,
             height: height,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(radius),
-              child: Image.network(
-                widget.imageUrl,
-                width: width,
-                height: height,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => _placeholder(context),
-              ),
-            ),
+            child: showOverlays
+                ? ScanImageWithRegionOverlays(
+                    imageUrl: widget.imageUrl,
+                    regions: regions,
+                    highlightIndex: widget.highlightRegionIndex,
+                    frameStyle: ScanRegionFrameStyle.savedRed,
+                    borderRadius: BorderRadius.circular(radius),
+                  )
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(radius),
+                    child: Image.network(
+                      widget.imageUrl,
+                      width: width,
+                      height: height,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => _placeholder(context),
+                    ),
+                  ),
           ),
         );
       },

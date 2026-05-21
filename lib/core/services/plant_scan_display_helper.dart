@@ -1,4 +1,5 @@
 import 'package:bitirme_mobile/core/locale/species_class_display.dart';
+import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:bitirme_mobile/models/plant_scan_model.dart';
 import 'package:flutter/material.dart';
 
@@ -39,4 +40,20 @@ String speciesScanGroupTitle({
   required String speciesLabel,
 }) {
   return speciesClassDisplayForRaw(context, speciesLabel);
+}
+
+/// Geçmişte tam fotoğraf + çoklu bölge: yalnızca bu kaydın bölgesini çiz.
+List<PlantRegionModel>? scanRegionsForDisplay(PlantScanModel scan) {
+  final List<PlantRegionModel>? markers = scan.regionMarkers;
+  if (markers == null || markers.isEmpty) {
+    return null;
+  }
+  if (markers.length == 1) {
+    return markers;
+  }
+  final int? idx = scan.regionIndex;
+  if (idx != null && idx >= 0 && idx < markers.length) {
+    return <PlantRegionModel>[markers[idx]];
+  }
+  return markers;
 }

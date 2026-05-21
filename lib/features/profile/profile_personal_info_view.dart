@@ -90,6 +90,7 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
     final AuthState auth = ref.watch(authProvider);
     final AsyncValue<UserProfileModel?> profileAsync = ref.watch(userProfileProvider);
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
+    final TextTheme tt = Theme.of(context).textTheme;
 
     if (!_hydrated && !profileAsync.isLoading) {
       _hydrateFromProfile(profileAsync.valueOrNull, auth);
@@ -113,7 +114,7 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
               children: <Widget>[
                 Text(
                   context.l10n.profilePersonalInfoIntro,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: tt.bodyMedium?.copyWith(
                         color: context.palMuted,
                         height: 1.45,
                         fontWeight: FontWeight.w500,
@@ -140,34 +141,6 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
                         ),
                         SizedBox(height: WidgetSizesEnum.cardRadius.value),
                         AppTextField(
-                          controller: _email,
-                          label: context.l10n.profileEmailLabel,
-                          keyboardType: TextInputType.emailAddress,
-                          readOnly: _isGoogleAccount,
-                          validator: (String? v) {
-                            if (v == null || v.trim().isEmpty) {
-                              return context.l10n.profileEmailRequired;
-                            }
-                            if (!v.contains('@') || !v.contains('.')) {
-                              return context.l10n.errorAuthInvalidEmail;
-                            }
-                            return null;
-                          },
-                        ),
-                        if (_isGoogleAccount) ...<Widget>[
-                          SizedBox(height: WidgetSizesEnum.divider.value * 8),
-                          Text(
-                            context.l10n.profileEmailGoogleHint,
-                            style: TextStyle(
-                              fontSize: TextSizesEnum.caption.value,
-                              color: context.palMuted,
-                              height: 1.35,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                        SizedBox(height: WidgetSizesEnum.cardRadius.value),
-                        AppTextField(
                           controller: _phone,
                           label: context.l10n.profilePhoneLabel,
                           keyboardType: TextInputType.phone,
@@ -180,6 +153,51 @@ class _ProfilePersonalInfoViewState extends ConsumerState<ProfilePersonalInfoVie
                         ),
                       ],
                     ),
+                  ),
+                ),
+                SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.15),
+                Text(
+                  context.l10n.profileEmailChangeSection,
+                  style: tt.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: context.palOnSurface,
+                  ),
+                ),
+                SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.75),
+                SoftElevationCard(
+                  onTap: null,
+                  padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      AppTextField(
+                        controller: _email,
+                        label: context.l10n.profileEmailLabel,
+                        keyboardType: TextInputType.emailAddress,
+                        readOnly: _isGoogleAccount,
+                        validator: (String? v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return context.l10n.profileEmailRequired;
+                          }
+                          if (!v.contains('@') || !v.contains('.')) {
+                            return context.l10n.errorAuthInvalidEmail;
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: WidgetSizesEnum.divider.value * 8),
+                      Text(
+                        _isGoogleAccount
+                            ? context.l10n.profileEmailGoogleHint
+                            : context.l10n.profileEmailChangeHint,
+                        style: TextStyle(
+                          fontSize: TextSizesEnum.caption.value,
+                          color: context.palMuted,
+                          height: 1.4,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value),

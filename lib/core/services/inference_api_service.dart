@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:bitirme_mobile/core/env/env.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:bitirme_mobile/core/utils/confidence_format.dart';
 import 'package:bitirme_mobile/core/services/tflite_plant_inference_service.dart';
 import 'package:bitirme_mobile/models/inference_result_model.dart';
@@ -46,13 +47,16 @@ class InferenceApiService {
     if (Env.useMockInference) {
       return _mockResult(_mockSpecies);
     }
-    if (Env.useLocalTflite) {
+    if (Env.useLocalTflite && !kIsWeb) {
       try {
         return await _tflite.predictSpecies(imageBytes);
       } catch (e, st) {
         _logger.e('inference_tflite_species', e, st);
         rethrow;
       }
+    }
+    if (kIsWeb && Env.useLocalTflite) {
+      _logger.w('Web: TFLite atlandı, HTTP/mock kullanılıyor.');
     }
     try {
       final Uri uri = Uri.parse('${Env.apiBaseUrl}/predict/species');
@@ -76,13 +80,16 @@ class InferenceApiService {
     if (Env.useMockInference) {
       return _mockResult(_mockDiseaseKeys);
     }
-    if (Env.useLocalTflite) {
+    if (Env.useLocalTflite && !kIsWeb) {
       try {
         return await _tflite.predictDisease(imageBytes);
       } catch (e, st) {
         _logger.e('inference_tflite_disease', e, st);
         rethrow;
       }
+    }
+    if (kIsWeb && Env.useLocalTflite) {
+      _logger.w('Web: TFLite atlandı, HTTP/mock kullanılıyor.');
     }
     try {
       final Uri uri = Uri.parse('${Env.apiBaseUrl}/predict/disease');

@@ -1,16 +1,21 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
+import 'package:bitirme_mobile/core/widgets/image/scan_detail_preview_image.dart';
+import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:flutter/material.dart';
 
-/// Tarama fotoğrafını tam ekran gösterir.
+/// Tarama fotoğrafını tam ekran gösterir; çoklu bölgede kırmızı çerçeveler.
 Future<void> showScanImageViewerDialog({
   required BuildContext context,
   required String? imageUrl,
   String? caption,
+  List<PlantRegionModel>? regions,
+  int? highlightRegionIndex,
 }) {
   if (imageUrl == null || imageUrl.isEmpty) {
     return Future<void>.value();
   }
+  final List<PlantRegionModel> markers = regions ?? <PlantRegionModel>[];
   return showDialog<void>(
     context: context,
     builder: (BuildContext ctx) {
@@ -43,12 +48,10 @@ Future<void> showScanImageViewerDialog({
                   maxHeight: maxImageHeight,
                   maxWidth: maxImageWidth,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(WidgetSizesEnum.chipRadius.value),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.contain,
-                  ),
+                child: ScanDetailPreviewImage(
+                  imageUrl: imageUrl,
+                  regions: markers.isNotEmpty ? markers : null,
+                  highlightRegionIndex: highlightRegionIndex,
                 ),
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:bitirme_mobile/models/plant_region_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,6 +15,9 @@ class PlantScanModel extends Equatable {
     required this.diseaseConfidence,
     required this.healthScore,
     this.imageUrl,
+    this.thumbnailUrl,
+    this.regionMarkers,
+    this.regionIndex,
     this.notes,
   });
 
@@ -29,12 +33,37 @@ class PlantScanModel extends Equatable {
   /// 0..100 — grafik için tek metrik.
   final int healthScore;
 
+  /// Tam fotoğraf (çoklu bölgede) veya tek bölge kırpımı.
   final String? imageUrl;
+
+  /// Liste küçük görseli; çoklu bölgede kırpılmış bölge fotoğrafı.
+  final String? thumbnailUrl;
+
+  /// Çoklu bölge seçiminde tüm dikdörtgenler (normalize).
+  final List<PlantRegionModel>? regionMarkers;
+
+  /// Bu kaydın hangi bölgeye ait olduğu (0 tabanlı).
+  final int? regionIndex;
+
   final String? notes;
 
-  /// Firebase Storage / Firestore `imageUrl` veya `photoUrl` dolu mu.
-  bool get hasStoredImage =>
-      imageUrl != null && imageUrl!.trim().isNotEmpty;
+  bool get hasRegionOverlay =>
+      regionMarkers != null && regionMarkers!.isNotEmpty;
+
+  /// Geçmiş / detayda tam fotoğraf.
+  String? get fullImageUrl => imageUrl;
+
+  /// Liste önizlemesi.
+  String? get listThumbnailUrl =>
+      thumbnailUrl != null && thumbnailUrl!.isNotEmpty ? thumbnailUrl : imageUrl;
+
+  /// Firebase Storage / Firestore görsel alanı dolu mu.
+  bool get hasStoredImage {
+    final String? full = imageUrl?.trim();
+    final String? thumb = thumbnailUrl?.trim();
+    return (full != null && full.isNotEmpty) ||
+        (thumb != null && thumb.isNotEmpty);
+  }
 
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -48,20 +77,29 @@ class PlantScanModel extends Equatable {
       'diseaseConfidence': diseaseConfidence,
       'healthScore': healthScore,
       'imageUrl': imageUrl,
+      if (thumbnailUrl != null && thumbnailUrl!.isNotEmpty)
+        'thumbnailUrl': thumbnailUrl,
+      if (regionMarkers != null && regionMarkers!.isNotEmpty)
+        'regionMarkers': PlantRegionModel.listToJson(regionMarkers!),
+      if (regionIndex != null) 'regionIndex': regionIndex,
       'notes': notes,
     };
   }
 
+  static String? _optionalString(Map<String, dynamic> json, String key) {
+    final String? v = json[key] as String?;
+    if (v == null || v.trim().isEmpty) {
+      return null;
+    }
+    return v.trim();
+  }
+
   static String? _imageUrlFromJson(Map<String, dynamic> json) {
-    final String? direct = json['imageUrl'] as String?;
-    if (direct != null && direct.trim().isNotEmpty) {
-      return direct.trim();
+    final String? direct = _optionalString(json, 'imageUrl');
+    if (direct != null) {
+      return direct;
     }
-    final String? legacy = json['photoUrl'] as String?;
-    if (legacy != null && legacy.trim().isNotEmpty) {
-      return legacy.trim();
-    }
-    return null;
+    return _optionalString(json, 'photoUrl');
   }
 
   static PlantScanModel? fromJson(Map<String, dynamic>? json) {
@@ -76,7 +114,10 @@ class PlantScanModel extends Equatable {
       return null;
     }
 
-    final DateTime createdAt = (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+    final DateTime createdAt =
+        (json['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+    final List<PlantRegionModel> markers =
+        PlantRegionModel.listFromJson(json['regionMarkers']);
 
     return PlantScanModel(
       id: id,
@@ -89,6 +130,9 @@ class PlantScanModel extends Equatable {
       diseaseConfidence: (json['diseaseConfidence'] as num?)?.toDouble() ?? 0,
       healthScore: (json['healthScore'] as num?)?.toInt() ?? 0,
       imageUrl: _imageUrlFromJson(json),
+      thumbnailUrl: _optionalString(json, 'thumbnailUrl'),
+      regionMarkers: markers.isEmpty ? null : markers,
+      regionIndex: (json['regionIndex'] as num?)?.toInt(),
       notes: json['notes'] as String?,
     );
   }
@@ -105,6 +149,9 @@ class PlantScanModel extends Equatable {
         diseaseConfidence,
         healthScore,
         imageUrl,
+        thumbnailUrl,
+        regionMarkers,
+        regionIndex,
         notes,
       ];
 }

@@ -2,6 +2,7 @@ import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
 import 'package:bitirme_mobile/core/locale/species_class_display.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
+import 'package:bitirme_mobile/core/navigation/scan_flow_launcher.dart';
 import 'package:bitirme_mobile/core/mixins/scaffold_message_mixin.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/pdf_file_save_service.dart';
@@ -91,19 +92,9 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
       children: <Widget>[
         Text(
           context.l10n.historyHeadline,
-          style: tt.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w900,
+          style: tt.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
             color: context.palOnSurface,
-            letterSpacing: -0.4,
-          ),
-        ),
-        SizedBox(height: WidgetSizesEnum.divider.value * 8),
-        Text(
-          context.l10n.historySubtitle,
-          style: tt.bodyLarge?.copyWith(
-            color: context.palMuted,
-            height: 1.4,
-            fontWeight: FontWeight.w500,
           ),
         ),
         SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.25),
@@ -153,7 +144,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
               SizedBox(height: WidgetSizesEnum.cardRadius.value),
               AppPrimaryButton(
                 label: context.l10n.homeStartScan,
-                onPressed: () => context.push(AppPaths.scan),
+                onPressed: () => launchScanFlow(context),
               ),
             ],
           ),
@@ -188,17 +179,9 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
             children: [
               Text(
                 context.l10n.historyHeadline,
-                style: tt.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
+                style: tt.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
                   color: context.palOnSurface,
-                ),
-              ),
-              SizedBox(height: WidgetSizesEnum.divider.value * 8),
-              Text(
-                context.l10n.historySubtitle,
-                style: tt.bodyLarge?.copyWith(
-                  color: context.palMuted,
-                  fontWeight: FontWeight.w500,
                 ),
               ),
               SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.25),
@@ -237,10 +220,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
                 ),
                 SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.85),
                 ...speciesScans.map((PlantScanModel s) {
-                  final String dis = diseaseClassKeyToDisplay(
-                    s.diseaseKey,
-                    context.l10n,
-                  );
+                  final String dis = diseaseDisplayForScan(s, context.l10n);
                   return Padding(
                     padding: EdgeInsets.only(
                       bottom: WidgetSizesEnum.cardRadius.value * 0.55,
@@ -258,7 +238,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
                         child: Row(
                           children: <Widget>[
                             ScanThumbnailImage(
-                              imageUrl: s.imageUrl,
+                              imageUrl: s.listThumbnailUrl,
                               size: WidgetSizesEnum.cardRadius.value * 1.75,
                             ),
                             SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.75),
@@ -314,10 +294,7 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
         final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
         final double maxSheetHeight =
             MediaQuery.sizeOf(ctx).height * SheetSizesEnum.modalMaxHeightFraction.value;
-        final String diseaseLine = diseaseClassKeyToDisplay(
-          e.diseaseKey,
-          context.l10n,
-        );
+        final String diseaseLine = diseaseDisplayForScan(e, context.l10n);
         final String title = speciesScanGroupTitle(
           context: context,
           speciesLabel: e.speciesLabel,
@@ -332,16 +309,20 @@ class _HistoryViewState extends ConsumerState<HistoryView> with ScaffoldMessageM
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  if (e.imageUrl != null && e.imageUrl!.isNotEmpty)
+                  if (e.fullImageUrl != null && e.fullImageUrl!.isNotEmpty)
                     ScanDetailPreviewImage(
-                    imageUrl: e.imageUrl!,
+                    imageUrl: e.fullImageUrl!,
+                    regions: scanRegionsForDisplay(e),
+                    highlightRegionIndex: 0,
                     onTap: () => showScanImageViewerDialog(
                       context: ctx,
-                      imageUrl: e.imageUrl,
+                      imageUrl: e.fullImageUrl,
                       caption: title,
+                      regions: scanRegionsForDisplay(e),
+                      highlightRegionIndex: 0,
                     ),
                   ),
-                if (e.imageUrl != null && e.imageUrl!.isNotEmpty)
+                if (e.fullImageUrl != null && e.fullImageUrl!.isNotEmpty)
                   SizedBox(height: WidgetSizesEnum.cardRadius.value),
                 Text(
                   title,
@@ -565,10 +546,8 @@ class _ScanSearchDelegate extends SearchDelegate<PlantScanModel?> {
         context,
         element.speciesLabel,
       ).toLowerCase();
-      final String disease = diseaseClassKeyToDisplay(
-        element.diseaseKey,
-        context.l10n,
-      ).toLowerCase();
+      final String disease = diseaseDisplayForScan(element, context.l10n)
+          .toLowerCase();
       final String q = query.toLowerCase();
       return species.contains(q) || disease.contains(q);
     }).toList();
@@ -583,12 +562,12 @@ class _ScanSearchDelegate extends SearchDelegate<PlantScanModel?> {
       itemBuilder: (context, index) {
         final e = results[index];
         return ListTile(
-          leading: ScanThumbnailImage(imageUrl: e.imageUrl),
+          leading: ScanThumbnailImage(imageUrl: e.listThumbnailUrl),
           title: Text(
             speciesScanGroupTitle(context: context, speciesLabel: e.speciesLabel),
           ),
           subtitle: Text(
-            '${diseaseClassKeyToDisplay(e.diseaseKey, context.l10n)} · ${fmt.format(e.createdAt)}',
+            '${diseaseDisplayForScan(e, context.l10n)} · ${fmt.format(e.createdAt)}',
           ),
           onTap: () => close(context, e),
         );

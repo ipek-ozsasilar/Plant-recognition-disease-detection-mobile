@@ -157,7 +157,7 @@
     }
   },
   "scanSummaryMultiHint": "Her bölge ayrı satırda gösterilir. Türü tanınan bölgeler geçmişe ayrı kayıt olarak yazılır.",
-  "scanSaveMultiSuccess": "{saved} tarama geçmişe kaydedildi.",
+  "scanSaveMultiSuccess": "{saved} bitki kaydı geçmişe eklendi.",
   "@scanSaveMultiSuccess": {
     "placeholders": {
       "saved": { "type": "int" }
@@ -187,7 +187,7 @@
   "scanSpeciesLoading": "Bitki türü tahmin ediliyor…",
   "scanSpeciesTitle": "Tür sonucu",
   "scanSpeciesConfidence": "Güven",
-  "scanDiseaseLoading": "Hastalık / sağlık durumu analiz ediliyor…",
+  "scanDiseaseLoading": "Hastalık tanınıyor…",
   "scanDiseaseTitle": "Hastalık / genel durum",
   "scanDiseaseNote": "Model türden bağımsız genel sınıflandırma yapar; sonuç öneri niteliğindedir.",
   "scanUnrecognizedTitle": "Tanınamadı",
@@ -204,7 +204,7 @@
   },
   "scanSaveNewPlant": "Yeni bitki olarak kaydet",
   "scanSaveToPlantCta": "Bitkiyi kaydet",
-  "scanSavedToPlantSuccess": "Tarama geçmişe kaydedildi.",
+  "scanSavedToPlantSuccess": "Bitki kaydedildi.",
   "scanSavedPhotoFailed": "Tarama kaydedildi; fotoğraf yüklenemedi. Firebase Storage kurallarını kontrol edin.",
   "scanExportPdfCta": "PDF raporu paylaş",
   "scanDownloadPdfCta": "PDF raporu indir",
@@ -221,6 +221,7 @@
   "scanRetry": "Yeniden dene",
   "historyTitle": "Geçmiş taramalar",
   "historyHeadline": "Tarama geçmişi",
+  "historyDiseaseUnknown": "Hastalık bilinmiyor",
   "historySubtitle": "Taramalar bitki türüne göre gruplanır. Aynı türden kaç saksı olursa olsun tek kartta listelenir.",
   "historyScanCount": "{count} tarama",
   "@historyScanCount": {
@@ -233,9 +234,9 @@
   "search": "Ara",
   "guideTitle": "Rehber",
   "guidesHeadline": "Bitki Bakım Rehberi",
-  "guidesSubtitle": "Kaydettiğiniz her tarama Geçmiş'e eklenir. Geçmiş ve Sağlık ilerlemesi bitki türüne göre gruplanır; kayıt sırasında isterseniz hangi saksıya ait olduğunu seçebilirsiniz.",
+  "guidesSubtitle": "Kaydettiğiniz her tarama Geçmiş'e eklenir. Sağlık ilerlemesi tür bazında grafik sunar; kayıt sırasında isterseniz saksı seçebilirsiniz.",
   "guideSectionApp": "Uygulama bölümleri",
-  "guideAppTips": "Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nBitkilerim: kayıt sırasında saksı seçerseniz o bitkinin skoru ve taramaları güncellenir.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş'e yazılır.",
+  "guideAppTips": "Geçmiş: tüm taramalarınız tür bazında listelenir.\n\nSağlık ilerlemesi: seçtiğiniz tür için son 14/30 gün grafiği ve tarama fotoğrafları.\n\nTarama: önce tür, sonra hastalık tahmini; sonuç otomatik Geçmiş'e yazılır. Kayıt sırasında saksı seçebilirsiniz.",
   "guidesEssentialsBadge": "Temel",
   "guidesAdvancedBadge": "İleri",
   "guidesLearnMore": "Devamını oku",
@@ -247,7 +248,7 @@
   "guideSectionMulti": "Çoklu bitki",
   "guideMultiTips": "Birden fazla tür varsa her bitki için ayrı bölge işaretleyin; yanlış eşleşmeyi azaltır.",
   "guideSectionDisease": "Hastalık taraması",
-  "guideDiseaseTips": "Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek Bitkilerim takibini günceller.",
+  "guideDiseaseTips": "Belirtiler yaprakta net görünmeli; bulanık çekim güven skorunu düşürür. Geçmişe kaydederken doğru saksıyı seçmek takibi kolaylaştırır.",
   "settingsTitle": "Ayarlar",
   "settingsHeadline": "Tercihler",
   "settingsSubtitle": "Dil, tema ve bildirim tercihlerinizi buradan yönetin.",
@@ -263,13 +264,17 @@
   "profileHelpCenter": "Yardım merkezi",
   "profilePlantsTracked": "Kayıtlı bitki",
   "profileScansDone": "Toplam tarama",
-  "profileStatsHint": "Sol: Bitkilerim’de eklediğiniz saksı sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.",
+  "profileSpeciesCount": "Tür sayısı",
+  "profileDiseaseCount": "Hastalık sayısı",
+  "profileStatsHint": "Sol: tanınan bitki türü sayısı. Sağ: hesabınıza kayıtlı tüm tarama sayısı.",
   "profileChangePhotoHint": "Fotoğrafı değiştirmek için dokunun",
   "profilePhotoGallery": "Galeriden seç",
   "profilePhotoCamera": "Kamera",
   "profilePhotoUploadSuccess": "Profil fotoğrafı güncellendi.",
   "profilePhotoUploadError": "Profil fotoğrafı yüklenemedi.",
-  "profilePersonalInfoIntro": "Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz. E-posta değişikliğinde doğrulama bağlantısı gönderilir.",
+  "profilePersonalInfoIntro": "Adınızı ve iletişim bilgilerinizi güncelleyebilirsiniz.",
+  "profileEmailChangeSection": "E-posta değiştir",
+  "profileEmailChangeHint": "Yeni e-posta adresinize doğrulama bağlantısı gönderilir. Bağlantıyı onayladıktan sonra giriş e-postanız güncellenir.",
   "profileDisplayNameLabel": "Ad soyad",
   "profileDisplayNameRequired": "Ad gerekli",
   "profileEmailLabel": "E-posta",
@@ -284,6 +289,20 @@
   "profileNotificationsDetail": "Bildirimler cihazınızda yerel olarak planlanır. Her bitki için en son kayda göre tek bir takip hatırlatması tutulur.",
   "profilePrivacyIntro": "Hesap güvenliği ve verileriniz.",
   "profileChangePassword": "Şifre sıfırlama",
+  "profilePasswordResetHint": "Kayıtlı e-postanıza ({email}) şifre sıfırlama bağlantısı gönderilir.",
+  "@profilePasswordResetHint": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "profilePasswordResetConfirmTitle": "Şifre sıfırlama",
+  "profilePasswordResetConfirmBody": "{email} adresine şifre sıfırlama bağlantısı gönderilsin mi?",
+  "@profilePasswordResetConfirmBody": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "profilePasswordGoogleHint": "Google ile giriş yaptığınız için şifre bu uygulamadan sıfırlanmaz. Google hesap güvenliği ayarlarını kullanın.",
   "profilePrivacyDataNote": "Tarama ve bitki verileriniz Firebase üzerinde {email} hesabına bağlıdır. Fotoğraflar güvenli depolamada saklanır.",
   "@profilePrivacyDataNote": {
     "placeholders": {
@@ -296,15 +315,15 @@
   "profileDeleteDataHint": "Hesabınız açık kalır; yalnızca uygulama verileri silinir.",
   "profileDeleteDataError": "Veriler silinemedi.",
   "aboutTitle": "Hakkında",
-  "aboutSubtitle": "Bitki türü ve hastalık analizi — bitirme tezi mobil uygulaması",
-  "aboutPurposeTitle": "Ne işe yarar?",
-  "aboutPurposeBody": "PhytoGuard, bitkilerinizin fotoğrafından yapay zeka destekli tür ve hastalık tahmini sunar. Ev bitkilerinizi veya bahçe bitkilerinizi düzenli taramalarla izleyebilir, geçmiş sonuçlara bakabilir ve sağlık trendini grafiklerle takip edebilirsiniz.",
-  "aboutFeaturesTitle": "Özellikler",
-  "aboutFeaturesBody": "Fotoğrafla tür ve hastalık analizi (tahmin büyük ölçüde cihazınızda çalışır)\nTarama geçmişi; türe göre gruplanmış kayıtlar ve fotoğraflar\nSağlık ilerlemesi: son 14 veya 30 günlük hastalık trendi grafiği\nBitkilerim: saksı bazında kayıt ve tarama bağlama\nHatırlatıcı bildirimler (düşük sağlık skorunda takip)\nPDF analiz raporu indirme ve paylaşma\nRehber, günün ipucu ve çoklu bitki bölge seçimi",
-  "aboutHowItWorksTitle": "Nasıl çalışır?",
-  "aboutHowItWorksBody": "Tarama akışında önce bitki türü, ardından hastalık sınıfı değerlendirilir. Kaydettiğiniz her tarama hesabınıza yazılır; isteğe bağlı olarak hangi saksıya ait olduğunu seçebilirsiniz. Veriler Firebase ile güvenli şekilde senkronize edilir; tarama fotoğrafları bulut depolamada saklanır.",
-  "aboutThesisTitle": "Bitirme projesi",
-  "aboutThesisBody": "Bu uygulama bir üniversite bitirme tezi çalışması olarak geliştirilmiştir. Makine öğrenmesi modelleri, mobil arayüz ve bulut altyapısı tezin uygulama bileşenlerini oluşturur.",
+  "aboutSubtitle": "Atatürk Üniversitesi Bilgisayar Mühendisliği bitirme tezi — yapay zekâ destekli bitki tanıma ve hastalık tespiti mobil uygulaması",
+  "aboutPurposeTitle": "Proje amacı",
+  "aboutPurposeBody": "Bu bitirme çalışması, PhytoGuard adlı bulut destekli mobil uygulamayı geliştirmeyi hedefler. Kullanıcılar yaprak fotoğraflarını çekerek veya yükleyerek bitki türünü tanıyabilir; varsa hastalık durumunu yapay zekâ ile değerlendirebilir. Amaç, uzman desteğine sınırlı erişilen ortamlarda hızlı, erişilebilir ve anlaşılır bir karar destek aracı sunmaktır. Sistem, bitki tanıma ile hastalık tespitini tek bir mobil uygulamada birleştirir; geçmiş taramaları saklayarak uzun vadeli sağlık takibine olanak tanır.",
+  "aboutFeaturesTitle": "Sistem bileşenleri",
+  "aboutFeaturesBody": "Tür modeli: EfficientNetB3 tabanlı ~93 sınıflı model (Leafsnap ve PlantNet-300K veri kümeleri); TensorFlow Lite ile cihazda çalışır\nHastalık modeli: Türden bağımsız 5 sınıflı genel model (sağlıklı, küf, pas, yanıklık, külleme); TFLite ile yerel çıkarım\nMobil uygulama: Flutter; çoklu bölge seçimi, tarama geçmişi, sağlık grafikleri, PDF rapor, bildirimler\nBulut altyapısı: Firebase kimlik doğrulama, Firestore kayıtları ve Storage ile fotoğraf senkronizasyonu\nKullanım kolaylığı: Önce tür, sonra hastalık analizi; sonuçlar hesabınıza kaydedilir",
+  "aboutHowItWorksTitle": "Teknik yaklaşım",
+  "aboutHowItWorksBody": "Modeller Python ortamında TensorFlow/Keras ile eğitilmiş, mobil kullanım için TensorFlow Lite formatına dönüştürülmüştür. Uygulamada fotoğraf üzerinde ilgili bölgeler seçilir; önce tür, ardından hastalık sınıfı tahmin edilir. Tür tanınmadığında kayıt yapılmaz; hastalık güven skoru düşükse geçmişte \"Hastalık bilinmiyor\" olarak gösterilir. Tarama sonuçları isteğe bağlı olarak bitki kaydına bağlanır. Çıktılar bilgilendirme amaçlıdır; profesyonel tarım teşhisi yerine geçmez.",
+  "aboutThesisTitle": "Bitirme tezi",
+  "aboutThesisBody": "Tez başlığı: Yapay Zekâ Destekli Bitki Tanıma ve Hastalık Tespiti İçin Bulut Tabanlı Mobil Uygulama\n\nHazırlayan: İpek ÖZSAŞILAR (220707057)\nProje danışmanı: Doç. Dr. Ferhat BOZKURT\nAtatürk Üniversitesi — Mühendislik Fakültesi, Bilgisayar Mühendisliği Bölümü\nBilgisayar Mühendisliği Seçmeli Tasarım Dersi I — Haziran 2026\n\nÇalışma; görüntü işleme, derin öğrenme, mobil uygulama geliştirme ve bulut bilişimi alanlarını bir araya getiren bütünleşik bir bitirme projesidir.",
   "aboutDisclaimerTitle": "Önemli uyarı",
   "aboutDisclaimerBody": "Sunulan sonuçlar bilgilendirme amaçlıdır; kesin teşhis veya tedavi önerisi değildir. Ciddi bitki hastalığı şüphesinde tarım uzmanı veya bahçıvan desteği alınmalıdır.",
   "aboutVersionLabel": "Sürüm 1.0.0",

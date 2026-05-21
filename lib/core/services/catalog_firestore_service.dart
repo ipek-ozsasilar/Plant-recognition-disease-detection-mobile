@@ -1,4 +1,5 @@
 import 'package:bitirme_mobile/core/enums/firestore_collection_enum.dart';
+import 'package:bitirme_mobile/core/services/disease_label_display.dart';
 import 'package:bitirme_mobile/core/services/app_logger.dart';
 import 'package:bitirme_mobile/core/services/plantnet_species_name_repository.dart';
 import 'package:bitirme_mobile/core/services/species_label_formatter.dart';
@@ -19,16 +20,17 @@ final class CatalogFirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> ensureDisease({required String diseaseKey}) async {
-    if (diseaseKey.trim().isEmpty) {
+    final String key = diseaseKey.trim();
+    if (key.isEmpty || key == kStoredDiseaseKeyUnknown) {
       return;
     }
     try {
       final DocumentReference<Map<String, dynamic>> ref = _db
           .collection(FirestoreCollectionEnum.diseases.value)
-          .doc(diseaseKey);
+          .doc(key);
 
       await ref.set(<String, dynamic>{
-        'key': diseaseKey,
+        'key': key,
         'updatedAt': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));

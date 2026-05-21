@@ -1,23 +1,34 @@
 import 'package:bitirme_mobile/core/enums/size_enum.dart';
 import 'package:bitirme_mobile/core/locale/l10n_context.dart';
+import 'package:bitirme_mobile/core/mixins/scaffold_message_mixin.dart';
 import 'package:bitirme_mobile/core/navigation/app_paths.dart';
 import 'package:bitirme_mobile/core/services/firestore_setup_service.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
 import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
+import 'package:bitirme_mobile/features/profile/provider/user_profile_provider.dart';
 import 'package:bitirme_mobile/features/profile/sub_view/profile_settings_tile.dart';
 import 'package:bitirme_mobile/gen/colors.gen.dart';
+import 'package:bitirme_mobile/models/user_profile_model.dart';
 import 'package:bitirme_mobile/service_locator/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Gizlilik, şifre ve veri silme.
-class ProfilePrivacyView extends ConsumerWidget {
+/// Gizlilik, şifre sıfırlama ve veri silme.
+class ProfilePrivacyView extends ConsumerStatefulWidget {
   const ProfilePrivacyView({super.key});
 
-  Future<void> _confirmDeleteData(BuildContext context, WidgetRef ref) async {
+  @override
+  ConsumerState<ProfilePrivacyView> createState() => _ProfilePrivacyViewState();
+}
+
+class _ProfilePrivacyViewState extends ConsumerState<ProfilePrivacyView>
+    with ScaffoldMessageMixin {
+  bool _sendingPasswordReset = false;
+
+  Future<void> _confirmDeleteData() async {
     final bool? ok = await showDialog<bool>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
@@ -38,7 +49,7 @@ class ProfilePrivacyView extends ConsumerWidget {
         ],
       ),
     );
-    if (ok != true || !context.mounted) {
+    if (ok != true || !mounted) {
       return;
     }
     final String? uid = ref.read(authProvider).uid;
@@ -48,23 +59,65 @@ class ProfilePrivacyView extends ConsumerWidget {
     try {
       await sl<FirestoreSetupService>().deleteAllUserData(uid: uid);
       await ref.read(authProvider.notifier).logout();
-      if (context.mounted) {
+      if (mounted) {
         context.go(AppPaths.login);
       }
     } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.profileDeleteDataError)),
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          message: context.l10n.profileDeleteDataError,
+          isError: true,
         );
       }
     }
   }
 
+  Future<void> _requestPasswordReset(String email) async {
+    final bool? ok = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        title: Text(ctx.l10n.profilePasswordResetConfirmTitle),
+        content: Text(ctx.l10n.profilePasswordResetConfirmBody(email)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(ctx.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(ctx.l10n.forgotPasswordCta),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) {
+      return;
+    }
+
+    setState(() => _sendingPasswordReset = true);
+    final String? error = await ref
+        .read(authProvider.notifier)
+        .sendPasswordResetEmail(email, context.l10n);
+    if (!mounted) {
+      return;
+    }
+    setState(() => _sendingPasswordReset = false);
+
+    if (error != null) {
+      showAppSnackBar(context, message: error, isError: true);
+    } else {
+      showAppSnackBar(context, message: context.l10n.forgotPasswordSuccess);
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final TextTheme tt = Theme.of(context).textTheme;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
-    final String email = ref.watch(authProvider).email ?? '';
+    final String email = (ref.watch(authProvider).email ?? '').trim();
+    final UserProfileModel? profile = ref.watch(userProfileProvider).valueOrNull;
+    final bool isGoogleAccount = profile?.authProvider == 'google';
 
     return Scaffold(
       backgroundColor: context.palSurface,
@@ -94,23 +147,56 @@ class ProfilePrivacyView extends ConsumerWidget {
             padding: EdgeInsets.zero,
             child: Column(
               children: <Widget>[
-                ProfileSettingsTile(
-                  icon: Icons.lock_reset_rounded,
-                  title: context.l10n.profileChangePassword,
-                  onTap: () => context.push(AppPaths.forgotPassword),
-                ),
-                Divider(
-                  height: WidgetSizesEnum.divider.value,
-                  color: context.palOutline.withValues(alpha: 0.35),
-                ),
-                ProfileSettingsTile(
-                  icon: Icons.tune_rounded,
-                  title: context.l10n.settingsTitle,
-                  onTap: () => context.push(AppPaths.settings),
-                ),
+                if (!isGoogleAccount && email.isNotEmpty)
+                  ProfileSettingsTile(
+                    icon: Icons.lock_reset_rounded,
+                    title: context.l10n.profileChangePassword,
+                    onTap: _sendingPasswordReset
+                        ? () {}
+                        : () => _requestPasswordReset(email),
+                  ),
+                if (isGoogleAccount)
+                  Padding(
+                    padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          color: context.palMuted,
+                          size: IconSizesEnum.medium.value,
+                        ),
+                        SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.75),
+                        Expanded(
+                          child: Text(
+                            context.l10n.profilePasswordGoogleHint,
+                            style: tt.bodyMedium?.copyWith(
+                              color: context.palMuted,
+                              height: 1.45,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
+          if (!isGoogleAccount && email.isNotEmpty) ...<Widget>[
+            SizedBox(height: WidgetSizesEnum.divider.value * 8),
+            if (_sendingPasswordReset)
+              const Center(child: CircularProgressIndicator())
+            else
+              Text(
+                context.l10n.profilePasswordResetHint(email),
+                style: tt.bodySmall?.copyWith(
+                  color: context.palMuted,
+                  height: 1.4,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+          ],
           SizedBox(height: WidgetSizesEnum.cardRadius.value),
           SoftElevationCard(
             onTap: null,
@@ -125,7 +211,7 @@ class ProfilePrivacyView extends ConsumerWidget {
           ),
           SizedBox(height: WidgetSizesEnum.cardRadius.value),
           SoftElevationCard(
-            onTap: () => _confirmDeleteData(context, ref),
+            onTap: _confirmDeleteData,
             padding: EdgeInsets.all(WidgetSizesEnum.cardRadius.value),
             child: Row(
               children: <Widget>[

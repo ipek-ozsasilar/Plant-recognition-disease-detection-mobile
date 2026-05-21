@@ -8,7 +8,6 @@ import 'package:bitirme_mobile/features/auth/provider/auth_provider.dart';
 import 'package:bitirme_mobile/core/theme/app_palette.dart';
 import 'package:bitirme_mobile/core/widgets/appbar/conditional_back_leading.dart';
 import 'package:bitirme_mobile/core/widgets/surface/soft_elevation_card.dart';
-import 'package:bitirme_mobile/features/plants/provider/plants_provider.dart';
 import 'package:bitirme_mobile/features/profile/provider/user_profile_provider.dart';
 import 'package:bitirme_mobile/features/profile/sub_view/profile_avatar.dart';
 import 'package:bitirme_mobile/features/profile/sub_view/profile_settings_tile.dart';
@@ -39,7 +38,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> with ScaffoldMessageM
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(plantsProvider.notifier).load();
       await ref.read(userProfileProvider.notifier).reload();
     });
   }
@@ -126,10 +124,13 @@ class _ProfileViewState extends ConsumerState<ProfileView> with ScaffoldMessageM
     final UserProfileModel? profile = profileAsync.valueOrNull;
     final double pad = WidgetSizesEnum.cardRadius.value * 1.15;
     final TextTheme tt = Theme.of(context).textTheme;
-    final int plantsCount = ref.watch(plantsProvider).items.length;
     final AsyncValue<HomeStatsModel> statsAsync = ref.watch(homeStatsProvider);
-    final int scansCount = statsAsync.maybeWhen(
-      data: (HomeStatsModel stats) => stats.totalScans,
+    final int speciesCount = statsAsync.maybeWhen(
+      data: (HomeStatsModel stats) => stats.uniqueSpeciesCount,
+      orElse: () => 0,
+    );
+    final int diseaseCount = statsAsync.maybeWhen(
+      data: (HomeStatsModel stats) => stats.uniqueDiseaseCount,
       orElse: () => 0,
     );
     final double topInset = MediaQuery.paddingOf(context).top + kToolbarHeight;
@@ -181,14 +182,6 @@ class _ProfileViewState extends ConsumerState<ProfileView> with ScaffoldMessageM
                       uploading: _uploadingAvatar,
                     ),
                   ),
-                  SizedBox(height: WidgetSizesEnum.divider.value * 6),
-                  Text(
-                    context.l10n.profileChangePhotoHint,
-                    style: tt.bodySmall?.copyWith(
-                      color: context.palMuted,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                   SizedBox(height: WidgetSizesEnum.cardRadius.value * 0.65),
                   Text(
                     displayName,
@@ -216,32 +209,22 @@ class _ProfileViewState extends ConsumerState<ProfileView> with ScaffoldMessageM
               children: <Widget>[
                 Expanded(
                   child: ProfileStatPill(
-                    value: '$plantsCount',
-                    label: context.l10n.profilePlantsTracked,
+                    value: '$speciesCount',
+                    label: context.l10n.profileSpeciesCount,
                     accent: context.palPrimary,
-                    icon: Icons.local_florist_rounded,
+                    icon: Icons.eco_rounded,
                   ),
                 ),
                 SizedBox(width: WidgetSizesEnum.cardRadius.value * 0.75),
                 Expanded(
                   child: ProfileStatPill(
-                    value: '$scansCount',
-                    label: context.l10n.profileScansDone,
+                    value: '$diseaseCount',
+                    label: context.l10n.profileDiseaseCount,
                     accent: context.palAccent,
-                    icon: Icons.document_scanner_outlined,
+                    icon: Icons.biotech_rounded,
                   ),
                 ),
               ],
-            ),
-            SizedBox(height: WidgetSizesEnum.divider.value * 8),
-            Text(
-              context.l10n.profileStatsHint,
-              textAlign: TextAlign.center,
-              style: tt.bodySmall?.copyWith(
-                color: context.palMuted,
-                height: 1.35,
-                fontWeight: FontWeight.w600,
-              ),
             ),
             SizedBox(height: WidgetSizesEnum.cardRadius.value * 1.25),
             SoftElevationCard(
@@ -280,6 +263,16 @@ class _ProfileViewState extends ConsumerState<ProfileView> with ScaffoldMessageM
                     icon: Icons.lock_outline_rounded,
                     title: context.l10n.profilePrivacySecurity,
                     onTap: () => context.push(AppPaths.profilePrivacy),
+                  ),
+                  Divider(
+                    height: WidgetSizesEnum.divider.value,
+                    thickness: WidgetSizesEnum.divider.value,
+                    color: context.palOutline.withValues(alpha: 0.35),
+                  ),
+                  ProfileSettingsTile(
+                    icon: Icons.settings_rounded,
+                    title: context.l10n.settingsTitle,
+                    onTap: () => context.push(AppPaths.settings),
                   ),
                   Divider(
                     height: WidgetSizesEnum.divider.value,
