@@ -133,8 +133,6 @@ Full-screen step-by-step flow:
 
 ## Screenshots
 
-## Screenshots
-
 <p align="center">
   <img src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" width="150" />
   <img src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" width="150" />
@@ -145,84 +143,30 @@ Full-screen step-by-step flow:
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/07.png" width="15%" />
-  <img src="docs/screenshots/08.png" width="15%" />
-  <img src="docs/screenshots/09.png" width="15%" />
-  <img src="docs/screenshots/10.png" width="15%" />
-  <img src="docs/screenshots/11.png" width="15%" />
-  <img src="docs/screenshots/12.png" width="15%" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 29 (3)" src="https://github.com/user-attachments/assets/dc4300ac-d531-4fcf-aff0-16613ebffe7c" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 29 (4)" src="https://github.com/user-attachments/assets/33ef0e49-1920-41bb-8dab-8f1cc69625b9" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 29" src="https://github.com/user-attachments/assets/a987f74f-bc08-4861-8a88-af30e0ef939d" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (1)" src="https://github.com/user-attachments/assets/b6f26124-d7da-4e8b-9871-0efef875d549" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (2)" src="https://github.com/user-attachments/assets/e34213fb-60ad-4761-b60c-1fb02c255806" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (3)" src="https://github.com/user-attachments/assets/b93f1e93-ca7e-477c-bbbe-6727525062e5" width="150" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/13.png" width="15%" />
-  <img src="docs/screenshots/14.png" width="15%" />
-  <img src="docs/screenshots/15.png" width="15%" />
-  <img src="docs/screenshots/16.png" width="15%" />
-  <img src="docs/screenshots/17.png" width="15%" />
-  <img src="docs/screenshots/18.png" width="15%" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (1)" src="https://github.com/user-attachments/assets/c3a14583-0dc2-4e50-8b70-549421ead93b" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30" src="https://github.com/user-attachments/assets/c96c3a3f-ef49-40c6-9e99-5f99c2fde568" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (6)" src="https://github.com/user-attachments/assets/241e41a9-b2d5-40a4-bc3d-08806eb45b20" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (5)" src="https://github.com/user-attachments/assets/fc931aa4-e109-42b4-886d-1cc73591e5b7" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (4)" src="https://github.com/user-attachments/assets/5156b5dc-cd60-4361-bbbb-2eae43bba0eb" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (2)" src="https://github.com/user-attachments/assets/c7ce4aed-9c98-44a2-badb-20e136541f68" width="150" />
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/19.png" width="15%" />
-  <img src="docs/screenshots/20.png" width="15%" />
-  <img src="docs/screenshots/21.png" width="15%" />
-  <img src="docs/screenshots/22.png" width="15%" />
-  <img src="docs/screenshots/23.png" width="15%" />
-  <img src="docs/screenshots/24.png" width="15%" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/25.png" width="15%" />
-  <img src="docs/screenshots/26.png" width="15%" />
-  <img src="docs/screenshots/27.png" width="15%" />
-  <img src="docs/screenshots/28.png" width="15%" />
-  <img src="docs/screenshots/29.png" width="15%" />
-  <img src="docs/screenshots/30.png" width="15%" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/31.png" width="15%" />
-  <img src="docs/screenshots/32.png" width="15%" />
-  <img src="docs/screenshots/33.png" width="15%" />
-  <img src="docs/screenshots/34.png" width="15%" />
-  <img src="docs/screenshots/35.png" width="15%" />
-  <img src="docs/screenshots/36.png" width="15%" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/37.png" width="15%" />
-  <img src="docs/screenshots/38.png" width="15%" />
-  <img src="docs/screenshots/39.png" width="15%" />
-  <img src="docs/screenshots/40.png" width="15%" />
-  <img src="docs/screenshots/41.png" width="15%" />
-  <img src="docs/screenshots/42.png" width="15%" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/43.png" width="15%" />
-  <img src="docs/screenshots/44.png" width="15%" />
-  <img src="docs/screenshots/45.png" width="15%" />
-  <img src="docs/screenshots/46.png" width="15%" />
-  <img src="docs/screenshots/47.png" width="15%" />
-  <img src="docs/screenshots/48.png" width="15%" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/49.png" width="15%" />
-  <img src="docs/screenshots/50.png" width="15%" />
-  <img src="docs/screenshots/51.png" width="15%" />
-  <img src="docs/screenshots/52.png" width="15%" />
-  <img src="docs/screenshots/53.png" width="15%" />
-  <img src="docs/screenshots/54.png" width="15%" />
-</p>
-
-<p align="center">
-  <img src="docs/screenshots/55.png" width="15%" />
-  <img src="docs/screenshots/56.png" width="15%" />
-  <img src="docs/screenshots/57.png" width="15%" />
-  <img src="docs/screenshots/58.png" width="15%" />
-  <img src="docs/screenshots/59.png" width="15%" />
-  <img src="docs/screenshots/60.png" width="15%" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (3)" src="https://github.com/user-attachments/assets/3e865381-85d5-4800-91a1-be4d8fdac7ee" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (4)" src="https://github.com/user-attachments/assets/792168f3-e437-42a5-88f9-c2439f930706" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 32 (1)" src="https://github.com/user-attachments/assets/d0ede9c0-be02-4b5d-a5eb-3ec8286012fc" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 31" src="https://github.com/user-attachments/assets/73ab01d9-c1a7-41b8-994f-dcfe76a207da" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (5)" src="https://github.com/user-attachments/assets/8035ed3d-9b8a-4f1b-80ae-a6ca7835b877" width="150" />
+  <img alt="WhatsApp Image 2026-05-21 at 20 29 32 (2)" src="https://github.com/user-attachments/assets/85df9b60-27cb-4258-bda6-b0294ecd6876" width="150" />
 </p>
 
 ## Tech Stack
