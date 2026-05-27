@@ -139,27 +139,24 @@ Full-screen step-by-step flow:
 
 ## Screenshots
 
-Add your app screenshots below. Place them all in this section, one after another. Optional captions can go directly above each image.
+**60 slots** — 10 rows × 6 images per row (left → right, top → bottom).
 
-<br>
+1. Create folder: `docs/screenshots/`
+2. Add files: `01.png` … `60.png` (or change paths in the table cells below)
+3. Replace only the image paths if your names differ — **do not change the table layout**
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!--  ADD YOUR SCREENSHOTS FROM HERE                                   -->
-<!--  Example: ![Caption](docs/screenshots/01-splash.png)            -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<!-- Blank lines above leave room while editing; remove extras after adding images. -->
+| | | | | | |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| ![](docs/screenshots/01.png) | ![](docs/screenshots/02.png) | ![](docs/screenshots/03.png) | ![](docs/screenshots/04.png) | ![](docs/screenshots/05.png) | ![](docs/screenshots/06.png) |
+| ![](docs/screenshots/07.png) | ![](docs/screenshots/08.png) | ![](docs/screenshots/09.png) | ![](docs/screenshots/10.png) | ![](docs/screenshots/11.png) | ![](docs/screenshots/12.png) |
+| ![](docs/screenshots/13.png) | ![](docs/screenshots/14.png) | ![](docs/screenshots/15.png) | ![](docs/screenshots/16.png) | ![](docs/screenshots/17.png) | ![](docs/screenshots/18.png) |
+| ![](docs/screenshots/19.png) | ![](docs/screenshots/20.png) | ![](docs/screenshots/21.png) | ![](docs/screenshots/22.png) | ![](docs/screenshots/23.png) | ![](docs/screenshots/24.png) |
+| ![](docs/screenshots/25.png) | ![](docs/screenshots/26.png) | ![](docs/screenshots/27.png) | ![](docs/screenshots/28.png) | ![](docs/screenshots/29.png) | ![](docs/screenshots/30.png) |
+| ![](docs/screenshots/31.png) | ![](docs/screenshots/32.png) | ![](docs/screenshots/33.png) | ![](docs/screenshots/34.png) | ![](docs/screenshots/35.png) | ![](docs/screenshots/36.png) |
+| ![](docs/screenshots/37.png) | ![](docs/screenshots/38.png) | ![](docs/screenshots/39.png) | ![](docs/screenshots/40.png) | ![](docs/screenshots/41.png) | ![](docs/screenshots/42.png) |
+| ![](docs/screenshots/43.png) | ![](docs/screenshots/44.png) | ![](docs/screenshots/45.png) | ![](docs/screenshots/46.png) | ![](docs/screenshots/47.png) | ![](docs/screenshots/48.png) |
+| ![](docs/screenshots/49.png) | ![](docs/screenshots/50.png) | ![](docs/screenshots/51.png) | ![](docs/screenshots/52.png) | ![](docs/screenshots/53.png) | ![](docs/screenshots/54.png) |
+| ![](docs/screenshots/55.png) | ![](docs/screenshots/56.png) | ![](docs/screenshots/57.png) | ![](docs/screenshots/58.png) | ![](docs/screenshots/59.png) | ![](docs/screenshots/60.png) |
 
 ---
 
