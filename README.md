@@ -136,12 +136,12 @@ Full-screen step-by-step flow:
 ## Screenshots
 
 <p align="center">
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 08" src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09 (1)" src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09 (2)" src="https://github.com/user-attachments/assets/44fafbaf-3592-4c2c-afb1-0229a93eb9f1" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09" src="https://github.com/user-attachments/assets/769978e6-8c23-45e3-af51-a3ba81b9faaa" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 10" src="https://github.com/user-attachments/assets/d1da4d0d-be2f-42af-86c7-19f7b6865557" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 29 (2)" src="https://github.com/user-attachments/assets/22b469da-38f1-41d3-aa1b-6937e67bbc87" />
+  <img src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" width="120" />
+  <img src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" width="120" />
+  <img src="https://github.com/user-attachments/assets/44fafbaf-3592-4c2c-afb1-0229a93eb9f1" width="120" />
+  <img src="https://github.com/user-attachments/assets/769978e6-8c23-45e3-af51-a3ba81b9faaa" width="120" />
+  <img src="https://github.com/user-attachments/assets/d1da4d0d-be2f-42af-86c7-19f7b6865557" width="120" />
+  <img src="https://github.com/user-attachments/assets/22b469da-38f1-41d3-aa1b-6937e67bbc87" width="120" />
 </p>
 
 <p align="center">
