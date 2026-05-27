@@ -1,12 +1,3 @@
-<img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09" src="https://github.com/user-attachments/assets/67746d58-ec7e-4068-813f-8b603df080ea" />
-<img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09" src="https://github.com/user-attachments/assets/010d2857-5eb3-4413-af78-b466d1038807" />
-# PhytoGuard — Plant Species & Disease Recognition Mobile App
-
-<p align="center">
-  <strong>Flutter · Firebase · TensorFlow Lite</strong><br>
-  Offline ML–powered plant health monitoring app developed as a graduation thesis project
-</p>
-
 > **Language:** This README is in English for GitHub and portfolio use. The thesis document and in-app copy are available in Turkish (TR) and English (EN).
 
 ---
