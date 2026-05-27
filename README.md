@@ -126,24 +126,104 @@ Full-screen step-by-step flow:
 | History | Scan list |
 | **FAB** | Scan wizard |
 | Progress | Health progress |
-| Menu | Guide, profile, settings, about |
+| Menu | Guide, profile, settings, about |<img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 29 (1)" src="https://github.com/user-attachments/assets/64a4316a-e886-4ad1-ad65-296c2e99b16a" />
+
 
 ---
 
 ## Screenshots
 
-**60 slots** — 10 rows × 6 images per row (left → right, top → bottom).
+## Screenshots
 
-1. Create folder: `docs/screenshots/`
-2. Add files: `01.png` … `60.png` (or change paths in the table cells below)
-3. Replace only the image paths if your names differ — **do not change the table layout**
+<p align="center">
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 08" src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" />
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09 (1)" src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" />
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09 (2)" src="https://github.com/user-attachments/assets/44fafbaf-3592-4c2c-afb1-0229a93eb9f1" />
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09" src="https://github.com/user-attachments/assets/769978e6-8c23-45e3-af51-a3ba81b9faaa" />
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 10" src="https://github.com/user-attachments/assets/d1da4d0d-be2f-42af-86c7-19f7b6865557" />
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 29 (2)" src="https://github.com/user-attachments/assets/22b469da-38f1-41d3-aa1b-6937e67bbc87" />
+</p>
 
-| | | | | | |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![](https://github.com/user-attachments/assets/fcd89890-25fb-4bad-846a-adcb92fad019) | ![](https://github.com/user-attachments/assets/56b4a21a-c0cc-416f-a8ab-59dfdf5370d9) | ![](https://github.com/user-attachments/assets/e9d52c2d-7c65-46eb-a3d5-69d1f8ee231f) | ![](https://github.com/user-attachments/assets/99eedd41-58ab-47ec-8c20-6305f10e8987) | ![](docs/screenshots/05.png) | ![](docs/screenshots/06.png) |
+<p align="center">
+  <img src="docs/screenshots/07.png" width="15%" />
+  <img src="docs/screenshots/08.png" width="15%" />
+  <img src="docs/screenshots/09.png" width="15%" />
+  <img src="docs/screenshots/10.png" width="15%" />
+  <img src="docs/screenshots/11.png" width="15%" />
+  <img src="docs/screenshots/12.png" width="15%" />
+</p>
 
+<p align="center">
+  <img src="docs/screenshots/13.png" width="15%" />
+  <img src="docs/screenshots/14.png" width="15%" />
+  <img src="docs/screenshots/15.png" width="15%" />
+  <img src="docs/screenshots/16.png" width="15%" />
+  <img src="docs/screenshots/17.png" width="15%" />
+  <img src="docs/screenshots/18.png" width="15%" />
+</p>
 
----
+<p align="center">
+  <img src="docs/screenshots/19.png" width="15%" />
+  <img src="docs/screenshots/20.png" width="15%" />
+  <img src="docs/screenshots/21.png" width="15%" />
+  <img src="docs/screenshots/22.png" width="15%" />
+  <img src="docs/screenshots/23.png" width="15%" />
+  <img src="docs/screenshots/24.png" width="15%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/25.png" width="15%" />
+  <img src="docs/screenshots/26.png" width="15%" />
+  <img src="docs/screenshots/27.png" width="15%" />
+  <img src="docs/screenshots/28.png" width="15%" />
+  <img src="docs/screenshots/29.png" width="15%" />
+  <img src="docs/screenshots/30.png" width="15%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/31.png" width="15%" />
+  <img src="docs/screenshots/32.png" width="15%" />
+  <img src="docs/screenshots/33.png" width="15%" />
+  <img src="docs/screenshots/34.png" width="15%" />
+  <img src="docs/screenshots/35.png" width="15%" />
+  <img src="docs/screenshots/36.png" width="15%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/37.png" width="15%" />
+  <img src="docs/screenshots/38.png" width="15%" />
+  <img src="docs/screenshots/39.png" width="15%" />
+  <img src="docs/screenshots/40.png" width="15%" />
+  <img src="docs/screenshots/41.png" width="15%" />
+  <img src="docs/screenshots/42.png" width="15%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/43.png" width="15%" />
+  <img src="docs/screenshots/44.png" width="15%" />
+  <img src="docs/screenshots/45.png" width="15%" />
+  <img src="docs/screenshots/46.png" width="15%" />
+  <img src="docs/screenshots/47.png" width="15%" />
+  <img src="docs/screenshots/48.png" width="15%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/49.png" width="15%" />
+  <img src="docs/screenshots/50.png" width="15%" />
+  <img src="docs/screenshots/51.png" width="15%" />
+  <img src="docs/screenshots/52.png" width="15%" />
+  <img src="docs/screenshots/53.png" width="15%" />
+  <img src="docs/screenshots/54.png" width="15%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/55.png" width="15%" />
+  <img src="docs/screenshots/56.png" width="15%" />
+  <img src="docs/screenshots/57.png" width="15%" />
+  <img src="docs/screenshots/58.png" width="15%" />
+  <img src="docs/screenshots/59.png" width="15%" />
+  <img src="docs/screenshots/60.png" width="15%" />
+</p>
 
 ## Tech Stack
 
