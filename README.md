@@ -141,15 +141,7 @@ Full-screen step-by-step flow:
 | | | | | | |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | ![](https://github.com/user-attachments/assets/fcd89890-25fb-4bad-846a-adcb92fad019) | ![](https://github.com/user-attachments/assets/56b4a21a-c0cc-416f-a8ab-59dfdf5370d9) | ![](https://github.com/user-attachments/assets/e9d52c2d-7c65-46eb-a3d5-69d1f8ee231f) | ![](https://github.com/user-attachments/assets/99eedd41-58ab-47ec-8c20-6305f10e8987) | ![](docs/screenshots/05.png) | ![](docs/screenshots/06.png) |
-| ![](docs/screenshots/07.png) | ![](docs/screenshots/08.png) | ![](docs/screenshots/09.png) | ![](docs/screenshots/10.png) | ![](docs/screenshots/11.png) | ![](docs/screenshots/12.png) |
-| ![](docs/screenshots/13.png) | ![](docs/screenshots/14.png) | ![](docs/screenshots/15.png) | ![](docs/screenshots/16.png) | ![](docs/screenshots/17.png) | ![](docs/screenshots/18.png) |
-| ![](docs/screenshots/19.png) | ![](docs/screenshots/20.png) | ![](docs/screenshots/21.png) | ![](docs/screenshots/22.png) | ![](docs/screenshots/23.png) | ![](docs/screenshots/24.png) |
-| ![](docs/screenshots/25.png) | ![](docs/screenshots/26.png) | ![](docs/screenshots/27.png) | ![](docs/screenshots/28.png) | ![](docs/screenshots/29.png) | ![](docs/screenshots/30.png) |
-| ![](docs/screenshots/31.png) | ![](docs/screenshots/32.png) | ![](docs/screenshots/33.png) | ![](docs/screenshots/34.png) | ![](docs/screenshots/35.png) | ![](docs/screenshots/36.png) |
-| ![](docs/screenshots/37.png) | ![](docs/screenshots/38.png) | ![](docs/screenshots/39.png) | ![](docs/screenshots/40.png) | ![](docs/screenshots/41.png) | ![](docs/screenshots/42.png) |
-| ![](docs/screenshots/43.png) | ![](docs/screenshots/44.png) | ![](docs/screenshots/45.png) | ![](docs/screenshots/46.png) | ![](docs/screenshots/47.png) | ![](docs/screenshots/48.png) |
-| ![](docs/screenshots/49.png) | ![](docs/screenshots/50.png) | ![](docs/screenshots/51.png) | ![](docs/screenshots/52.png) | ![](docs/screenshots/53.png) | ![](docs/screenshots/54.png) |
-| ![](docs/screenshots/55.png) | ![](docs/screenshots/56.png) | ![](docs/screenshots/57.png) | ![](docs/screenshots/58.png) | ![](docs/screenshots/59.png) | ![](docs/screenshots/60.png) |
+
 
 ---
 
