@@ -134,30 +134,8 @@ Full-screen step-by-step flow:
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" width="150" />
-  <img src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" width="150" />
-  <img src="https://github.com/user-attachments/assets/44fafbaf-3592-4c2c-afb1-0229a93eb9f1" width="150" />
-  <img src="https://github.com/user-attachments/assets/769978e6-8c23-45e3-af51-a3ba81b9faaa" width="150" />
-  <img src="https://github.com/user-attachments/assets/d1da4d0d-be2f-42af-86c7-19f7b6865557" width="150" />
-  <img src="https://github.com/user-attachments/assets/22b469da-38f1-41d3-aa1b-6937e67bbc87" width="150" />
-</p>
-
-<p align="center">
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 29 (2)" src="https://github.com/user-attachments/assets/6f796efe-6ae2-43c6-b229-9a46ba7f7723" />
   
 
-
-
-  
-</p>
-
-<p align="center">
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (3)" src="https://github.com/user-attachments/assets/3e865381-85d5-4800-91a1-be4d8fdac7ee" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (4)" src="https://github.com/user-attachments/assets/792168f3-e437-42a5-88f9-c2439f930706" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 32 (1)" src="https://github.com/user-attachments/assets/d0ede9c0-be02-4b5d-a5eb-3ec8286012fc" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 31" src="https://github.com/user-attachments/assets/73ab01d9-c1a7-41b8-994f-dcfe76a207da" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (5)" src="https://github.com/user-attachments/assets/8035ed3d-9b8a-4f1b-80ae-a6ca7835b877" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 32 (2)" src="https://github.com/user-attachments/assets/85df9b60-27cb-4258-bda6-b0294ecd6876" width="150" />
 </p>
 
 ## Tech Stack
