@@ -1,11 +1,4 @@
-# PhytoGuard — Plant Species & Disease Recognition Mobile App
-
-<p align="center">
-  <strong>Flutter · Firebase · TensorFlow Lite</strong><br>
-  Offline ML–powered plant health monitoring app developed as a graduation thesis project
-</p>
-
-> **Language:** This README is in English for GitHub and portfolio use. The thesis document and in-app copy are available in Turkish (TR) and English (EN).
+**Language:** This README is in English for GitHub and portfolio use. The thesis document and in-app copy are available in Turkish (TR) and English (EN).
 
 ---
 
@@ -147,7 +140,7 @@ Full-screen step-by-step flow:
 
 | | | | | | |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| ![](docs/screenshots/01.png) | ![](docs/screenshots/02.png) | ![](docs/screenshots/03.png) | ![](docs/screenshots/04.png) | ![](docs/screenshots/05.png) | ![](docs/screenshots/06.png) |
+| ![](https://github.com/user-attachments/assets/fcd89890-25fb-4bad-846a-adcb92fad019) | ![](https://github.com/user-attachments/assets/56b4a21a-c0cc-416f-a8ab-59dfdf5370d9) | ![](https://github.com/user-attachments/assets/e9d52c2d-7c65-46eb-a3d5-69d1f8ee231f) | ![](https://github.com/user-attachments/assets/99eedd41-58ab-47ec-8c20-6305f10e8987) | ![](docs/screenshots/05.png) | ![](docs/screenshots/06.png) |
 | ![](docs/screenshots/07.png) | ![](docs/screenshots/08.png) | ![](docs/screenshots/09.png) | ![](docs/screenshots/10.png) | ![](docs/screenshots/11.png) | ![](docs/screenshots/12.png) |
 | ![](docs/screenshots/13.png) | ![](docs/screenshots/14.png) | ![](docs/screenshots/15.png) | ![](docs/screenshots/16.png) | ![](docs/screenshots/17.png) | ![](docs/screenshots/18.png) |
 | ![](docs/screenshots/19.png) | ![](docs/screenshots/20.png) | ![](docs/screenshots/21.png) | ![](docs/screenshots/22.png) | ![](docs/screenshots/23.png) | ![](docs/screenshots/24.png) |
