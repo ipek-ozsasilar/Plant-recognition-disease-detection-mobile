@@ -200,13 +200,7 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/53.png" width="150" />
   <img src="docs/screenshots/54.png" width="150" />
   <img src="docs/screenshots/55.png" width="150" />
-  <img src="docs/screenshots/56.png" width="150" />
-  <br />
-  <img src="docs/screenshots/62.png" width="150" />
   <img src="docs/screenshots/63.png" width="150" />
-  <img src="docs/screenshots/64.png" width="150" />
-  <img src="docs/screenshots/65.png" width="150" />
-  <img src="docs/screenshots/66.png" width="150" />
   <br />
 </p>
 
