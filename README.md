@@ -143,10 +143,10 @@ Add your app screenshots below. Place them all in this section, one after anothe
 
 <br>
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!--  ADD YOUR SCREENSHOTS FROM HERE                                   -->
-<!--  Example: ![Caption](docs/screenshots/01-splash.png)            -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 08" src="https://github.com/user-attachments/assets/fcd89890-25fb-4bad-846a-adcb92fad019" />
+<img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09 (1)" src="https://github.com/user-attachments/assets/56b4a21a-c0cc-416f-a8ab-59dfdf5370d9" />
+<img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09 (2)" src="https://github.com/user-attachments/assets/e9d52c2d-7c65-46eb-a3d5-69d1f8ee231f" />
 
 <br>
 <br>
