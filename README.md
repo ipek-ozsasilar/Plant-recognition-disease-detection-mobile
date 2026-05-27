@@ -148,13 +148,6 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/11.png" width="150" />
   <img src="docs/screenshots/12.png" width="150" />
   <br />
-  <img src="docs/screenshots/13.png" width="150" />
-  <img src="docs/screenshots/14.png" width="150" />
-  <img src="docs/screenshots/15.png" width="150" />
-  <img src="docs/screenshots/16.png" width="150" />
-  <img src="docs/screenshots/17.png" width="150" />
-  <img src="docs/screenshots/18.png" width="150" />
-  <br />
   <img src="docs/screenshots/19.png" width="150" />
   <img src="docs/screenshots/20.png" width="150" />
   <img src="docs/screenshots/21.png" width="150" />
