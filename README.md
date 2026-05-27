@@ -136,12 +136,12 @@ Full-screen step-by-step flow:
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" width="140" />
-  <img src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" width="140" />
-  <img src="https://github.com/user-attachments/assets/44fafbaf-3592-4c2c-afb1-0229a93eb9f1" width="140" />
-  <img src="https://github.com/user-attachments/assets/769978e6-8c23-45e3-af51-a3ba81b9faaa" width="140" />
-  <img src="https://github.com/user-attachments/assets/d1da4d0d-be2f-42af-86c7-19f7b6865557" width="140" />
-  <img src="https://github.com/user-attachments/assets/22b469da-38f1-41d3-aa1b-6937e67bbc87" width="140" />
+  <img src="https://github.com/user-attachments/assets/85dfe8be-b1e1-4f95-88f8-e2d20bee6e55" width="150" />
+  <img src="https://github.com/user-attachments/assets/fb934936-3e42-4cef-ba0a-3e3e6f5e036f" width="150" />
+  <img src="https://github.com/user-attachments/assets/44fafbaf-3592-4c2c-afb1-0229a93eb9f1" width="150" />
+  <img src="https://github.com/user-attachments/assets/769978e6-8c23-45e3-af51-a3ba81b9faaa" width="150" />
+  <img src="https://github.com/user-attachments/assets/d1da4d0d-be2f-42af-86c7-19f7b6865557" width="150" />
+  <img src="https://github.com/user-attachments/assets/22b469da-38f1-41d3-aa1b-6937e67bbc87" width="150" />
 </p>
 
 <p align="center">
