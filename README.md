@@ -1,149 +1,151 @@
-# PhytoGuard — Bitki Türü ve Hastalık Tanıma Mobil Uygulaması
+# PhytoGuard — Plant Species & Disease Recognition Mobile App
 
 <p align="center">
   <strong>Flutter · Firebase · TensorFlow Lite</strong><br>
-  Bitirme tezi kapsamında geliştirilmiş, çevrimdışı makine öğrenmesi destekli bitki sağlığı izleme uygulaması
+  Offline ML–powered plant health monitoring app developed as a graduation thesis project
 </p>
 
----
-
-## İçindekiler
-
-1. [Proje Hakkında](#proje-hakkında)
-2. [Temel Özellikler](#temel-özellikler)
-3. [Ekran Görüntüleri](#ekran-görüntüleri)
-4. [Teknoloji Yığını](#teknoloji-yığını)
-5. [Sistem Mimarisi](#sistem-mimarisi)
-6. [Makine Öğrenmesi](#makine-öğrenmesi)
-7. [Firebase ve Veri Modeli](#firebase-ve-veri-modeli)
-8. [Proje Yapısı](#proje-yapısı)
-9. [Kurulum](#kurulum)
-10. [Yapılandırma (.env)](#yapılandırma-env)
-11. [Çalıştırma](#çalıştırma)
-12. [İsteğe Bağlı Backend](#isteğe-bağlı-backend)
-13. [Firebase Kurallarını Yayınlama](#firebase-kurallarını-yayınlama)
-14. [Yerelleştirme](#yerelleştirme)
-15. [Bilinen Sınırlamalar](#bilinen-sınırlamalar)
-16. [Lisans ve Tez](#lisans-ve-tez)
+> **Language:** This README is in English for GitHub and portfolio use. The thesis document and in-app copy are available in Turkish (TR) and English (EN).
 
 ---
 
-## Proje Hakkında
+## Table of Contents
 
-**PhytoGuard** (`bitirme_mobile`), kullanıcıların bitki yaprak veya bitki fotoğrafları üzerinden **bitki türünü** ve **genel hastalık sınıfını** tahmin etmesini sağlayan bir mobil uygulamadır. Uygulama, bitirme tezinde eğitilen derin öğrenme modellerinin uç kullanıcıya sunulması, sonuçların bulutta saklanması ve zaman içinde izlenmesi amacıyla tasarlanmıştır.
-
-Uygulama **karar destek** niteliğindedir; profesyonel bitki patolojisi teşhisi veya tarımsal resmî raporlama yerine geçmez. Tüm tahminler güven skorlarıyla birlikte gösterilir; düşük güven veya “sink” (kolay yanlış sınıflanan) türlerde sonuç **tanınamadı** olarak işaretlenir.
-
-### Ne yapar?
-
-| Alan | Açıklama |
-|------|----------|
-| **Tür tanıma** | ~93 sınıflı PlantNet tabanlı EfficientNetB3 türevi TFLite modeli |
-| **Hastalık sınıflandırma** | 5 sınıf: sağlıklı, yanıklık, küf, külleme, pas |
-| **Çoklu bölge** | Tek fotoğrafta birden fazla bitki/bölge seçimi; her bölge ayrı analiz ve kayıt |
-| **Geçmiş** | Taramalar tür etiketine göre gruplanır; detay, PDF, tür/hastalık bilgi sayfaları |
-| **Sağlık ilerlemesi** | Seçilen tür için 14/30 günlük hastalık trend grafiği ve foto zaman çizelgesi |
-| **Bulut senkronizasyonu** | Firebase Auth, Firestore, Storage |
-| **Yerel çıkarım** | Ağ gerektirmeden cihaz üzerinde TFLite (mobil/masaüstü) |
-| **Günün ipucu** | Son taramalara göre bağlamlı bakım önerisi (OpenAI veya yerel şablon) |
-| **Bildirimler** | Düşük sağlık skorunda risk uyarısı; takip hatırlatmaları |
-| **PDF rapor** | Tek tarama için paylaşılabilir / indirilebilir rapor |
+1. [About the Project](#about-the-project)
+2. [Key Features](#key-features)
+3. [Screenshots](#screenshots)
+4. [Tech Stack](#tech-stack)
+5. [System Architecture](#system-architecture)
+6. [Machine Learning](#machine-learning)
+7. [Firebase & Data Model](#firebase--data-model)
+8. [Project Structure](#project-structure)
+9. [Installation](#installation)
+10. [Configuration (.env)](#configuration-env)
+11. [Running the App](#running-the-app)
+12. [Optional Backend](#optional-backend)
+13. [Deploying Firebase Rules](#deploying-firebase-rules)
+14. [Localization](#localization)
+15. [Known Limitations](#known-limitations)
+16. [License & Thesis](#license--thesis)
 
 ---
 
-## Temel Özellikler
+## About the Project
 
-### Kimlik doğrulama ve onboarding
+**PhytoGuard** (`bitirme_mobile`) is a mobile application that lets users estimate **plant species** and **general disease class** from photos of leaves or whole plants. It was built to deploy deep learning models trained for a graduation thesis, persist results in the cloud, and track health over time.
 
-- E-posta/şifre ile kayıt ve giriş
-- Google ile oturum açma
-- Şifremi unuttum akışı
-- İlk açılışta dil seçimi (Türkçe / İngilizce) ve onboarding slaytları
-- Oturum bilgisi yerel önbellek + Firebase Auth ile senkron
+The app is a **decision-support** tool only; it does not replace professional plant pathology or official agricultural reporting. All predictions are shown with confidence scores; low confidence or “sink” (easily misclassified) species are marked as **unrecognized**.
 
-### Ana sayfa (Pano)
+### What it does
 
-- Kullanıcı karşılama metni
-- Hızlı kısayollar: tarama, geçmiş, rehber, ayarlar
-- Merkezi tarama çağrı kartı
-- **Günün ipucu** banner’ı (son 5 gün tarama bağlamı)
-- Son taramalar yatay şeridi
-- Özet istatistikler: toplam tarama, benzersiz tür, hastalık sayısı, düşük skorlu kayıt
-
-### Tarama sihirbazı
-
-Tam ekran adım adım akış:
-
-1. **Görüntü seçimi** — kamera veya galeri (uzun kenar ~2048 px sınırı)
-2. **Bölge seçimi** — normalize dikdörtgen bölgeler; sürükle-bırak veya varsayılan kare
-3. **Tür analizi** — her bölge için sırayla model çıkarımı
-4. **Tür sonuçları** — bölge bazlı liste
-5. **Hastalık analizi** — her bölge için 5 sınıflı model
-6. **Özet** — tür, hastalık, güven; PDF; kaydet
-
-**Kayıt kuralları:**
-
-- Tür güveni **%60 altı** → tanınamadı, geçmişe yazılmaz
-- “Sink” türlerde eşik **%78**
-- Hastalık güveni **%60 altı** → `unknown` (“Hastalık bilinmiyor”) olarak saklanır
-- **Kaydedilebilir bölgeleri kaydet** yalnızca tanınmış tür + hastalık analizi tamamlanmış bölgeleri yazar
-
-**Çoklu bölge kaydı:**
-
-- Her kaydedilebilir bölge ayrı `scans` belgesi oluşturur
-- Storage’a yalnızca o bölgenin **kırpılmış JPEG**’i yüklenir (geçmişte karışık çerçeve görünmez)
-- Farklı türler aynı fotoğrafta ise her bölge **kendi tür etiketindeki** bitki kaydına otomatik bağlanır; bitki seçim diyaloğu gösterilmez
-- Aynı tür için mevcut bitki varsa en son taramalı kayıt kullanılır; yoksa otomatik yeni bitki oluşturulur
-
-### Geçmiş taramalar
-
-- `speciesLabel` ile gruplanmış liste
-- Arama
-- Detay: büyük görsel, tür/hastalık satırları, güven göstergesi
-- Tür ve hastalık detay sayfalarına geçiş
-- PDF paylaşım / indirme
-
-### Sağlık ilerlemesi
-
-- Geçmişte tür etiketi olan tüm taramalar açılır listede
-- 14 veya 30 günlük pencere
-- `fl_chart` ile hastalık sınıfı zaman serisi
-- Kronolojik fotoğraf şeridi ve tam ekran önizleme
-
-### Profil ve ayarlar
-
-- Profil fotoğrafı (Firebase Storage + Firestore `photoUrl`)
-- Kişisel bilgiler: ad, telefon, bio, e-posta (Google hesabında e-posta salt okunur)
-- Gizlilik ve şifre sıfırlama
-- Tema: açık / koyu / sistem
-- Dil ve bildirim anahtarı (`SharedPreferences`)
-
-### Rehber ve hakkında
-
-- İyi fotoğraf çekimi ve uygulama kullanım önerileri
-- Proje / tez amacına uygun bilgilendirme metinleri
-
-### Alt navigasyon
-
-| Sekme | İşlev |
-|-------|--------|
-| Ana | Pano |
-| Geçmiş | Tarama listesi |
-| **FAB** | Tarama sihirbazı |
-| İlerleme | Sağlık ilerlemesi |
-| Menü | Rehber, profil, ayarlar, hakkında |
+| Area | Description |
+|------|-------------|
+| **Species recognition** | ~93-class PlantNet-based EfficientNetB3–style TFLite model |
+| **Disease classification** | 5 classes: healthy, blight, mold, powdery mildew, rust |
+| **Multi-region** | Multiple plants/regions in one photo; each region analyzed and saved separately |
+| **History** | Scans grouped by species label; detail view, PDF, species/disease info pages |
+| **Health progress** | 14/30-day disease trend chart and photo timeline per species |
+| **Cloud sync** | Firebase Auth, Firestore, Storage |
+| **On-device inference** | TFLite on mobile/desktop without a network connection |
+| **Daily tip** | Contextual care tips from recent scans (OpenAI or local templates) |
+| **Notifications** | Risk alerts for low health scores; follow-up reminders |
+| **PDF report** | Shareable / downloadable report per scan |
 
 ---
 
-## Ekran Görüntüleri
+## Key Features
 
-Aşağıya uygulama ekran görüntülerinizi ekleyebilirsiniz. Hepsini bu bölümde alt alta yerleştirmeniz yeterlidir; başlık veya kısa açıklama isterseniz her görselin hemen üstüne yazabilirsiniz.
+### Authentication & onboarding
+
+- Email/password sign-up and sign-in
+- Google Sign-In
+- Forgot-password flow
+- First-launch language picker (Turkish / English) and onboarding slides
+- Session cached locally and synced with Firebase Auth
+
+### Home (dashboard)
+
+- Personalized greeting
+- Quick actions: scan, history, guide, settings
+- Central scan call-to-action card
+- **Daily tip** banner (context from last 5 days of scans)
+- Recent scans horizontal strip
+- Summary stats: total scans, unique species, disease count, low-score records
+
+### Scan wizard
+
+Full-screen step-by-step flow:
+
+1. **Pick image** — camera or gallery (long edge capped at ~2048 px)
+2. **Select regions** — normalized rectangles; drag-to-draw or default square
+3. **Species analysis** — sequential model inference per region
+4. **Species results** — per-region list
+5. **Disease analysis** — 5-class model per region
+6. **Summary** — species, disease, confidence; PDF; save
+
+**Save rules:**
+
+- Species confidence **below 60%** → unrecognized, not saved to history
+- **78%** threshold for “sink” species
+- Disease confidence **below 60%** → stored as `unknown` (“Disease unknown”)
+- **Save savable regions** only writes regions with recognized species and completed disease analysis
+
+**Multi-region save:**
+
+- Each savable region creates a separate `scans` document
+- Only that region’s **cropped JPEG** is uploaded to Storage (no mixed frames in history)
+- Different species in one photo → each region is linked to the **plant record for its species label** automatically (no plant picker dialog)
+- Same species → uses the plant with the most recent scan, or creates a new plant if none exists
+
+### Scan history
+
+- List grouped by `speciesLabel`
+- Search
+- Detail: large image, species/disease rows, confidence indicator
+- Navigation to species and disease detail pages
+- PDF share / download
+
+### Health progress
+
+- Dropdown of all scans with a species label in history
+- 14- or 30-day window
+- Disease-class time series via `fl_chart`
+- Chronological photo strip with full-screen preview
+
+### Profile & settings
+
+- Profile photo (Firebase Storage + Firestore `photoUrl`)
+- Personal info: name, phone, bio, email (read-only email for Google accounts)
+- Privacy and password reset
+- Theme: light / dark / system
+- Language and notification toggle (`SharedPreferences`)
+
+### Guide & about
+
+- Tips for good photos and app usage
+- Project / thesis-oriented information screens
+
+### Bottom navigation
+
+| Tab | Purpose |
+|-----|---------|
+| Home | Dashboard |
+| History | Scan list |
+| **FAB** | Scan wizard |
+| Progress | Health progress |
+| Menu | Guide, profile, settings, about |
+
+---
+
+## Screenshots
+
+Add your app screenshots below. Place them all in this section, one after another. Optional captions can go directly above each image.
 
 <br>
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<!--  EKRAN GÖRÜNTÜLERİNİZİ BURADAN İTİBAREN EKLEYİN                    -->
-<!--  Örnek: ![Açıklama](docs/screenshots/01-splash.png)               -->
+<!--  ADD YOUR SCREENSHOTS FROM HERE                                   -->
+<!--  Example: ![Caption](docs/screenshots/01-splash.png)            -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 
 <br>
@@ -157,44 +159,43 @@ Aşağıya uygulama ekran görüntülerinizi ekleyebilirsiniz. Hepsini bu bölü
 <br>
 <br>
 
-<!-- Yukarıdaki boş satırlar Word/README önizlemesinde alan bırakır; -->
-<!-- görselleri ekledikten sonra fazla satırları silebilirsiniz.      -->
+<!-- Blank lines above leave room while editing; remove extras after adding images. -->
 
 ---
 
-## Teknoloji Yığını
+## Tech Stack
 
-| Katman | Teknoloji |
-|--------|-----------|
+| Layer | Technology |
+|-------|------------|
 | Framework | Flutter 3.8+ (Dart 3.8+) |
 | UI | Material Design 3, Google Fonts, responsive_framework |
-| Durum yönetimi | Riverpod 2.x |
-| Navigasyon | go_router 14.x |
+| State | Riverpod 2.x |
+| Navigation | go_router 14.x |
 | DI | get_it |
-| Yerelleştirme | flutter gen-l10n (TR / EN) |
-| Kimlik | Firebase Auth, Google Sign-In |
-| Veritabanı | Cloud Firestore |
-| Dosya depolama | Firebase Storage |
-| ML çıkarım | TensorFlow Lite (`tflite_flutter`) |
-| Görüntü | image_picker, image (kırpım / JPEG) |
-| Grafik | fl_chart |
+| i18n | flutter gen-l10n (TR / EN) |
+| Auth | Firebase Auth, Google Sign-In |
+| Database | Cloud Firestore |
+| File storage | Firebase Storage |
+| ML inference | TensorFlow Lite (`tflite_flutter`) |
+| Imaging | image_picker, image (crop / JPEG) |
+| Charts | fl_chart |
 | PDF | pdf, printing |
-| Bildirim | flutter_local_notifications, timezone |
-| Gizli yapılandırma | envied + `.env` |
-| Kod üretimi | build_runner, flutter_gen, json_serializable |
+| Notifications | flutter_local_notifications, timezone |
+| Secrets | envied + `.env` |
+| Codegen | build_runner, flutter_gen, json_serializable |
 
 ---
 
-## Sistem Mimarisi
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Sunum (Flutter UI)                        │
-│  features/: home, scan, history, health_progress, auth, …   │
+│                    Presentation (Flutter UI)                 │
+│  features/: home, scan, history, health_progress, auth, …    │
 └──────────────────────────┬──────────────────────────────────┘
                            │ Riverpod Providers
 ┌──────────────────────────▼──────────────────────────────────┐
-│              İş mantığı / ViewModel / Notifier               │
+│              Business logic / Notifiers                        │
 └──────────────────────────┬──────────────────────────────────┘
                            │ get_it (Service Locator)
 ┌──────────────────────────▼──────────────────────────────────┐
@@ -209,84 +210,84 @@ Aşağıya uygulama ekran görüntülerinizi ekleyebilirsiniz. Hepsini bu bölü
         ▼                              ▼
 ┌───────────────┐              ┌──────────────────┐
 │ TFLite assets │              │ Firebase         │
-│ (cihaz içi)   │              │ Auth · Firestore │
+│ (on-device)   │              │ Auth · Firestore │
 │               │              │ · Storage        │
 └───────────────┘              └──────────────────┘
 ```
 
-**Başlangıç sırası** (`AppInitializers`):
+**Startup order** (`AppInitializers`):
 
-1. Firebase başlatma  
-2. Yerel saat dilimi (`timezone`)  
-3. Servis kayıtları (`service_locator.dart`)  
-4. ML metadata yükleme (sınıf listeleri, PlantNet haritası, sink sınıfları)  
-5. Bildirim kanalları  
-6. Kayıtlı dil ve tema tercihleri  
-
----
-
-## Makine Öğrenmesi
-
-### Model dosyaları (`assets/ml/`)
-
-| Dosya | Rol |
-|-------|-----|
-| `plant_species_model.tflite` | Tür sınıflandırıcı (~93 sınıf) |
-| `class_names.json` | Tür sınıf etiketleri |
-| `plantnet_species_id_map.json` | PlantNet ID → görünen ad |
-| `sink_classes.json` | Sıkı eşik uygulanan “sink” sınıflar |
-| `disease_5class.tflite` | 5 sınıflı hastalık modeli |
-| `disease_class_names_5class.json` | Hastalık sınıf anahtarları |
-
-### Hastalık sınıfları
-
-| Anahtar | Anlam |
-|---------|--------|
-| `healthy` | Sağlıklı |
-| `blight` | Yanıklık |
-| `mold` | Küf |
-| `powdery_mildew` | Külleme |
-| `rust` | Pas |
-
-### Çıkarım modları (`.env`)
-
-| Mod | `USE_MOCK_INFERENCE` | `USE_LOCAL_TFLITE` | Açıklama |
-|-----|----------------------|--------------------|----------|
-| Yerel TFLite | `false` | `true` | Önerilen; çevrimdışı |
-| HTTP API | `false` | `false` | `API_BASE_URL` üzerinden `/predict/species`, `/predict/disease` |
-| Mock | `true` | — | Geliştirme / test |
-
-**Ön işleme:** Görüntü decode → model giriş boyutuna yeniden boyutlandırma → softmax → en iyi sınıf + alternatifler.
-
-**Sağlık skoru:** Hastalık anahtarı ve güven değerinden 0–100 tamsayı skor (`computeHealthScore`).
+1. Initialize Firebase  
+2. Local timezone (`timezone`)  
+3. Register services (`service_locator.dart`)  
+4. Load ML metadata (class lists, PlantNet map, sink classes)  
+5. Notification channels  
+6. Restore saved language and theme  
 
 ---
 
-## Firebase ve Veri Modeli
+## Machine Learning
 
-### Firestore koleksiyonları
+### Model files (`assets/ml/`)
 
-| Koleksiyon | Açıklama |
-|------------|----------|
-| `users/{uid}` | Profil: email, displayName, photoUrl, phone, bio, authProvider |
-| `plants/{id}` | Kullanıcının fiziksel bitki kaydı (tür etiketi, son skor, foto) |
-| `scans/{id}` | Tarama: tür, hastalık, güven, healthScore, imageUrl, plantId |
-| `species/{id}` | Paylaşılan tür kataloğu (otomatik doldurulur) |
-| `diseases/{id}` | Paylaşılan hastalık kataloğu (`unknown` yazılmaz) |
+| File | Role |
+|------|------|
+| `plant_species_model.tflite` | Species classifier (~93 classes) |
+| `class_names.json` | Species class labels |
+| `plantnet_species_id_map.json` | PlantNet ID → display name |
+| `sink_classes.json` | Classes that use a stricter confidence threshold |
+| `disease_5class.tflite` | 5-class disease model |
+| `disease_class_names_5class.json` | Disease class keys |
 
-### Storage yolları
+### Disease classes
 
-| Yol | İçerik |
-|-----|--------|
-| `scans/{userId}/{scanId}.jpg` | Tarama / bölge kırpım fotoğrafı |
-| `users/{userId}/profile.jpg` | Profil fotoğrafı |
+| Key | Meaning |
+|-----|---------|
+| `healthy` | Healthy |
+| `blight` | Blight |
+| `mold` | Mold |
+| `powdery_mildew` | Powdery mildew |
+| `rust` | Rust |
 
-### Güvenlik kuralları
+### Inference modes (`.env`)
 
-- `firestore.rules` — kullanıcı verisi yalnızca `ownerUid == auth.uid`
-- `storage.rules` — kullanıcı klasörü izolasyonu
+| Mode | `USE_MOCK_INFERENCE` | `USE_LOCAL_TFLITE` | Description |
+|------|----------------------|--------------------|-------------|
+| Local TFLite | `false` | `true` | Recommended; offline |
+| HTTP API | `false` | `false` | `API_BASE_URL` → `/predict/species`, `/predict/disease` |
+| Mock | `true` | — | Development / testing |
 
-Kuralların Firebase Console’da **yayınlanması** gerekir:
+**Preprocessing:** Decode image → resize to model input → softmax → top class + alternatives.
+
+**Health score:** Integer 0–100 derived from disease key and confidence (`computeHealthScore`).
+
+---
+
+## Firebase & Data Model
+
+### Firestore collections
+
+| Collection | Description |
+|------------|-------------|
+| `users/{uid}` | Profile: email, displayName, photoUrl, phone, bio, authProvider |
+| `plants/{id}` | User’s physical plant record (species label, last score, photo) |
+| `scans/{id}` | Scan: species, disease, confidence, healthScore, imageUrl, plantId |
+| `species/{id}` | Shared species catalog (auto-populated) |
+| `diseases/{id}` | Shared disease catalog (`unknown` is not written) |
+
+### Storage paths
+
+| Path | Content |
+|------|---------|
+| `scans/{userId}/{scanId}.jpg` | Scan / region crop photo |
+| `users/{userId}/profile.jpg` | Profile photo |
+
+### Security rules
+
+- `firestore.rules` — user data only when `ownerUid == auth.uid`
+- `storage.rules` — per-user folder isolation
+
+Rules must be **published** in Firebase Console:
 
 ```bash
 firebase deploy --only firestore,storage
@@ -294,23 +295,23 @@ firebase deploy --only firestore,storage
 
 ---
 
-## Proje Yapısı
+## Project Structure
 
 ```
 bitirme_mobile/
 ├── android/                 # Android native
 ├── ios/                     # iOS native
 ├── assets/
-│   ├── ml/                  # TFLite modelleri ve JSON etiketler
+│   ├── ml/                  # TFLite models and JSON labels
 │   ├── colors/
 │   └── fonts/
-├── backend/                 # İsteğe bağlı FastAPI (günün ipucu)
+├── backend/                 # Optional FastAPI (daily tip)
 ├── lib/
 │   ├── main.dart
 │   ├── models/              # PlantScanModel, PlantModel, UserProfileModel, …
 │   ├── core/
 │   │   ├── navigation/      # app_router, app_paths
-│   │   ├── services/        # Firebase, ML, PDF, bildirim, …
+│   │   ├── services/        # Firebase, ML, PDF, notifications, …
 │   │   ├── enums/
 │   │   ├── widgets/
 │   │   └── env/
@@ -324,7 +325,7 @@ bitirme_mobile/
 │   │   ├── settings/
 │   │   └── …
 │   ├── l10n/                # app_tr.arb, app_en.arb
-│   ├── gen/                 # flutter_gen çıktıları
+│   ├── gen/                 # flutter_gen output
 │   └── service_locator/
 ├── firestore.rules
 ├── storage.rules
@@ -335,55 +336,55 @@ bitirme_mobile/
 
 ---
 
-## Kurulum
+## Installation
 
-### Gereksinimler
+### Requirements
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.8
-- Android Studio / Xcode (hedef platforma göre)
-- Firebase projesi (Auth, Firestore, Storage etkin)
-- `google-services.json` (Android) ve `GoogleService-Info.plist` (iOS) projeye eklenmiş olmalı
+- Android Studio / Xcode (target platform)
+- Firebase project with Auth, Firestore, and Storage enabled
+- `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) added to the project
 
-### Adımlar
+### Steps
 
 ```bash
-# Depoyu klonlayın
+# Clone the repository
 git clone <repo-url>
 cd bitirme_mobile
 
-# Bağımlılıklar
+# Dependencies
 flutter pub get
 
-# Ortam dosyası
+# Environment file
 cp .env.example .env
-# .env dosyasını düzenleyin (aşağıya bakın)
+# Edit .env (see below)
 
-# Kod üretimi (envied, l10n vb.)
+# Code generation (envied, l10n, etc.)
 dart run build_runner build --delete-conflicting-outputs
 flutter gen-l10n
 
-# Firebase yapılandırması (FlutterFire CLI kullanıyorsanız)
+# Firebase setup (if using FlutterFire CLI)
 # flutterfire configure
 ```
 
 ---
 
-## Yapılandırma (.env)
+## Configuration (.env)
 
-`.env` dosyası git’e **dahil edilmez**. `.env.example` şablonunu kopyalayın:
+`.env` is **not** committed to git. Copy from `.env.example`:
 
-| Değişken | Açıklama |
-|----------|----------|
-| `API_BASE_URL` | HTTP çıkarım sunucusu tabanı (ör. `http://127.0.0.1:8000`) |
-| `USE_MOCK_INFERENCE` | `true` → rastgele mock tahmin |
-| `USE_LOCAL_TFLITE` | `true` → cihazda TFLite (önerilen) |
-| `GOOGLE_WEB_CLIENT_ID` | Google Sign-In web istemci kimliği |
-| `OPENAI_API_KEY` | Günün ipucu için (isteğe bağlı) |
-| `OPENAI_MODEL` | Örn. `gpt-4o-mini` |
-| `USE_AI_DAILY_TIP` | `true` → OpenAI ile ipucu |
-| `USE_MOCK_DAILY_TIP` | `true` → şablon ipucu |
+| Variable | Description |
+|----------|-------------|
+| `API_BASE_URL` | HTTP inference server base (e.g. `http://127.0.0.1:8000`) |
+| `USE_MOCK_INFERENCE` | `true` → random mock predictions |
+| `USE_LOCAL_TFLITE` | `true` → on-device TFLite (recommended) |
+| `GOOGLE_WEB_CLIENT_ID` | Google Sign-In web client ID |
+| `OPENAI_API_KEY` | For daily tip (optional) |
+| `OPENAI_MODEL` | e.g. `gpt-4o-mini` |
+| `USE_AI_DAILY_TIP` | `true` → OpenAI-generated tip |
+| `USE_MOCK_DAILY_TIP` | `true` → template tip |
 
-Değişiklikten sonra:
+After changes:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
@@ -391,78 +392,78 @@ dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-## Çalıştırma
+## Running the App
 
 ```bash
-# Bağlı cihaz / emülatör listesi
+# List devices / emulators
 flutter devices
 
-# Debug çalıştırma
+# Debug run
 flutter run
 
 # Release APK (Android)
 flutter build apk --release
 ```
 
-**Not:** Web derlemesinde `tflite_flutter` FFI kısıtı nedeniyle yerel TFLite devre dışı kalabilir; bu durumda HTTP veya mock modu kullanın.
+**Note:** On web builds, local TFLite may be unavailable due to FFI limits; use HTTP or mock mode instead.
 
 ---
 
-## İsteğe Bağlı Backend
+## Optional Backend
 
-`backend/` klasöründe FastAPI tabanlı hafif bir servis bulunur (ör. günün ipucu proxy). Mobil uygulama doğrudan OpenAI anahtarını da kullanabilir (`.env` içinde).
+The `backend/` folder contains a lightweight FastAPI service (e.g. daily tip proxy). The mobile app can also call OpenAI directly via `.env`.
 
 ```bash
 cd backend
 python -m venv .venv
 .venv\Scripts\activate          # Windows
 pip install -r requirements.txt
-cp .env.example .env            # OPENAI_API_KEY doldurun
+cp .env.example .env            # Set OPENAI_API_KEY
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ---
 
-## Firebase Kurallarını Yayınlama
+## Deploying Firebase Rules
 
-Projede `firestore.rules` ve `storage.rules` tanımlıdır. Console’da manuel yapıştırabilir veya CLI ile deploy edebilirsiniz:
+`firestore.rules` and `storage.rules` are included in the repo. Paste them in the Console or deploy via CLI:
 
 ```bash
 firebase login
-firebase use <proje-id>
+firebase use <project-id>
 firebase deploy --only firestore,storage
 ```
 
-Yayınlanmamış kurallar `permission-denied` hatalarına yol açar (özellikle `species` / `diseases` katalog yazımları ve Storage yüklemeleri).
+Unpublished rules cause `permission-denied` errors (especially for `species` / `diseases` catalog writes and Storage uploads).
 
 ---
 
-## Yerelleştirme
+## Localization
 
-- Kaynak: `lib/l10n/app_tr.arb`, `lib/l10n/app_en.arb`
-- ARB düzenledikten sonra: `flutter gen-l10n`
-- İlk kurulumda dil seçimi ekranı
-
----
-
-## Bilinen Sınırlamalar
-
-- TFLite yalnızca Android / iOS / masaüstü native hedeflerde tam desteklenir; web’de sınırlıdır.
-- Model çıktıları eğitim veri seti ve koşullarıyla sınırlıdır; düşük ışık, bulanık veya alakasız görüntülerde “tanınamadı” sık görülür.
-- Aynı türden birden fazla saksı varsa kayıt, **en son taramalı** bitki kaydına otomatik bağlanır (manuel seçim yok).
-- OpenAI ipucu özelliği geçerli API anahtarı gerektirir; anahtar yoksa yerel şablon metinler kullanılır.
+- Source files: `lib/l10n/app_tr.arb`, `lib/l10n/app_en.arb`
+- After editing ARB: `flutter gen-l10n`
+- Language picker on first launch
 
 ---
 
-## Lisans ve Tez
+## Known Limitations
 
-Bu proje **bitirme tezi** kapsamında akademik amaçla geliştirilmiştir. Model eğitimi, veri setleri ve deneysel sonuçlar tez metninde ayrıntılı anlatılmaktadır.
+- TFLite is fully supported on Android, iOS, and desktop native targets; web support is limited.
+- Model outputs depend on training data and conditions; poor lighting, blur, or off-topic images often yield “unrecognized”.
+- Multiple pots of the same species auto-link to the **most recently scanned** plant record (no manual picker).
+- OpenAI daily tips require a valid API key; otherwise local template text is used.
 
-**Geliştirici:** İpek Özsaşılar  
-**Kurum / program:** (Tez bilgilerinizi buraya ekleyebilirsiniz)
+---
+
+## License & Thesis
+
+This project was developed for academic purposes as a **graduation thesis**. Model training, datasets, and experimental results are described in the thesis document.
+
+**Author:** İpek Özsaşılar  
+**Institution / program:** (Add your thesis details here)
 
 ---
 
 <p align="center">
-  <sub>PhytoGuard — Bitkilerinizi fotoğraflayın, tür ve sağlık durumunu izleyin.</sub>
+  <sub>PhytoGuard — Photograph your plants, track species and health over time.</sub>
 </p>
