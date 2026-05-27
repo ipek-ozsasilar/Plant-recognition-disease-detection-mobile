@@ -166,7 +166,6 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/35.png" width="150" />
   <img src="docs/screenshots/36.png" width="150" />
   <br />
-  <img src="docs/screenshots/37.png" width="150" />
   <img src="docs/screenshots/38.png" width="150" />
   <img src="docs/screenshots/39.png" width="150" />
   <img src="docs/screenshots/40.png" width="150" />
@@ -176,7 +175,7 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/37.png" width="150" />
   <img src="docs/screenshots/38.png" width="150" />
   <img src="docs/screenshots/39.png" width="150" />
-  <img src="docs/screenshots/40.png" width="150" />
+  <img src="docs/screenshots/37.png" width="150" />
   <img src="docs/screenshots/41.png" width="150" />
   <br />
   <img src="docs/screenshots/42.png" width="150" />
