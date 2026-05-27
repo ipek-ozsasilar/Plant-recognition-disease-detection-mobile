@@ -211,10 +211,6 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/65.png" width="150" />
   <img src="docs/screenshots/66.png" width="150" />
   <br />
-  <img src="docs/screenshots/67.png" width="150" />
-  <img src="docs/screenshots/68.png" width="150" />
-  <img src="docs/screenshots/69.png" width="150" />
-  <img src="docs/screenshots/70.png" width="150" />
 </p>
 
 ## Tech Stack
