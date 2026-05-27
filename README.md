@@ -143,21 +143,12 @@ Full-screen step-by-step flow:
 </p>
 
 <p align="center">
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 29 (3)" src="https://github.com/user-attachments/assets/dc4300ac-d531-4fcf-aff0-16613ebffe7c" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 29 (4)" src="https://github.com/user-attachments/assets/33ef0e49-1920-41bb-8dab-8f1cc69625b9" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 29" src="https://github.com/user-attachments/assets/a987f74f-bc08-4861-8a88-af30e0ef939d" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (1)" src="https://github.com/user-attachments/assets/b6f26124-d7da-4e8b-9871-0efef875d549" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (2)" src="https://github.com/user-attachments/assets/e34213fb-60ad-4761-b60c-1fb02c255806" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (3)" src="https://github.com/user-attachments/assets/b93f1e93-ca7e-477c-bbbe-6727525062e5" width="150" />
-</p>
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 29 (2)" src="https://github.com/user-attachments/assets/6f796efe-6ae2-43c6-b229-9a46ba7f7723" />
+  
 
-<p align="center">
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (1)" src="https://github.com/user-attachments/assets/c3a14583-0dc2-4e50-8b70-549421ead93b" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30" src="https://github.com/user-attachments/assets/c96c3a3f-ef49-40c6-9e99-5f99c2fde568" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (6)" src="https://github.com/user-attachments/assets/241e41a9-b2d5-40a4-bc3d-08806eb45b20" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (5)" src="https://github.com/user-attachments/assets/fc931aa4-e109-42b4-886d-1cc73591e5b7" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 30 (4)" src="https://github.com/user-attachments/assets/5156b5dc-cd60-4361-bbbb-2eae43bba0eb" width="150" />
-  <img alt="WhatsApp Image 2026-05-21 at 20 29 31 (2)" src="https://github.com/user-attachments/assets/c7ce4aed-9c98-44a2-badb-20e136541f68" width="150" />
+
+
+  
 </p>
 
 <p align="center">
