@@ -135,30 +135,31 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/03.png" width="150" />
   <img src="docs/screenshots/04.png" width="150" />
   <img src="docs/screenshots/05.png" width="150" />
-  <img src="docs/screenshots/06.png" width="150" />
   <br />
+  <img src="docs/screenshots/06.png" width="150" />
   <img src="docs/screenshots/07.png" width="150" />
   <img src="docs/screenshots/08.png" width="150" />
   <img src="docs/screenshots/09.png" width="150" />
   <img src="docs/screenshots/10.png" width="150" />
+  <br />
   <img src="docs/screenshots/11.png" width="150" />
   <img src="docs/screenshots/12.png" width="150" />
-  <br />
   <img src="docs/screenshots/19.png" width="150" />
   <img src="docs/screenshots/20.png" width="150" />
   <img src="docs/screenshots/21.png" width="150" />
+  <br />
   <img src="docs/screenshots/22.png" width="150" />
   <img src="docs/screenshots/23.png" width="150" />
   <img src="docs/screenshots/24.png" width="150" />
-  <br />
   <img src="docs/screenshots/25.png" width="150" />
   <img src="docs/screenshots/26.png" width="150" />
+  <br />
   <img src="docs/screenshots/27.png" width="150" />
   <img src="docs/screenshots/28.png" width="150" />
   <img src="docs/screenshots/29.png" width="150" />
   <img src="docs/screenshots/30.png" width="150" />
-  <br />
   <img src="docs/screenshots/31.png" width="150" />
+  <br />
   <img src="docs/screenshots/32.png" width="150" />
   <img src="docs/screenshots/33.png" width="150" />
   <img src="docs/screenshots/34.png" width="150" />
@@ -172,28 +173,36 @@ Full-screen step-by-step flow:
   <img src="docs/screenshots/41.png" width="150" />
   <img src="docs/screenshots/42.png" width="150" />
   <br />
+  <img src="docs/screenshots/37.png" width="150" />
+  <img src="docs/screenshots/38.png" width="150" />
+  <img src="docs/screenshots/39.png" width="150" />
+  <img src="docs/screenshots/40.png" width="150" />
+  <img src="docs/screenshots/41.png" width="150" />
+  <br />
+  <img src="docs/screenshots/42.png" width="150" />
   <img src="docs/screenshots/43.png" width="150" />
   <img src="docs/screenshots/44.png" width="150" />
   <img src="docs/screenshots/45.png" width="150" />
   <img src="docs/screenshots/46.png" width="150" />
+  <br />
   <img src="docs/screenshots/47.png" width="150" />
   <img src="docs/screenshots/48.png" width="150" />
-  <br />
   <img src="docs/screenshots/49.png" width="150" />
   <img src="docs/screenshots/50.png" width="150" />
   <img src="docs/screenshots/51.png" width="150" />
-  <img src="docs/screenshots/52.png" width="150" />
-  <img src="docs/screenshots/53.png" width="150" />
-  <img src="docs/screenshots/54.png" width="150" />
   <br />
-  <img src="docs/screenshots/55.png" width="150" />
-  <img src="docs/screenshots/56.png" width="150" />
   <img src="docs/screenshots/57.png" width="150" />
   <img src="docs/screenshots/58.png" width="150" />
   <img src="docs/screenshots/59.png" width="150" />
   <img src="docs/screenshots/60.png" width="150" />
-  <br />
   <img src="docs/screenshots/61.png" width="150" />
+  <br />
+  <img src="docs/screenshots/52.png" width="150" />
+  <img src="docs/screenshots/53.png" width="150" />
+  <img src="docs/screenshots/54.png" width="150" />
+  <img src="docs/screenshots/55.png" width="150" />
+  <img src="docs/screenshots/56.png" width="150" />
+  <br />
   <img src="docs/screenshots/62.png" width="150" />
   <img src="docs/screenshots/63.png" width="150" />
   <img src="docs/screenshots/64.png" width="150" />
