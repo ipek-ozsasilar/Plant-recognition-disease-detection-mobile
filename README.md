@@ -138,8 +138,8 @@ Add your app screenshots below. Place them all in this section, one after anothe
   <img src="https://github.com/user-attachments/assets/fcd89890-25fb-4bad-846a-adcb92fad019" width="18%" />
   <img src="https://github.com/user-attachments/assets/56b4a21a-c0cc-416f-a8ab-59dfdf5370d9" width="18%" />
   <img src="https://github.com/user-attachments/assets/e9d52c2d-7c65-46eb-a3d5-69d1f8ee231f" width="18%" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09" src="https://github.com/user-attachments/assets/6c917be9-0634-4bc1-bcce-9794988e2335" />
-  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 10" src="https://github.com/user-attachments/assets/e56f6370-003b-499a-8b1f-bdb1f88c4e9a" />
+  <img width="921" height="2048" alt="WhatsApp Image 2026-05-21 at 20 29 09" src="https://github.com/user-attachments/assets/99eedd41-58ab-47ec-8c20-6305f10e8987" />
+
 </p>
 <!-- Blank lines above leave room while editing; remove extras after adding images. -->
 
